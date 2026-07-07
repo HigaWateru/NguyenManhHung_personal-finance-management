@@ -126,34 +126,49 @@ Không thực hiện trong phạm vi dự án.
 
 ---
 # 5. Backend Technology
-Ngôn ngữ
+Language
 - Java 21
 
 Framework
 - Spring Boot
 
-Modules
+Spring Modules
 - Spring Web
 - Spring Security
 - Spring Data JPA
 - Spring Validation
+- Spring Mail
 
-Security
-- JWT Authentication
-- CORS Configuration
-- Password Encoder (BCrypt)
+Authentication & Security
+- JWT
+- BCrypt
+- CORS
 
 Database
 - SQLite
 
-Build Tool
-- Gradle
+Cache
+- Redis
+
+Cloud Storage
+- Cloudinary
+
+Object Mapper
+- MapStruct
 
 Utilities
 - Lombok
-- MapStruct
 
-Development
+Testing
+- JUnit 5
+- Mockito
+- Spring Boot Test
+- MockMvc
+
+Build Tool
+- Gradle
+
+Development Tools
 - Docker
 - Postman
 
@@ -373,3 +388,82 @@ Trong phạm vi MVP sẽ không thực hiện
 - Stress Test
 - Security Penetration Test
 - End-to-End Test
+
+# 14. Development Documentation
+Trong suốt quá trình phát triển, toàn bộ thay đổi và các vấn đề phát sinh phải được ghi lại nhằm hỗ trợ bảo trì, đánh giá và theo dõi tiến độ.
+
+## Required Documents
+Dự án phải bao gồm các tài liệu sau:
+- README.md
+- SRS.md
+- Prompt-Chain.md
+- Project-Scope.md
+- System-Flow.md
+- Changelog.md
+- Error-Log.md
+
+---
+# 15. Error Log Documentation
+Trong quá trình phát triển, mọi lỗi phát sinh cần được ghi nhận vào file `Error-Log.md`.
+Mỗi lỗi phải được mô tả đầy đủ theo cấu trúc sau:
+- Mã lỗi (Error ID)
+- Ngày phát sinh
+- Module
+- Chức năng
+- Mô tả lỗi
+- Nguyên nhân
+- Cách khắc phục
+- Bài học rút ra (Lesson Learned)
+- Trạng thái (Resolved/Pending)
+
+---
+## Error Log Template
+### Error ID
+ERR-001
+
+### Date
+2026-07-08
+
+### Module
+Authentication
+
+### Feature
+Login
+
+### Error Description
+JWT Token không được gửi trong Header của các request sau khi đăng nhập.
+
+### Root Cause
+Axios chưa cấu hình Request Interceptor để tự động thêm Authorization Header.
+
+### Resolution
+Cấu hình Axios Interceptor để tự động thêm Bearer Token vào Header trước khi gửi request.
+
+### Lesson Learned
+Các API yêu cầu xác thực cần sử dụng chung một Axios Instance nhằm tránh quên thêm Authorization Header.
+
+### Status
+Resolved
+
+---
+## Error Categories
+Các lỗi nên được phân loại theo nhóm:
+- Backend
+- Frontend
+- Database
+- Authentication
+- Authorization
+- API
+- UI/UX
+- Performance
+- Deployment
+- Testing
+
+---
+## Documentation Rules
+- Ghi nhận lỗi ngay khi phát sinh.
+- Chỉ ghi các lỗi thực tế trong quá trình phát triển.
+- Không ghi các lỗi giả lập.
+- Mỗi lỗi chỉ ghi một lần.
+- Sau khi khắc phục phải cập nhật trạng thái.
+- Nếu lỗi ảnh hưởng nhiều module cần ghi rõ phạm vi ảnh hưởng.
