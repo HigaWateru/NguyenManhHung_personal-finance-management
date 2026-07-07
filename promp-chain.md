@@ -83,18 +83,92 @@ Không sinh code.
 
 # Prompt 02
 
-Thiết kế Database.
+Thiết kế toàn bộ tầng dữ liệu của dự án Smart Finance.
 
-Yêu cầu
+Yêu cầu:
 
-- ERD
-- Quan hệ bảng
+1. Phân tích các thực thể cần có trong hệ thống.
+
+2. Xác định mối quan hệ giữa các Entity.
+
+3. Thiết kế Entity theo chuẩn JPA.
+
+4. Mỗi Entity phải bao gồm:
+
+- Các thuộc tính
 - Kiểu dữ liệu
-- Primary Key
-- Foreign Key
-- Constraint
+- Validation Annotation
+- Relationship Annotation
+- Fetch Type
+- Cascade Type
+- Naming Convention
 
-Không sinh code Java.
+5. Thiết kế Enum nếu cần.
+
+6. Thiết kế BaseEntity nếu phù hợp.
+
+7. Sinh đầy đủ source code cho:
+
+- Entity
+- Enum
+- BaseEntity
+
+8. Sau khi hoàn thành Entity, tạo dữ liệu mẫu (Seed Data) bằng Java.
+
+Yêu cầu Seed Data:
+
+- Không sử dụng file SQL.
+- Không sử dụng import CSV.
+- Không sử dụng Flyway Seed.
+- Sử dụng Java (CommandLineRunner hoặc ApplicationRunner).
+- Seed dữ liệu khi ứng dụng khởi động.
+- Kiểm tra dữ liệu tồn tại trước khi Seed để tránh trùng lặp.
+
+9. Sinh dữ liệu mẫu hợp lý cho:
+
+User
+
+Category
+
+Income
+
+Expense
+
+10. Dữ liệu mẫu phải phản ánh đúng nghiệp vụ Smart Finance.
+
+Ví dụ:
+
+Category
+
+- Salary
+- Food
+- Transport
+- Shopping
+- Entertainment
+- Health
+
+Income
+
+- Salary
+- Bonus
+- Freelance
+
+Expense
+
+- Coffee
+- Lunch
+- Electricity
+- Netflix
+- Shopping
+
+11. Sau khi hoàn thành hãy giải thích:
+
+- Quan hệ giữa các Entity.
+- Lý do lựa chọn kiểu dữ liệu.
+- Chiến lược Seed Data.
+- Luồng khởi tạo dữ liệu của hệ thống.
+
+Không tạo Repository, Service hoặc Controller ở bước này.
 
 ---
 
