@@ -12,33 +12,33 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 public class SmartFinanceDataSeeder implements CommandLineRunner {
-
     private final EntityManager entityManager;
-    private static final String DEFAULT_PASSWORD_HASH = "$2a$10$qf7ZQKJxTSG6B8Qtr6sl4e5O2E5w6gHc0jTjD0yMTLAFW8AKiM4qi";
+    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
     @Transactional
     public void run(String... args) {
         User primaryUser = ensureUser(
-                "Nguyen Van An",
-                "an@smartfinance.local",
-                "Asia/Ho_Chi_Minh",
-                CurrencyCode.VND,
-            DEFAULT_PASSWORD_HASH
+            "Nguyen Van An",
+            "an@smartfinance.local",
+            "Asia/Ho_Chi_Minh",
+            CurrencyCode.VND,
+            bCryptPasswordEncoder.encode("123456")
         );
 
         User secondaryUser = ensureUser(
-                "Tran Minh Chau",
-                "chau@smartfinance.local",
-                "Asia/Ho_Chi_Minh",
-                CurrencyCode.VND,
-                DEFAULT_PASSWORD_HASH
+            "Tran Minh Chau",
+            "chau@smartfinance.local",
+            "Asia/Ho_Chi_Minh",
+            CurrencyCode.VND,
+            bCryptPasswordEncoder.encode("123456")
         );
 
         Category salary = ensureCategory(primaryUser, "Salary", CategoryType.INCOME, "Luong hang thang");

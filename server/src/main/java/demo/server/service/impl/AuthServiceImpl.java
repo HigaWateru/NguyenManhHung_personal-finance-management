@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(normalizeEmail(request.email()))
                 .orElseThrow(() -> ApiException.unauthorized("Invalid email or password"));
