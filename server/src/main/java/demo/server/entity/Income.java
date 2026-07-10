@@ -14,8 +14,8 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -55,4 +55,11 @@ public class Income extends BaseEntity {
     @Size(max = 255)
     @Column(name = "note", length = 255)
     private String note;
+
+    public void updateDetails(Category category, BigDecimal amount, LocalDate transactionDate, String note) {
+        this.category = category;
+        this.amount = amount;
+        this.transactionDate = transactionDate;
+        this.note = note;
+    }
 }

@@ -4,6 +4,7 @@ import demo.server.dto.request.LoginRequest;
 import demo.server.dto.request.LogoutRequest;
 import demo.server.dto.request.RefreshTokenRequest;
 import demo.server.dto.request.RegisterRequest;
+import demo.server.dto.response.ApiResponse;
 import demo.server.dto.response.AuthResponse;
 import demo.server.dto.response.MessageResponse;
 import demo.server.dto.response.UserProfileResponse;
@@ -24,33 +25,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserProfileResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
+    public ResponseEntity<ApiResponse<UserProfileResponse>> register(@Valid @RequestBody RegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(ApiResponse.success("Register successful", authService.register(request)));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Login successful", authService.login(request)));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
-        return ResponseEntity.ok(authService.refreshToken(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Refresh token successful", authService.refreshToken(request)));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<MessageResponse> logout(@Valid @RequestBody LogoutRequest request) {
-        return ResponseEntity.ok(authService.logout(request.refreshToken()));
+    public ResponseEntity<ApiResponse<MessageResponse>> logout(@Valid @RequestBody LogoutRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Logout successful", authService.logout(request.refreshToken())));
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponse> getProfile(
-            @AuthenticationPrincipal CurrentUserPrincipal principal
+    public ResponseEntity<ApiResponse<UserProfileResponse>> getProfile(
+        @AuthenticationPrincipal CurrentUserPrincipal principal
     ) {
-        return ResponseEntity.ok(authService.getCurrentUserProfile(principal.id()));
+        return ResponseEntity.ok(ApiResponse.success("Profile fetched successfully", authService.getCurrentUserProfile(principal.id())));
     }
 }

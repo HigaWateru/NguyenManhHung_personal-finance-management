@@ -9,6 +9,7 @@ import demo.server.dto.response.MessageResponse;
 import demo.server.dto.response.UserProfileResponse;
 import demo.server.entity.RefreshToken;
 import demo.server.entity.User;
+import demo.server.exception.ApiException;
 import demo.server.mapper.AuthMapper;
 import demo.server.repository.RefreshTokenRepository;
 import demo.server.repository.UserRepository;
@@ -19,11 +20,9 @@ import java.util.Locale;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -43,11 +42,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public UserProfileResponse register(RegisterRequest request) {
-        validatePasswordConfirmation(request.password(), request.confirmPassword());
-
         String normalizedEmail = normalizeEmail(request.email());
         if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw ApiException.conflict("Email already exists");
         }
 
         User user = User.builder()
@@ -67,10 +64,10 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(normalizeEmail(request.email()))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+                .orElseThrow(() -> ApiException.unauthorized("Invalid email or password"));
 
         if (!user.isActive() || !passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw ApiException.unauthorized("Invalid email or password");
         }
 
         RefreshToken refreshToken = createRefreshToken(user);
@@ -81,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(request.refreshToken())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is invalid"));
+                .orElseThrow(() -> ApiException.unauthorized("Refresh token is invalid"));
 
         validateRefreshToken(refreshToken);
         revokeRefreshToken(refreshToken);
@@ -108,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     public UserProfileResponse getCurrentUserProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> ApiException.notFound("User not found"));
         return authMapper.toUserProfileResponse(user);
     }
 
@@ -136,28 +133,22 @@ public class AuthServiceImpl implements AuthService {
 
     private void validateRefreshToken(RefreshToken refreshToken) {
         if (refreshToken.isRevoked()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token has been revoked");
+            throw ApiException.unauthorized("Refresh token has been revoked");
         }
 
         if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             revokeRefreshToken(refreshToken);
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token has expired");
+            throw ApiException.unauthorized("Refresh token has expired");
         }
 
         if (!refreshToken.getUser().isActive()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User account is inactive");
+            throw ApiException.unauthorized("User account is inactive");
         }
     }
 
     private void revokeRefreshToken(RefreshToken refreshToken) {
         refreshToken.revoke(LocalDateTime.now());
         refreshTokenRepository.save(refreshToken);
-    }
-
-    private void validatePasswordConfirmation(String password, String confirmPassword) {
-        if (!password.equals(confirmPassword)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Confirm password does not match");
-        }
     }
 
     private String normalizeEmail(String email) {

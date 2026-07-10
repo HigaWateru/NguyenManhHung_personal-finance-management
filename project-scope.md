@@ -145,7 +145,7 @@ Authentication & Security
 - CORS
 
 Database
-- SQLite
+- MySQL
 
 Cache
 - Redis
@@ -467,3 +467,8 @@ Các lỗi nên được phân loại theo nhóm:
 - Mỗi lỗi chỉ ghi một lần.
 - Sau khi khắc phục phải cập nhật trạng thái.
 - Nếu lỗi ảnh hưởng nhiều module cần ghi rõ phạm vi ảnh hưởng.
+
+## Yêu cầu style code
+## Backend
+- Ưu tiên sử dụng lombok để giảm boilerplate code.
+- Sử dụng @RequiredArgsConstructor để tự động tạo constructor cho các field final.

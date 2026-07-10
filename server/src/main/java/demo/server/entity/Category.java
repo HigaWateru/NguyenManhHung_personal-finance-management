@@ -64,4 +64,10 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Builder.Default
     private List<Expense> expenses = new ArrayList<>();
+
+    public void updateDetails(String name, CategoryType type, String description) {
+        this.name = name;
+        this.type = type;
+        this.description = description;
+    }
 }
