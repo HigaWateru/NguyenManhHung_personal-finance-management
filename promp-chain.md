@@ -367,11 +367,11 @@ Thiết kế Layout.
 
 Bao gồm
 
-- Sidebar
-- Header
-- Footer
-- Dashboard Layout
-- Responsive
+- Sidebar với khả năng điều hướng rõ ràng, phù hợp cho dashboard.
+- Header hiển thị tiêu đề, thông tin người dùng và các thao tác cơ bản.
+- Footer gọn, đồng bộ với tổng thể giao diện.
+- Dashboard Layout bố cục hợp lý, tách biệt khu vực điều hướng và nội dung chính.
+- Responsive đầy đủ cho desktop, tablet và mobile.
 
 Không kết nối API.
 

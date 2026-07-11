@@ -472,3 +472,28 @@ Các lỗi nên được phân loại theo nhóm:
 ## Backend
 - Ưu tiên sử dụng lombok để giảm boilerplate code.
 - Sử dụng @RequiredArgsConstructor để tự động tạo constructor cho các field final.
+
+## Yêu cầu kiến trúc tổng thể giao diện
+Toàn bộ ứng dụng sử dụng **Application Shell Layout**.
+Tất cả các màn hình đều dùng chung một Layout.
+
+```text
++--------------------------------------------------------------+
+|                         TOP NAVBAR                           |
++----------------------+---------------------------------------+
+|                      |                                       |
+|                      |                                       |
+|                      |                                       |
+|      SIDEBAR         |           MAIN CONTENT                |
+|                      |                                       |
+|                      |                                       |
+|                      |                                       |
++----------------------+---------------------------------------+
+|                         FOOTER                               |
++--------------------------------------------------------------+
+```
+
+Chỉ có **Main Content** thay đổi theo từng chức năng.
+Sidebar, Navbar và Footer luôn được tái sử dụng.
+
+---
