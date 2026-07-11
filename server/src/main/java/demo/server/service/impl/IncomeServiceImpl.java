@@ -14,6 +14,7 @@ import demo.server.repository.CategoryRepository;
 import demo.server.repository.IncomeRepository;
 import demo.server.repository.UserRepository;
 import demo.server.service.IncomeService;
+import demo.server.service.impl.support.ServiceInputUtils;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,14 +43,14 @@ public class IncomeServiceImpl implements IncomeService {
             int page,
             int size
     ) {
-        validateDateRange(fromDate, toDate);
+        ServiceInputUtils.validateDateRange(fromDate, toDate);
 
         Page<IncomeResponse> incomes = incomeRepository.search(
                         userId,
                         categoryId,
                         fromDate,
                         toDate,
-                        normalizeKeyword(keyword),
+                        ServiceInputUtils.normalizeOptionalText(keyword),
                         PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
                 )
                 .map(incomeMapper::toResponse);
@@ -74,7 +75,7 @@ public class IncomeServiceImpl implements IncomeService {
                 category,
                 request.amount(),
                 request.transactionDate(),
-                normalizeNote(request.note())
+                ServiceInputUtils.normalizeOptionalText(request.note())
         );
 
         return incomeMapper.toResponse(incomeRepository.save(income));
@@ -90,7 +91,7 @@ public class IncomeServiceImpl implements IncomeService {
                 category,
                 request.amount(),
                 request.transactionDate(),
-                normalizeNote(request.note())
+                ServiceInputUtils.normalizeOptionalText(request.note())
         );
 
         return incomeMapper.toResponse(income);
@@ -125,27 +126,4 @@ public class IncomeServiceImpl implements IncomeService {
         return category;
     }
 
-    private void validateDateRange(LocalDate fromDate, LocalDate toDate) {
-        if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
-            throw ApiException.badRequest("From date must be before or equal to to date");
-        }
-    }
-
-    private String normalizeKeyword(String keyword) {
-        if (keyword == null) {
-            return null;
-        }
-
-        String normalizedKeyword = keyword.trim();
-        return normalizedKeyword.isEmpty() ? null : normalizedKeyword;
-    }
-
-    private String normalizeNote(String note) {
-        if (note == null) {
-            return null;
-        }
-
-        String normalizedNote = note.trim();
-        return normalizedNote.isEmpty() ? null : normalizedNote;
-    }
 }

@@ -11,6 +11,7 @@ import demo.server.mapper.CategoryMapper;
 import demo.server.repository.CategoryRepository;
 import demo.server.repository.UserRepository;
 import demo.server.service.CategoryService;
+import demo.server.service.impl.support.ServiceInputUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -120,11 +121,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private String normalizeDescription(String description) {
-        if (description == null) {
-            return null;
-        }
-
-        String normalizedDescription = description.trim();
-        return normalizedDescription.isEmpty() ? null : normalizedDescription;
+        return ServiceInputUtils.normalizeOptionalText(description);
     }
 }
