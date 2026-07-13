@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { apiService } from "../../apis/service";
+import { extractApiError } from "../../apis/http";
+import type { CategoryType } from "../../types/api";
 
-type CategoryType = "INCOME" | "EXPENSE";
 type CategoryStatus = "Hoạt động" | "Rà soát";
 
 type CategoryRecord = {
@@ -21,14 +23,6 @@ type CategoryFormState = {
 };
 
 type FormErrors = Partial<Record<keyof CategoryFormState, string>>;
-
-const initialRecords: CategoryRecord[] = [
-  { id: 1, name: "Lương", type: "INCOME", records: 12, status: "Hoạt động", description: "Nguồn thu nhập chính" },
-  { id: 2, name: "Freelance", type: "INCOME", records: 8, status: "Hoạt động", description: "Dự án ngoài" },
-  { id: 3, name: "Ăn uống", type: "EXPENSE", records: 37, status: "Hoạt động", description: "Ăn uống và thực phẩm" },
-  { id: 4, name: "Di chuyển", type: "EXPENSE", records: 21, status: "Hoạt động", description: "Taxi, xe buýt, xăng" },
-  { id: 5, name: "Mua sắm", type: "EXPENSE", records: 9, status: "Rà soát", description: "Thời trang và thiết bị" },
-];
 
 const emptyForm = (): CategoryFormState => ({
   name: "",
@@ -52,11 +46,44 @@ const validateForm = (form: CategoryFormState): FormErrors => {
 };
 
 export default function CategoryPage() {
-  const [records, setRecords] = useState<CategoryRecord[]>(initialRecords);
+  const [records, setRecords] = useState<CategoryRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<CategoryFormState>(emptyForm());
   const [errors, setErrors] = useState<FormErrors>({});
+
+  const fetchCategories = useCallback(async () => {
+    setLoading(true);
+    setApiError(null);
+
+    try {
+      const categories = await apiService.getCategories();
+      setRecords(
+        categories.map((item) => ({
+          id: item.id,
+          name: item.name,
+          type: item.type,
+          records: 0,
+          status: "Hoạt động",
+          description: item.description || "",
+        })),
+      );
+    } catch (error) {
+      setApiError(extractApiError(error, "Không thể tải danh sách danh mục."));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      void fetchCategories();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [fetchCategories]);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -84,16 +111,21 @@ export default function CategoryPage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     const record = records.find((item) => item.id === id);
     if (!record) return;
 
     if (window.confirm(`Xóa danh mục "${record.name}"?`)) {
-      setRecords((prev) => prev.filter((item) => item.id !== id));
+      try {
+        await apiService.deleteCategory(id);
+        await fetchCategories();
+      } catch (error) {
+        setApiError(extractApiError(error, "Xóa danh mục thất bại."));
+      }
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateForm(form);
@@ -110,21 +142,24 @@ export default function CategoryPage() {
       return;
     }
 
-    const payload: Omit<CategoryRecord, "id" | "records"> = {
+    const payload = {
       name: normalizedName,
       type: form.type,
-      status: form.status,
       description: form.description.trim(),
     };
 
-    if (editingId === null) {
-      const nextId = records.length > 0 ? Math.max(...records.map((item) => item.id)) + 1 : 1;
-      setRecords((prev) => [{ id: nextId, records: 0, ...payload }, ...prev]);
-    } else {
-      setRecords((prev) => prev.map((item) => (item.id === editingId ? { ...item, ...payload } : item)));
-    }
+    try {
+      if (editingId === null) {
+        await apiService.createCategory(payload);
+      } else {
+        await apiService.updateCategory(editingId, payload);
+      }
 
-    closeModal();
+      await fetchCategories();
+      closeModal();
+    } catch (error) {
+      setApiError(extractApiError(error, "Lưu danh mục thất bại."));
+    }
   };
 
   return (
@@ -146,6 +181,9 @@ export default function CategoryPage() {
       </header>
 
       <article className="glass-panel rounded-3xl p-5">
+        {loading && <p className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">Đang tải danh mục...</p>}
+        {apiError && <p className="mb-4 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{apiError}</p>}
+
         <div className="flex items-center justify-end">
           <button
             type="button"

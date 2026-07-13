@@ -1,6 +1,7 @@
 import { Menu, Search, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { clearAccessToken } from "../../utils/auth";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { logout } from "../../redux/slides/authSlide";
 
 type HeaderProps = {
   title: string;
@@ -9,9 +10,11 @@ type HeaderProps = {
 
 export default function Header({ title, onMenuClick }: HeaderProps) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
 
-  const handleLogout = () => {
-    clearAccessToken();
+  const handleLogout = async () => {
+    await dispatch(logout());
     navigate("/login", { replace: true });
   };
 
@@ -59,11 +62,11 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
 
         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
           <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 text-sm font-semibold text-slate-950">
-            AM
+            {(user?.fullName?.trim().slice(0, 2).toUpperCase() || "SF")}
           </div>
           <div className="hidden sm:block">
-            <p className="text-sm font-medium text-white">Alex Morgan</p>
-            <p className="text-xs text-slate-400">Tài khoản Premium</p>
+            <p className="text-sm font-medium text-white">{user?.fullName || "Smart Finance"}</p>
+            <p className="text-xs text-slate-400">{user?.email || "Tài khoản người dùng"}</p>
           </div>
         </div>
       </div>

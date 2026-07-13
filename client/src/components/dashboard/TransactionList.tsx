@@ -1,7 +1,22 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { recentTransactions } from "../../utils/mockData";
 
-export default function TransactionList() {
+type DashboardTransaction = {
+  id: number;
+  title: string;
+  category: string;
+  amount: string;
+  time: string;
+  type: "income" | "expense";
+};
+
+type TransactionListProps = {
+  transactions?: DashboardTransaction[];
+};
+
+export default function TransactionList({ transactions }: TransactionListProps) {
+  const rows = transactions ?? recentTransactions;
+
   return (
     <article className="glass-panel rounded-3xl p-5">
       <div className="flex items-center justify-between gap-4">
@@ -9,7 +24,7 @@ export default function TransactionList() {
           <p className="text-sm text-slate-400">Hoạt động</p>
           <h3 className="mt-2 text-xl font-semibold text-white">Giao dịch gần đây</h3>
         </div>
-        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">5 bản ghi</span>
+        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">{rows.length} bản ghi</span>
       </div>
 
       <div className="mt-5 overflow-x-auto rounded-2xl border border-white/10">
@@ -24,7 +39,7 @@ export default function TransactionList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10 bg-slate-950/40 text-slate-200">
-            {recentTransactions.map((transaction) => {
+            {rows.map((transaction) => {
               const isIncome = transaction.type === "income";
 
               return (

@@ -3,9 +3,13 @@ import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, UserRound, ShieldCheck } fr
 import { Link, useNavigate } from "react-router-dom";
 import { authHighlights } from "../../utils/mockData";
 import { validateRegisterForm, type RegisterFormErrors, type RegisterFormValues } from "../../utils/authValidation";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { clearAuthError, register } from "../../redux/slides/authSlide";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.auth);
   const [values, setValues] = useState<RegisterFormValues>({
     name: "",
     email: "",
@@ -15,9 +19,10 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
+    dispatch(clearAuthError());
 
     const nextErrors = validateRegisterForm(values);
     setErrors(nextErrors);
@@ -26,7 +31,19 @@ export default function RegisterPage() {
       return;
     }
 
-    navigate("/login", { replace: true });
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Ho_Chi_Minh";
+    const result = await dispatch(register({
+      fullName: values.name,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.password,
+      timezone,
+      currencyCode: "VND",
+    }));
+
+    if (register.fulfilled.match(result)) {
+      navigate("/login", { replace: true });
+    }
   };
 
   return (
@@ -97,11 +114,14 @@ export default function RegisterPage() {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-sky-300 px-4 py-3 font-semibold text-slate-950 transition hover:brightness-110"
               >
-                Tạo tài khoản
+                {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
                 <ArrowRight size={18} />
               </button>
+
+              {error && <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
             </form>
 
             <p className="mt-6 text-center text-sm text-slate-400">

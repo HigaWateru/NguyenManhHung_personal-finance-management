@@ -1,4 +1,25 @@
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { fetchProfile } from "../../redux/slides/authSlide";
+
 export default function ProfilePage() {
+  const dispatch = useAppDispatch();
+  const { user, loading, error } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!user) {
+      void dispatch(fetchProfile());
+    }
+  }, [dispatch, user]);
+
+  if (loading && !user) {
+    return <section className="glass-panel rounded-3xl p-6 text-slate-200">Đang tải hồ sơ...</section>;
+  }
+
+  if (error && !user) {
+    return <section className="glass-panel rounded-3xl p-6 text-rose-200">{error}</section>;
+  }
+
   return (
     <section className="space-y-6">
       <header className="glass-panel rounded-[2rem] p-6 sm:p-8">
@@ -14,15 +35,16 @@ export default function ProfilePage() {
           <h4 className="text-lg font-semibold text-white">Thông tin cá nhân</h4>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {[
-              ["Họ và tên", "Alex Morgan"],
-              ["Email", "alex.morgan@example.com"],
-              ["Múi giờ", "Asia/Ho_Chi_Minh"],
-              ["Đơn vị tiền", "USD"],
+              ["Họ và tên", user?.fullName || "-"],
+              ["Email", user?.email || "-"],
+              ["Múi giờ", user?.timezone || "Asia/Ho_Chi_Minh"],
+              ["Đơn vị tiền", user?.currencyCode || "VND"],
             ].map(([label, value]) => (
               <label key={label} className="block">
                 <span className="mb-2 block text-xs uppercase tracking-[0.2em] text-slate-400">{label}</span>
                 <input
-                  defaultValue={value}
+                  value={value}
+                  readOnly
                   className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400/60"
                 />
               </label>
@@ -43,8 +65,8 @@ export default function ProfilePage() {
           <h4 className="text-lg font-semibold text-white">Phiên bảo mật</h4>
           <div className="mt-4 space-y-3">
             {[
-              ["Thiết bị hiện tại", "Windows 11 · Chrome 138"],
-              ["Lần đăng nhập gần nhất", "2026-07-12 09:34"],
+              ["Thiết bị hiện tại", "Web Browser Session"],
+              ["Lần cập nhật gần nhất", user?.updatedAt ? new Date(user.updatedAt).toLocaleString("vi-VN") : "-"],
               ["Refresh Token", "Đang hoạt động"],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-white/10 bg-white/5 p-4">

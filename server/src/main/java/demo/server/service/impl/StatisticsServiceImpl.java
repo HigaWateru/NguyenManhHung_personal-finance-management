@@ -68,14 +68,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         Map<Integer, BigDecimal> expenseByYear = toYearAmountMap(expenseRepository.sumAmountGroupByYear(userId));
 
         return java.util.stream.Stream.concat(incomeByYear.keySet().stream(), expenseByYear.keySet().stream())
-                .distinct()
-                .sorted()
-                .map(year -> {
-                    BigDecimal income = incomeByYear.getOrDefault(year, ZERO);
-                    BigDecimal expense = expenseByYear.getOrDefault(year, ZERO);
-                    return new YearlyStatisticsResponse(year, income, expense, income.subtract(expense));
-                })
-                .toList();
+            .distinct()
+            .sorted()
+            .map(year -> {
+                BigDecimal income = incomeByYear.getOrDefault(year, ZERO);
+                BigDecimal expense = expenseByYear.getOrDefault(year, ZERO);
+                return new YearlyStatisticsResponse(year, income, expense, income.subtract(expense));
+            })
+            .toList();
     }
 
     private List<CategoryStatisticsResponse> buildCategoryStatistics(Long userId, int year) {
@@ -100,11 +100,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         return results;
     }
 
-    private CategoryStatisticsResponse toCategoryResponse(
-            CategoryAmountProjection item,
-            CategoryType type,
-            BigDecimal grandTotal
-    ) {
+    private CategoryStatisticsResponse toCategoryResponse(CategoryAmountProjection item, CategoryType type,
+            BigDecimal grandTotal) {
         BigDecimal amount = valueOrZero(item.getTotalAmount());
         BigDecimal percentage = ZERO;
 
@@ -117,9 +114,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private BigDecimal sumCategoryTotals(List<CategoryAmountProjection> items) {
         return items.stream()
-                .map(CategoryAmountProjection::getTotalAmount)
-                .map(this::valueOrZero)
-                .reduce(ZERO, BigDecimal::add);
+            .map(CategoryAmountProjection::getTotalAmount)
+            .map(this::valueOrZero)
+            .reduce(ZERO, BigDecimal::add);
     }
 
     private Map<Integer, BigDecimal> toMonthAmountMap(List<MonthlyAmountProjection> items) {

@@ -3,10 +3,13 @@ import { ArrowRight, Eye, EyeOff, Mail, LockKeyhole, ShieldCheck } from "lucide-
 import { authHighlights } from "../../utils/mockData";
 import { Link, useNavigate } from "react-router-dom";
 import { validateLoginForm, type LoginFormErrors, type LoginFormValues } from "../../utils/authValidation";
-import { saveAccessToken } from "../../utils/auth";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { clearAuthError, login } from "../../redux/slides/authSlide";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.auth);
   const [values, setValues] = useState<LoginFormValues>({
     email: "",
     password: "",
@@ -16,9 +19,10 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
+    dispatch(clearAuthError());
 
     const nextErrors = validateLoginForm(values);
     setErrors(nextErrors);
@@ -27,9 +31,10 @@ export default function LoginPage() {
       return;
     }
 
-    // Demo flow: set local token and continue to protected routes.
-    saveAccessToken(`demo-token-${Date.now()}`);
-    navigate("/", { replace: true });
+    const result = await dispatch(login({ email: values.email, password: values.password }));
+    if (login.fulfilled.match(result)) {
+      navigate("/", { replace: true });
+    }
   };
 
   return (
@@ -116,11 +121,14 @@ export default function LoginPage() {
                 <button type="button" className="text-cyan-300 transition hover:text-cyan-200">Quên mật khẩu?</button>
               </div>
 
+              {error && <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
+
               <button
                 type="submit"
+                disabled={loading}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-sky-300 px-4 py-3 font-semibold text-slate-950 transition hover:brightness-110"
               >
-                Đăng nhập
+                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
                 <ArrowRight size={18} />
               </button>
             </form>

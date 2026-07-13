@@ -21,9 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class DashboardServiceImpl implements DashboardService {
 
     private static final BigDecimal ZERO = BigDecimal.ZERO;
-        private static final Comparator<RecentTransactionResponse> RECENT_TRANSACTION_COMPARATOR =
-                        Comparator.comparing(RecentTransactionResponse::transactionDate, Comparator.reverseOrder())
-                                        .thenComparing(RecentTransactionResponse::createdAt, Comparator.reverseOrder());
+    private static final Comparator<RecentTransactionResponse> RECENT_TRANSACTION_COMPARATOR =
+        Comparator.comparing(RecentTransactionResponse::transactionDate, Comparator.reverseOrder())
+            .thenComparing(RecentTransactionResponse::createdAt, Comparator.reverseOrder());
 
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
@@ -45,55 +45,55 @@ public class DashboardServiceImpl implements DashboardService {
         List<RecentTransactionResponse> recentTransactions = buildRecentTransactions(userId);
 
         return new DashboardResponse(
-                totalIncome,
-                totalExpense,
-                totalBalance,
-                monthlyIncome,
-                monthlyExpense,
-                recentTransactions
+            totalIncome,
+            totalExpense,
+            totalBalance,
+            monthlyIncome,
+            monthlyExpense,
+            recentTransactions
         );
     }
 
     private List<RecentTransactionResponse> buildRecentTransactions(Long userId) {
         List<RecentTransactionResponse> incomes = incomeRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
-                .stream()
-                .map(this::toIncomeTransaction)
-                .toList();
+            .stream()
+            .map(this::toIncomeTransaction)
+            .toList();
 
         List<RecentTransactionResponse> expenses = expenseRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
-                .stream()
-                .map(this::toExpenseTransaction)
-                .toList();
+            .stream()
+            .map(this::toExpenseTransaction)
+            .toList();
 
         return java.util.stream.Stream.concat(incomes.stream(), expenses.stream())
-                .sorted(RECENT_TRANSACTION_COMPARATOR)
-                .limit(5)
-                .toList();
+            .sorted(RECENT_TRANSACTION_COMPARATOR)
+            .limit(5)
+            .toList();
     }
 
     private RecentTransactionResponse toIncomeTransaction(Income income) {
         return new RecentTransactionResponse(
-                income.getId(),
-                CategoryType.INCOME,
-                income.getCategory().getId(),
-                income.getCategory().getName(),
-                income.getAmount(),
-                income.getTransactionDate(),
-                income.getNote(),
-                income.getCreatedAt()
+            income.getId(),
+            CategoryType.INCOME,
+            income.getCategory().getId(),
+            income.getCategory().getName(),
+            income.getAmount(),
+            income.getTransactionDate(),
+            income.getNote(),
+            income.getCreatedAt()
         );
     }
 
     private RecentTransactionResponse toExpenseTransaction(Expense expense) {
         return new RecentTransactionResponse(
-                expense.getId(),
-                CategoryType.EXPENSE,
-                expense.getCategory().getId(),
-                expense.getCategory().getName(),
-                expense.getAmount(),
-                expense.getTransactionDate(),
-                expense.getNote(),
-                expense.getCreatedAt()
+            expense.getId(),
+            CategoryType.EXPENSE,
+            expense.getCategory().getId(),
+            expense.getCategory().getName(),
+            expense.getAmount(),
+            expense.getTransactionDate(),
+            expense.getNote(),
+            expense.getCreatedAt()
         );
     }
 

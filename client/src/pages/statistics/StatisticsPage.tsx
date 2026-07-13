@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -13,6 +14,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { apiService } from "../../apis/service";
+import { extractApiError } from "../../apis/http";
+import type { StatisticsData } from "../../types/api";
 
 const monthlyFinance = [
   { month: "T1", income: 18.5, expense: 11.2, net: 7.3 },
@@ -40,10 +44,77 @@ const expenseByCategory = [
 const pieColors = ["#22d3ee", "#38bdf8", "#3b82f6", "#0ea5e9", "#14b8a6"];
 
 const formatMoney = (value: number) => `${value.toFixed(1)}M`;
+const formatTooltipMoney = (value: unknown) => formatMoney(Number(value ?? 0));
 
 export default function StatisticsPage() {
-  const yearlyIncome = monthlyFinance.reduce((sum, item) => sum + item.income, 0);
-  const yearlyExpense = monthlyFinance.reduce((sum, item) => sum + item.expense, 0);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [stats, setStats] = useState<StatisticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await apiService.getStatistics(selectedYear);
+        setStats(data);
+      } catch (fetchError) {
+        setError(extractApiError(fetchError, "Không thể tải dữ liệu thống kê."));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void fetchStatistics();
+  }, [selectedYear]);
+
+  const monthlyChartData = useMemo(() => {
+    if (!stats?.monthlyStatistics?.length) {
+      return monthlyFinance;
+    }
+
+    return stats.monthlyStatistics.map((item) => ({
+      month: `T${item.month}`,
+      income: Number(item.income),
+      expense: Number(item.expense),
+      net: Number(item.balance),
+    }));
+  }, [stats]);
+
+  const categoryChartData = useMemo(() => {
+    if (!stats?.categoryStatistics?.length) {
+      return expenseByCategory;
+    }
+
+    const expenseCategories = stats.categoryStatistics.filter((item) => item.type === "EXPENSE");
+    if (!expenseCategories.length) {
+      return expenseByCategory;
+    }
+
+    return expenseCategories.map((item) => {
+      const rawPercentage = Number(item.percentage);
+      const normalizedPercentage = rawPercentage > 1 ? rawPercentage : rawPercentage * 100;
+
+      return {
+        name: item.categoryName,
+        value: Number(normalizedPercentage.toFixed(2)),
+        amount: Number(item.totalAmount) / 1_000_000,
+      };
+    });
+  }, [stats]);
+
+  const availableYears = useMemo(() => {
+    if (!stats?.yearlyStatistics?.length) {
+      return [selectedYear, selectedYear - 1, selectedYear - 2];
+    }
+
+    return Array.from(new Set(stats.yearlyStatistics.map((item) => item.year))).sort((a, b) => b - a);
+  }, [stats, selectedYear]);
+
+  const yearlyIncome = monthlyChartData.reduce((sum, item) => sum + item.income, 0);
+  const yearlyExpense = monthlyChartData.reduce((sum, item) => sum + item.expense, 0);
   const yearlyNet = yearlyIncome - yearlyExpense;
   const savingRate = yearlyIncome > 0 ? (yearlyNet / yearlyIncome) * 100 : 0;
 
@@ -59,9 +130,14 @@ export default function StatisticsPage() {
         <div className="mt-5 grid gap-3 md:grid-cols-4">
           <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
             Năm
-            <select className="mt-1 w-full bg-transparent text-white outline-none">
-              <option value="2026" className="bg-slate-900">2026</option>
-              <option value="2025" className="bg-slate-900">2025</option>
+            <select
+              value={selectedYear}
+              onChange={(event) => setSelectedYear(Number(event.target.value))}
+              className="mt-1 w-full bg-transparent text-white outline-none"
+            >
+              {availableYears.map((year) => (
+                <option key={year} value={year} className="bg-slate-900">{year}</option>
+              ))}
             </select>
           </label>
 
@@ -80,6 +156,9 @@ export default function StatisticsPage() {
             <input type="text" placeholder="VD: ăn uống" className="mt-1 w-full bg-transparent text-white placeholder:text-slate-500 outline-none" />
           </label>
         </div>
+
+        {loading && <p className="mt-4 text-sm text-slate-300">Đang tải dữ liệu thống kê từ backend...</p>}
+        {error && <p className="mt-4 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -100,11 +179,11 @@ export default function StatisticsPage() {
         <article className="glass-panel rounded-3xl p-5">
           <div className="mb-4 flex items-center justify-between">
             <h4 className="text-lg font-semibold text-white">Bar Chart: Thu và chi theo tháng</h4>
-            <span className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">2026</span>
+            <span className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">{selectedYear}</span>
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyFinance}>
+              <BarChart data={monthlyChartData}>
                 <CartesianGrid strokeDasharray="4 4" stroke="rgba(148, 163, 184, 0.15)" />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} tickFormatter={formatMoney} />
@@ -115,7 +194,7 @@ export default function StatisticsPage() {
                     borderRadius: "14px",
                     color: "#e2e8f0",
                   }}
-                  formatter={(value: number) => `${formatMoney(value)}`}
+                  formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
                 <Bar dataKey="income" name="Thu nhập" fill="#22d3ee" radius={[8, 8, 0, 0]} />
@@ -131,7 +210,7 @@ export default function StatisticsPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={expenseByCategory}
+                  data={categoryChartData}
                   dataKey="value"
                   nameKey="name"
                   innerRadius={62}
@@ -139,7 +218,7 @@ export default function StatisticsPage() {
                   paddingAngle={2}
                   stroke="rgba(15, 23, 42, 0.8)"
                 >
-                  {expenseByCategory.map((entry, index) => (
+                  {categoryChartData.map((entry, index) => (
                     <Cell key={entry.name} fill={pieColors[index % pieColors.length]} />
                   ))}
                 </Pie>
@@ -150,7 +229,11 @@ export default function StatisticsPage() {
                     borderRadius: "14px",
                     color: "#e2e8f0",
                   }}
-                  formatter={(value: number, _name, props) => [`${value}% | ${formatMoney(props.payload.amount)}`, "Tỷ trọng"]}
+                  formatter={(value, _name, props) => {
+                    const percentage = Number(value ?? 0);
+                    const amount = Number((props as { payload?: { amount?: number } }).payload?.amount ?? 0);
+                    return [`${percentage}% | ${formatMoney(amount)}`, "Tỷ trọng"];
+                  }}
                 />
                 <Legend verticalAlign="bottom" height={24} />
               </PieChart>
@@ -168,7 +251,7 @@ export default function StatisticsPage() {
 
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyFinance}>
+              <LineChart data={monthlyChartData}>
                 <CartesianGrid strokeDasharray="4 4" stroke="rgba(148, 163, 184, 0.15)" />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} tickFormatter={formatMoney} />
@@ -179,7 +262,7 @@ export default function StatisticsPage() {
                     borderRadius: "14px",
                     color: "#e2e8f0",
                   }}
-                  formatter={(value: number) => `${formatMoney(value)}`}
+                  formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
                 <Line
@@ -216,7 +299,7 @@ export default function StatisticsPage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        {expenseByCategory.map((item, index) => (
+        {categoryChartData.map((item, index) => (
           <article key={item.name} className="glass-panel rounded-2xl p-4">
             <div className="mb-3 h-1.5 rounded-full" style={{ backgroundColor: pieColors[index % pieColors.length] }} />
             <p className="text-sm text-slate-300">{item.name}</p>

@@ -1,10 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { apiService } from "../../apis/service";
+import { extractApiError } from "../../apis/http";
+import type { CategoryItem } from "../../types/api";
 
 type ExpenseRecord = {
   id: number;
   date: string;
-  merchant: string;
+  categoryId: number;
   category: string;
   amount: number;
   note: string;
@@ -12,35 +15,18 @@ type ExpenseRecord = {
 
 type ExpenseFormState = {
   date: string;
-  merchant: string;
-  category: string;
+  categoryId: string;
   amount: string;
   note: string;
 };
 
 type FormErrors = Partial<Record<keyof ExpenseFormState, string>>;
 
-const PAGE_SIZE = 5;
-
-const initialRecords: ExpenseRecord[] = [
-  { id: 1, date: "2026-07-12", merchant: "WinMart", category: "Ăn uống", amount: 820000, note: "Mua thực phẩm tuần" },
-  { id: 2, date: "2026-07-11", merchant: "Grab", category: "Di chuyển", amount: 145000, note: "Đi làm" },
-  { id: 3, date: "2026-07-10", merchant: "EVN", category: "Tiện ích", amount: 1260000, note: "Hóa đơn điện" },
-  { id: 4, date: "2026-07-08", merchant: "CGV", category: "Giải trí", amount: 220000, note: "Xem phim" },
-  { id: 5, date: "2026-07-07", merchant: "Nhà thuốc Long Châu", category: "Sức khỏe", amount: 315000, note: "Thuốc cảm" },
-  { id: 6, date: "2026-07-05", merchant: "Shopee", category: "Mua sắm", amount: 540000, note: "Đồ gia dụng" },
-  { id: 7, date: "2026-07-03", merchant: "Highlands Coffee", category: "Ăn uống", amount: 89000, note: "Làm việc cuối tuần" },
-  { id: 8, date: "2026-07-01", merchant: "VinFast Charging", category: "Di chuyển", amount: 180000, note: "Sạc xe điện" },
-  { id: 9, date: "2026-06-29", merchant: "Netflix", category: "Giải trí", amount: 260000, note: "Gói tháng" },
-  { id: 10, date: "2026-06-26", merchant: "Circle K", category: "Ăn uống", amount: 76000, note: "Ăn nhẹ" },
-  { id: 11, date: "2026-06-24", merchant: "Co.opmart", category: "Ăn uống", amount: 690000, note: "Đồ dùng gia đình" },
-  { id: 12, date: "2026-06-21", merchant: "FPT Telecom", category: "Tiện ích", amount: 330000, note: "Internet tháng" },
-];
+const PAGE_SIZE = 10;
 
 const emptyForm = (): ExpenseFormState => ({
   date: new Date().toISOString().slice(0, 10),
-  merchant: "",
-  category: "",
+  categoryId: "",
   amount: "",
   note: "",
 });
@@ -56,8 +42,7 @@ const validateForm = (form: ExpenseFormState): FormErrors => {
   const errors: FormErrors = {};
 
   if (!form.date.trim()) errors.date = "Vui lòng chọn ngày";
-  if (!form.merchant.trim()) errors.merchant = "Đơn vị không được để trống";
-  if (!form.category.trim()) errors.category = "Danh mục không được để trống";
+  if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục";
 
   const amount = Number(form.amount);
   if (!form.amount.trim()) {
@@ -66,48 +51,61 @@ const validateForm = (form: ExpenseFormState): FormErrors => {
     errors.amount = "Số tiền phải lớn hơn 0";
   }
 
-  if (form.note.length > 120) {
-    errors.note = "Ghi chú tối đa 120 ký tự";
+  if (form.note.length > 255) {
+    errors.note = "Ghi chú tối đa 255 ký tự";
   }
 
   return errors;
 };
 
 export default function ExpensePage() {
-  const [records, setRecords] = useState<ExpenseRecord[]>(initialRecords);
+  const [records, setRecords] = useState<ExpenseRecord[]>([]);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<ExpenseFormState>(emptyForm());
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const filteredRecords = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return records;
+  const fetchData = async () => {
+    setLoading(true);
+    setApiError(null);
 
-    return records.filter((record) => {
-      const searchable = `${record.date} ${record.merchant} ${record.category} ${record.note} ${record.amount}`.toLowerCase();
-      return searchable.includes(normalizedQuery);
-    });
-  }, [records, query]);
+    try {
+      const [expensePage, expenseCategories] = await Promise.all([
+        apiService.getExpenses({ page: page - 1, size: PAGE_SIZE, keyword: query || undefined }),
+        apiService.getCategories("EXPENSE"),
+      ]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / PAGE_SIZE));
-  const activePage = Math.min(page, totalPages);
+      setRecords(
+        expensePage.content.map((item) => ({
+          id: item.id,
+          date: item.transactionDate,
+          categoryId: item.categoryId,
+          category: item.categoryName,
+          amount: Number(item.amount),
+          note: item.note || "",
+        })),
+      );
+      setTotalPages(Math.max(1, expensePage.totalPages));
+      setTotalElements(expensePage.totalElements);
+      setCategories(expenseCategories);
+    } catch (error) {
+      setApiError(extractApiError(error, "Không thể tải dữ liệu chi tiêu."));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const currentPageRows = useMemo(() => {
-    const start = (activePage - 1) * PAGE_SIZE;
-    return filteredRecords.slice(start, start + PAGE_SIZE);
-  }, [filteredRecords, activePage]);
-
-  const paginationNumbers = useMemo(() => {
-    const start = Math.max(1, activePage - 1);
-    const end = Math.min(totalPages, start + 2);
-    const adjustedStart = Math.max(1, end - 2);
-
-    return Array.from({ length: end - adjustedStart + 1 }, (_, index) => adjustedStart + index);
-  }, [activePage, totalPages]);
+  useEffect(() => {
+    void fetchData();
+  }, [page, query]);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -127,8 +125,7 @@ export default function ExpensePage() {
     setEditingId(record.id);
     setForm({
       date: record.date,
-      merchant: record.merchant,
-      category: record.category,
+      categoryId: String(record.categoryId),
       amount: String(record.amount),
       note: record.note,
     });
@@ -136,46 +133,52 @@ export default function ExpensePage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    const record = records.find((item) => item.id === id);
-    if (!record) return;
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Xóa giao dịch chi tiêu này?")) return;
 
-    if (window.confirm(`Xóa giao dịch tại "${record.merchant}"?`)) {
-      setRecords((prev) => prev.filter((item) => item.id !== id));
+    try {
+      await apiService.deleteExpense(id);
+      await fetchData();
+    } catch (error) {
+      setApiError(extractApiError(error, "Xóa giao dịch thất bại."));
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateForm(form);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    const payload: Omit<ExpenseRecord, "id"> = {
-      date: form.date,
-      merchant: form.merchant.trim(),
-      category: form.category.trim(),
+    const payload = {
+      transactionDate: form.date,
+      categoryId: Number(form.categoryId),
       amount: Number(form.amount),
       note: form.note.trim(),
     };
 
-    if (editingId === null) {
-      const nextId = records.length > 0 ? Math.max(...records.map((item) => item.id)) + 1 : 1;
-      setRecords((prev) => [
-        { id: nextId, ...payload },
-        ...prev,
-      ]);
-      setPage(1);
-    } else {
-      setRecords((prev) => prev.map((item) => (item.id === editingId ? { id: editingId, ...payload } : item)));
-    }
+    try {
+      if (editingId === null) {
+        await apiService.createExpense(payload);
+      } else {
+        await apiService.updateExpense(editingId, payload);
+      }
 
-    closeModal();
+      closeModal();
+      await fetchData();
+    } catch (error) {
+      setApiError(extractApiError(error, "Lưu giao dịch chi tiêu thất bại."));
+    }
   };
 
-  const resultStart = filteredRecords.length === 0 ? 0 : (activePage - 1) * PAGE_SIZE + 1;
-  const resultEnd = Math.min(activePage * PAGE_SIZE, filteredRecords.length);
+  const resultStart = totalElements === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const resultEnd = Math.min(page * PAGE_SIZE, totalElements);
+
+  const selectedCategoryName = useMemo(
+    () => categories.find((category) => String(category.id) === form.categoryId)?.name || "",
+    [categories, form.categoryId],
+  );
 
   return (
     <section className="space-y-6">
@@ -183,19 +186,14 @@ export default function ExpensePage() {
         <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Giao dịch</p>
         <h3 className="mt-3 text-3xl font-semibold text-white">Quản lý chi tiêu</h3>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          Ghi nhận và quản lý mọi khoản chi với luồng thao tác CRUD đầy đủ, tìm kiếm tức thì theo từ khóa và phân trang rõ ràng để kiểm soát ngân sách hiệu quả.
+          Dữ liệu chi tiêu đã kết nối backend: CRUD, tìm kiếm và phân trang theo API thật.
         </p>
-
-        <div className="mt-5 flex flex-wrap gap-2">
-          {["Chi tiêu", "Danh mục (EXPENSE)", "Search + Pagination"].map((chip) => (
-            <span key={chip} className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-100">
-              {chip}
-            </span>
-          ))}
-        </div>
       </header>
 
       <article className="glass-panel rounded-3xl p-5">
+        {loading && <p className="mb-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">Đang tải dữ liệu...</p>}
+        {apiError && <p className="mb-3 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{apiError}</p>}
+
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
             <Search size={16} className="text-cyan-300/80" />
@@ -206,7 +204,7 @@ export default function ExpensePage() {
                 setQuery(event.target.value);
                 setPage(1);
               }}
-              placeholder="Tìm đơn vị, ghi chú, danh mục..."
+              placeholder="Tìm ghi chú hoặc danh mục..."
               className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
             />
           </label>
@@ -226,7 +224,6 @@ export default function ExpensePage() {
             <thead className="bg-slate-900/80 text-slate-300">
               <tr>
                 <th className="px-4 py-3 text-left">Ngày</th>
-                <th className="px-4 py-3 text-left">Đơn vị</th>
                 <th className="px-4 py-3 text-left">Danh mục</th>
                 <th className="px-4 py-3 text-right">Số tiền</th>
                 <th className="px-4 py-3 text-left">Ghi chú</th>
@@ -235,11 +232,10 @@ export default function ExpensePage() {
             </thead>
 
             <tbody className="divide-y divide-white/10 bg-slate-950/40 text-slate-200">
-              {currentPageRows.length > 0 ? (
-                currentPageRows.map((row) => (
+              {records.length > 0 ? (
+                records.map((row) => (
                   <tr key={row.id} className="hover:bg-white/5">
                     <td className="px-4 py-3">{row.date}</td>
-                    <td className="px-4 py-3">{row.merchant}</td>
                     <td className="px-4 py-3">{row.category}</td>
                     <td className="px-4 py-3 text-right font-medium text-rose-100">{formatCurrency(row.amount)}</td>
                     <td className="px-4 py-3 text-slate-300">{row.note || "-"}</td>
@@ -268,8 +264,8 @@ export default function ExpensePage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
-                    Không có dữ liệu phù hợp với từ khóa tìm kiếm.
+                  <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                    Không có dữ liệu phù hợp.
                   </td>
                 </tr>
               )}
@@ -278,39 +274,24 @@ export default function ExpensePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
-          <p>
-            Hiển thị {resultStart}-{resultEnd} trong tổng số {filteredRecords.length} bản ghi
-          </p>
+          <p>Hiển thị {resultStart}-{resultEnd} trong tổng số {totalElements} bản ghi</p>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              disabled={activePage === 1}
+              disabled={page === 1}
               className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Trước
             </button>
 
-            {paginationNumbers.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setPage(item)}
-                className={`rounded-xl px-3 py-1.5 ${
-                  item === activePage
-                    ? "border border-cyan-300/40 bg-cyan-400/10 text-cyan-100"
-                    : "border border-white/10 bg-white/5 text-slate-300"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
+            <span className="rounded-xl border border-cyan-300/40 bg-cyan-400/10 px-3 py-1.5 text-cyan-100">{page} / {totalPages}</span>
 
             <button
               type="button"
               onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-              disabled={activePage === totalPages}
+              disabled={page === totalPages}
               className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Sau
@@ -341,9 +322,7 @@ export default function ExpensePage() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="expense-date" className="mb-2 block text-sm text-slate-300">
-                    Ngày
-                  </label>
+                  <label htmlFor="expense-date" className="mb-2 block text-sm text-slate-300">Ngày</label>
                   <input
                     id="expense-date"
                     type="date"
@@ -355,56 +334,39 @@ export default function ExpensePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="expense-amount" className="mb-2 block text-sm text-slate-300">
-                    Số tiền
-                  </label>
+                  <label htmlFor="expense-amount" className="mb-2 block text-sm text-slate-300">Số tiền</label>
                   <input
                     id="expense-amount"
                     type="number"
                     min="0"
                     value={form.amount}
                     onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
-                    placeholder="Ví dụ: 250000"
+                    placeholder="Ví dụ: 350000"
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
                   {errors.amount && <p className="mt-1 text-xs text-rose-300">{errors.amount}</p>}
                 </div>
 
-                <div>
-                  <label htmlFor="expense-merchant" className="mb-2 block text-sm text-slate-300">
-                    Đơn vị
-                  </label>
-                  <input
-                    id="expense-merchant"
-                    type="text"
-                    value={form.merchant}
-                    onChange={(event) => setForm((prev) => ({ ...prev, merchant: event.target.value }))}
-                    placeholder="Ví dụ: WinMart"
-                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
-                  />
-                  {errors.merchant && <p className="mt-1 text-xs text-rose-300">{errors.merchant}</p>}
-                </div>
-
-                <div>
-                  <label htmlFor="expense-category" className="mb-2 block text-sm text-slate-300">
-                    Danh mục
-                  </label>
-                  <input
+                <div className="md:col-span-2">
+                  <label htmlFor="expense-category" className="mb-2 block text-sm text-slate-300">Danh mục</label>
+                  <select
                     id="expense-category"
-                    type="text"
-                    value={form.category}
-                    onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
-                    placeholder="Ví dụ: Ăn uống"
+                    value={form.categoryId}
+                    onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
-                  />
-                  {errors.category && <p className="mt-1 text-xs text-rose-300">{errors.category}</p>}
+                  >
+                    <option value="">Chọn danh mục chi tiêu</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id} className="bg-slate-900">{category.name}</option>
+                    ))}
+                  </select>
+                  {errors.categoryId && <p className="mt-1 text-xs text-rose-300">{errors.categoryId}</p>}
+                  {selectedCategoryName && <p className="mt-1 text-xs text-slate-400">Đang chọn: {selectedCategoryName}</p>}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="expense-note" className="mb-2 block text-sm text-slate-300">
-                  Ghi chú
-                </label>
+                <label htmlFor="expense-note" className="mb-2 block text-sm text-slate-300">Ghi chú</label>
                 <textarea
                   id="expense-note"
                   rows={3}

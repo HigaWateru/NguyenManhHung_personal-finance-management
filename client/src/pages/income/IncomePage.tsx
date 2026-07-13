@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
+import { apiService } from "../../apis/service";
+import { extractApiError } from "../../apis/http";
+import type { CategoryItem } from "../../types/api";
 
 type IncomeRecord = {
   id: number;
   date: string;
-  source: string;
+  categoryId: number;
   category: string;
   amount: number;
   note: string;
@@ -12,35 +15,18 @@ type IncomeRecord = {
 
 type IncomeFormState = {
   date: string;
-  source: string;
-  category: string;
+  categoryId: string;
   amount: string;
   note: string;
 };
 
 type FormErrors = Partial<Record<keyof IncomeFormState, string>>;
 
-const PAGE_SIZE = 5;
-
-const initialRecords: IncomeRecord[] = [
-  { id: 1, date: "2026-07-12", source: "Lương công ty", category: "Lương", amount: 24500000, note: "Lương tháng 7" },
-  { id: 2, date: "2026-07-10", source: "Khách hàng ABC", category: "Freelance", amount: 6200000, note: "Dự án landing page" },
-  { id: 3, date: "2026-07-09", source: "Ngân hàng", category: "Lãi suất", amount: 340000, note: "Lãi tài khoản tiết kiệm" },
-  { id: 4, date: "2026-07-06", source: "Công ty", category: "Thưởng", amount: 2800000, note: "Thưởng hiệu suất quý" },
-  { id: 5, date: "2026-07-03", source: "Khóa học online", category: "Thu nhập phụ", amount: 950000, note: "Bán khóa học" },
-  { id: 6, date: "2026-07-01", source: "Khách hàng XYZ", category: "Freelance", amount: 4900000, note: "Thiết kế dashboard" },
-  { id: 7, date: "2026-06-28", source: "Shopee Affiliate", category: "Hoa hồng", amount: 670000, note: "Chiến dịch tháng 6" },
-  { id: 8, date: "2026-06-25", source: "YouTube", category: "Nội dung số", amount: 1120000, note: "Doanh thu quảng cáo" },
-  { id: 9, date: "2026-06-21", source: "Tư vấn 1:1", category: "Dịch vụ", amount: 1800000, note: "2 buổi tư vấn" },
-  { id: 10, date: "2026-06-17", source: "Bán template", category: "Thu nhập phụ", amount: 840000, note: "Template React" },
-  { id: 11, date: "2026-06-15", source: "Ngân hàng", category: "Lãi suất", amount: 300000, note: "Lãi tháng" },
-  { id: 12, date: "2026-06-10", source: "Referral", category: "Hoa hồng", amount: 450000, note: "Giới thiệu dịch vụ" },
-];
+const PAGE_SIZE = 10;
 
 const emptyForm = (): IncomeFormState => ({
   date: new Date().toISOString().slice(0, 10),
-  source: "",
-  category: "",
+  categoryId: "",
   amount: "",
   note: "",
 });
@@ -56,8 +42,7 @@ const validateForm = (form: IncomeFormState): FormErrors => {
   const errors: FormErrors = {};
 
   if (!form.date.trim()) errors.date = "Vui lòng chọn ngày";
-  if (!form.source.trim()) errors.source = "Nguồn thu không được để trống";
-  if (!form.category.trim()) errors.category = "Danh mục không được để trống";
+  if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục";
 
   const amount = Number(form.amount);
   if (!form.amount.trim()) {
@@ -66,53 +51,61 @@ const validateForm = (form: IncomeFormState): FormErrors => {
     errors.amount = "Số tiền phải lớn hơn 0";
   }
 
-  if (form.note.length > 120) {
-    errors.note = "Ghi chú tối đa 120 ký tự";
+  if (form.note.length > 255) {
+    errors.note = "Ghi chú tối đa 255 ký tự";
   }
 
   return errors;
 };
 
 export default function IncomePage() {
-  const [records, setRecords] = useState<IncomeRecord[]>(initialRecords);
+  const [records, setRecords] = useState<IncomeRecord[]>([]);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<IncomeFormState>(emptyForm());
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const filteredRecords = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return records;
+  const fetchData = async () => {
+    setLoading(true);
+    setApiError(null);
 
-    return records.filter((record) => {
-      const searchable = `${record.date} ${record.source} ${record.category} ${record.note} ${record.amount}`.toLowerCase();
-      return searchable.includes(normalizedQuery);
-    });
-  }, [records, query]);
+    try {
+      const [incomePage, incomeCategories] = await Promise.all([
+        apiService.getIncomes({ page: page - 1, size: PAGE_SIZE, keyword: query || undefined }),
+        apiService.getCategories("INCOME"),
+      ]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / PAGE_SIZE));
+      setRecords(
+        incomePage.content.map((item) => ({
+          id: item.id,
+          date: item.transactionDate,
+          categoryId: item.categoryId,
+          category: item.categoryName,
+          amount: Number(item.amount),
+          note: item.note || "",
+        })),
+      );
+      setTotalPages(Math.max(1, incomePage.totalPages));
+      setTotalElements(incomePage.totalElements);
+      setCategories(incomeCategories);
+    } catch (error) {
+      setApiError(extractApiError(error, "Không thể tải dữ liệu thu nhập."));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
-
-  const currentPageRows = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filteredRecords.slice(start, start + PAGE_SIZE);
-  }, [filteredRecords, page]);
-
-  const paginationNumbers = useMemo(() => {
-    const start = Math.max(1, page - 1);
-    const end = Math.min(totalPages, start + 2);
-    const adjustedStart = Math.max(1, end - 2);
-
-    return Array.from({ length: end - adjustedStart + 1 }, (_, index) => adjustedStart + index);
-  }, [page, totalPages]);
+    void fetchData();
+  }, [page, query]);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -132,8 +125,7 @@ export default function IncomePage() {
     setEditingId(record.id);
     setForm({
       date: record.date,
-      source: record.source,
-      category: record.category,
+      categoryId: String(record.categoryId),
       amount: String(record.amount),
       note: record.note,
     });
@@ -141,46 +133,52 @@ export default function IncomePage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    const record = records.find((item) => item.id === id);
-    if (!record) return;
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Xóa giao dịch thu nhập này?")) return;
 
-    if (window.confirm(`Xóa giao dịch "${record.source}"?`)) {
-      setRecords((prev) => prev.filter((item) => item.id !== id));
+    try {
+      await apiService.deleteIncome(id);
+      await fetchData();
+    } catch (error) {
+      setApiError(extractApiError(error, "Xóa giao dịch thất bại."));
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateForm(form);
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length > 0) return;
 
-    const payload: Omit<IncomeRecord, "id"> = {
-      date: form.date,
-      source: form.source.trim(),
-      category: form.category.trim(),
+    const payload = {
+      transactionDate: form.date,
+      categoryId: Number(form.categoryId),
       amount: Number(form.amount),
       note: form.note.trim(),
     };
 
-    if (editingId === null) {
-      const nextId = records.length > 0 ? Math.max(...records.map((item) => item.id)) + 1 : 1;
-      setRecords((prev) => [
-        { id: nextId, ...payload },
-        ...prev,
-      ]);
-      setPage(1);
-    } else {
-      setRecords((prev) => prev.map((item) => (item.id === editingId ? { id: editingId, ...payload } : item)));
-    }
+    try {
+      if (editingId === null) {
+        await apiService.createIncome(payload);
+      } else {
+        await apiService.updateIncome(editingId, payload);
+      }
 
-    closeModal();
+      closeModal();
+      await fetchData();
+    } catch (error) {
+      setApiError(extractApiError(error, "Lưu giao dịch thu nhập thất bại."));
+    }
   };
 
-  const resultStart = filteredRecords.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const resultEnd = Math.min(page * PAGE_SIZE, filteredRecords.length);
+  const resultStart = totalElements === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const resultEnd = Math.min(page * PAGE_SIZE, totalElements);
+
+  const selectedCategoryName = useMemo(
+    () => categories.find((category) => String(category.id) === form.categoryId)?.name || "",
+    [categories, form.categoryId],
+  );
 
   return (
     <section className="space-y-6">
@@ -188,19 +186,14 @@ export default function IncomePage() {
         <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Giao dịch</p>
         <h3 className="mt-3 text-3xl font-semibold text-white">Quản lý thu nhập</h3>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          Theo dõi toàn bộ khoản thu với luồng thao tác CRUD đầy đủ, tìm kiếm nhanh theo từ khóa và phân trang rõ ràng để xử lý tập dữ liệu lớn.
+          Dữ liệu thu nhập đã kết nối backend: CRUD, tìm kiếm và phân trang theo API thật.
         </p>
-
-        <div className="mt-5 flex flex-wrap gap-2">
-          {["Thu nhập", "Danh mục (INCOME)", "Search + Pagination"].map((chip) => (
-            <span key={chip} className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-100">
-              {chip}
-            </span>
-          ))}
-        </div>
       </header>
 
       <article className="glass-panel rounded-3xl p-5">
+        {loading && <p className="mb-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">Đang tải dữ liệu...</p>}
+        {apiError && <p className="mb-3 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{apiError}</p>}
+
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
             <Search size={16} className="text-cyan-300/80" />
@@ -211,7 +204,7 @@ export default function IncomePage() {
                 setQuery(event.target.value);
                 setPage(1);
               }}
-              placeholder="Tìm nguồn thu, ghi chú, danh mục..."
+              placeholder="Tìm ghi chú hoặc danh mục..."
               className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
             />
           </label>
@@ -231,7 +224,6 @@ export default function IncomePage() {
             <thead className="bg-slate-900/80 text-slate-300">
               <tr>
                 <th className="px-4 py-3 text-left">Ngày</th>
-                <th className="px-4 py-3 text-left">Nguồn thu</th>
                 <th className="px-4 py-3 text-left">Danh mục</th>
                 <th className="px-4 py-3 text-right">Số tiền</th>
                 <th className="px-4 py-3 text-left">Ghi chú</th>
@@ -240,11 +232,10 @@ export default function IncomePage() {
             </thead>
 
             <tbody className="divide-y divide-white/10 bg-slate-950/40 text-slate-200">
-              {currentPageRows.length > 0 ? (
-                currentPageRows.map((row) => (
+              {records.length > 0 ? (
+                records.map((row) => (
                   <tr key={row.id} className="hover:bg-white/5">
                     <td className="px-4 py-3">{row.date}</td>
-                    <td className="px-4 py-3">{row.source}</td>
                     <td className="px-4 py-3">{row.category}</td>
                     <td className="px-4 py-3 text-right font-medium text-cyan-100">{formatCurrency(row.amount)}</td>
                     <td className="px-4 py-3 text-slate-300">{row.note || "-"}</td>
@@ -273,8 +264,8 @@ export default function IncomePage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-slate-400">
-                    Không có dữ liệu phù hợp với từ khóa tìm kiếm.
+                  <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
+                    Không có dữ liệu phù hợp.
                   </td>
                 </tr>
               )}
@@ -283,9 +274,7 @@ export default function IncomePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
-          <p>
-            Hiển thị {resultStart}-{resultEnd} trong tổng số {filteredRecords.length} bản ghi
-          </p>
+          <p>Hiển thị {resultStart}-{resultEnd} trong tổng số {totalElements} bản ghi</p>
 
           <div className="flex items-center gap-2">
             <button
@@ -297,20 +286,7 @@ export default function IncomePage() {
               Trước
             </button>
 
-            {paginationNumbers.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setPage(item)}
-                className={`rounded-xl px-3 py-1.5 ${
-                  item === page
-                    ? "border border-cyan-300/40 bg-cyan-400/10 text-cyan-100"
-                    : "border border-white/10 bg-white/5 text-slate-300"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
+            <span className="rounded-xl border border-cyan-300/40 bg-cyan-400/10 px-3 py-1.5 text-cyan-100">{page} / {totalPages}</span>
 
             <button
               type="button"
@@ -346,9 +322,7 @@ export default function IncomePage() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="income-date" className="mb-2 block text-sm text-slate-300">
-                    Ngày
-                  </label>
+                  <label htmlFor="income-date" className="mb-2 block text-sm text-slate-300">Ngày</label>
                   <input
                     id="income-date"
                     type="date"
@@ -360,9 +334,7 @@ export default function IncomePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="income-amount" className="mb-2 block text-sm text-slate-300">
-                    Số tiền
-                  </label>
+                  <label htmlFor="income-amount" className="mb-2 block text-sm text-slate-300">Số tiền</label>
                   <input
                     id="income-amount"
                     type="number"
@@ -375,41 +347,26 @@ export default function IncomePage() {
                   {errors.amount && <p className="mt-1 text-xs text-rose-300">{errors.amount}</p>}
                 </div>
 
-                <div>
-                  <label htmlFor="income-source" className="mb-2 block text-sm text-slate-300">
-                    Nguồn thu
-                  </label>
-                  <input
-                    id="income-source"
-                    type="text"
-                    value={form.source}
-                    onChange={(event) => setForm((prev) => ({ ...prev, source: event.target.value }))}
-                    placeholder="Ví dụ: Lương công ty"
-                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
-                  />
-                  {errors.source && <p className="mt-1 text-xs text-rose-300">{errors.source}</p>}
-                </div>
-
-                <div>
-                  <label htmlFor="income-category" className="mb-2 block text-sm text-slate-300">
-                    Danh mục
-                  </label>
-                  <input
+                <div className="md:col-span-2">
+                  <label htmlFor="income-category" className="mb-2 block text-sm text-slate-300">Danh mục</label>
+                  <select
                     id="income-category"
-                    type="text"
-                    value={form.category}
-                    onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
-                    placeholder="Ví dụ: Freelance"
+                    value={form.categoryId}
+                    onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
-                  />
-                  {errors.category && <p className="mt-1 text-xs text-rose-300">{errors.category}</p>}
+                  >
+                    <option value="">Chọn danh mục thu nhập</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id} className="bg-slate-900">{category.name}</option>
+                    ))}
+                  </select>
+                  {errors.categoryId && <p className="mt-1 text-xs text-rose-300">{errors.categoryId}</p>}
+                  {selectedCategoryName && <p className="mt-1 text-xs text-slate-400">Đang chọn: {selectedCategoryName}</p>}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="income-note" className="mb-2 block text-sm text-slate-300">
-                  Ghi chú
-                </label>
+                <label htmlFor="income-note" className="mb-2 block text-sm text-slate-300">Ghi chú</label>
                 <textarea
                   id="income-note"
                   rows={3}

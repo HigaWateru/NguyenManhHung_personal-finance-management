@@ -1,13 +1,35 @@
-export default function ChartCard() {
-  const cashFlowByDay = [
-    { day: "T2", income: 72, expense: 44 },
-    { day: "T3", income: 88, expense: 55 },
-    { day: "T4", income: 64, expense: 49 },
-    { day: "T5", income: 92, expense: 58 },
-    { day: "T6", income: 77, expense: 61 },
-    { day: "T7", income: 96, expense: 67 },
-    { day: "CN", income: 84, expense: 52 },
-  ];
+type WeekFlowItem = {
+  day: string;
+  income: number;
+  expense: number;
+};
+
+type ChartCardProps = {
+  data?: WeekFlowItem[];
+};
+
+const defaultData: WeekFlowItem[] = [
+  { day: "T2", income: 72, expense: 44 },
+  { day: "T3", income: 88, expense: 55 },
+  { day: "T4", income: 64, expense: 49 },
+  { day: "T5", income: 92, expense: 58 },
+  { day: "T6", income: 77, expense: 61 },
+  { day: "T7", income: 96, expense: 67 },
+  { day: "CN", income: 84, expense: 52 },
+];
+
+const formatMoney = (value: number) =>
+  new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(value);
+
+export default function ChartCard({ data }: ChartCardProps) {
+  const cashFlowByDay = data && data.length > 0 ? data : defaultData;
+  const maxValue = Math.max(1, ...cashFlowByDay.flatMap((item) => [item.income, item.expense]));
+
+  const toPercent = (value: number) => (value / maxValue) * 100;
 
   return (
     <article className="glass-panel rounded-3xl p-5">
@@ -32,20 +54,20 @@ export default function ChartCard() {
             <div className="flex h-44 w-full items-end justify-center gap-1 rounded-xl bg-slate-950/40 p-2">
               <div
                 className="w-1/2 rounded-sm bg-gradient-to-t from-emerald-500 to-emerald-300"
-                style={{ height: `${item.income}%` }}
-                title={`Thu vào: ${item.income}`}
+                style={{ height: `${toPercent(item.income)}%` }}
+                title={`Thu vào: ${formatMoney(item.income)}`}
               />
               <div
                 className="w-1/2 rounded-sm bg-gradient-to-t from-rose-500 to-rose-300"
-                style={{ height: `${item.expense}%` }}
-                title={`Chi ra: ${item.expense}`}
+                style={{ height: `${toPercent(item.expense)}%` }}
+                title={`Chi ra: ${formatMoney(item.expense)}`}
               />
             </div>
 
             <div className="text-center">
               <p className="text-[10px] text-slate-400">{item.day}</p>
               <p className={`text-[10px] ${item.income - item.expense >= 0 ? "text-emerald-300" : "text-rose-300"}`}>
-                {item.income - item.expense >= 0 ? "+" : ""}{item.income - item.expense}
+                {item.income - item.expense >= 0 ? "+" : ""}{formatMoney(item.income - item.expense)}
               </p>
             </div>
           </div>

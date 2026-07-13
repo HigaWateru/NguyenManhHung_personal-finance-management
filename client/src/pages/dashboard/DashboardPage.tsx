@@ -1,4 +1,5 @@
-import { FormEvent, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import { ArrowDownRight, ArrowUpRight, Banknote, PiggyBank, Wallet, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { dashboardMetrics } from "../../utils/mockData";
@@ -6,15 +7,37 @@ import MetricCard from "../../components/dashboard/MetricCard";
 import ChartCard from "../../components/dashboard/ChartCard";
 import CategoryCard from "../../components/dashboard/CategoryCard";
 import TransactionList from "../../components/dashboard/TransactionList";
+import { apiService } from "../../apis/service";
+import { extractApiError } from "../../apis/http";
+import type { CategoryItem, DashboardData, RecentTransaction } from "../../types/api";
 
 type QuickActionType = "income" | "expense";
 
 type QuickActionForm = {
   date: string;
-  target: string;
-  category: string;
+  categoryId: string;
   amount: string;
   note: string;
+};
+
+type DashboardTransaction = {
+  id: number;
+  title: string;
+  category: string;
+  amount: string;
+  time: string;
+  type: "income" | "expense";
+};
+
+type WeekFlowItem = {
+  day: string;
+  income: number;
+  expense: number;
+};
+
+type CategorySplit = {
+  label: string;
+  value: number;
 };
 
 const icons = {
@@ -25,12 +48,35 @@ const icons = {
   Banknote,
 };
 
+function mapApiTransactions(data: RecentTransaction[]): DashboardTransaction[] {
+  return data.map((item) => ({
+    id: item.id,
+    title: item.note || `${item.type === "INCOME" ? "Thu" : "Chi"} từ ${item.categoryName}`,
+    category: item.categoryName,
+    amount: `${item.type === "INCOME" ? "+" : "-"}${new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
+    }).format(item.amount)}`,
+    time: new Date(item.createdAt).toLocaleString("vi-VN"),
+    type: item.type === "INCOME" ? "income" : "expense",
+  }));
+}
+
 export default function DashboardPage() {
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
+  const [weeklyFlow, setWeeklyFlow] = useState<WeekFlowItem[]>([]);
+  const [categorySplit, setCategorySplit] = useState<CategorySplit[]>([]);
+
   const [quickActionType, setQuickActionType] = useState<QuickActionType | null>(null);
+  const [quickActionCategories, setQuickActionCategories] = useState<CategoryItem[]>([]);
+  const [quickActionSaving, setQuickActionSaving] = useState(false);
+  const [quickActionError, setQuickActionError] = useState<string | null>(null);
   const [form, setForm] = useState<QuickActionForm>({
     date: new Date().toISOString().slice(0, 10),
-    target: "",
-    category: "",
+    categoryId: "",
     amount: "",
     note: "",
   });
@@ -42,39 +88,176 @@ export default function DashboardPage() {
     { name: "Thống kê", route: "/statistics", desc: "Phân tích tài chính theo tháng, năm và danh mục." },
   ];
 
-  const openQuickAction = (type: QuickActionType) => {
+  const openQuickAction = async (type: QuickActionType) => {
+    setQuickActionError(null);
+    setQuickActionSaving(false);
     setQuickActionType(type);
     setForm({
       date: new Date().toISOString().slice(0, 10),
-      target: "",
-      category: "",
+      categoryId: "",
       amount: "",
       note: "",
     });
+
+    try {
+      const categories = await apiService.getCategories(type === "income" ? "INCOME" : "EXPENSE");
+      setQuickActionCategories(categories);
+    } catch (error) {
+      setQuickActionError(extractApiError(error, "Không thể tải danh mục cho tác vụ nhanh."));
+      setQuickActionCategories([]);
+    }
   };
 
   const closeQuickAction = () => {
     setQuickActionType(null);
+    setQuickActionError(null);
   };
 
-  const handleQuickActionSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleQuickActionSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!form.target.trim() || !form.category.trim() || Number(form.amount) <= 0) {
+    if (!form.categoryId.trim() || Number(form.amount) <= 0) {
       window.alert("Vui lòng nhập đầy đủ thông tin hợp lệ.");
       return;
     }
 
-    const actionLabel = quickActionType === "income" ? "thu nhập" : "chi tiêu";
-    window.alert(`Đã tạo nhanh giao dịch ${actionLabel} (mock).`);
-    closeQuickAction();
+    try {
+      setQuickActionSaving(true);
+
+      const payload = {
+        transactionDate: form.date,
+        categoryId: Number(form.categoryId),
+        amount: Number(form.amount),
+        note: form.note.trim(),
+      };
+
+      if (quickActionType === "income") {
+        await apiService.createIncome(payload);
+      } else {
+        await apiService.createExpense(payload);
+      }
+
+      closeQuickAction();
+      const data = await apiService.getDashboard();
+      setDashboardData(data);
+    } catch (error) {
+      setQuickActionError(extractApiError(error, "Không thể lưu giao dịch nhanh."));
+    } finally {
+      setQuickActionSaving(false);
+    }
   };
 
   const isIncome = quickActionType === "income";
   const modalTitle = isIncome ? "Thêm thu nhập" : "Thêm chi tiêu";
-  const targetLabel = isIncome ? "Nguồn thu" : "Đơn vị";
-  const targetPlaceholder = isIncome ? "Ví dụ: Lương công ty" : "Ví dụ: WinMart";
   const amountPlaceholder = isIncome ? "Ví dụ: 2500000" : "Ví dụ: 350000";
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      setDashboardLoading(true);
+      setDashboardError(null);
+
+      try {
+        const now = new Date();
+        const toDate = now.toISOString().slice(0, 10);
+        const from = new Date(now);
+        from.setDate(now.getDate() - 6);
+        const fromDate = from.toISOString().slice(0, 10);
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+
+        const [data, weeklyIncomes, weeklyExpenses, monthlyExpenses] = await Promise.all([
+          apiService.getDashboard(),
+          apiService.getIncomes({ page: 0, size: 100, fromDate, toDate }),
+          apiService.getExpenses({ page: 0, size: 100, fromDate, toDate }),
+          apiService.getExpenses({ page: 0, size: 500, fromDate: startOfMonth, toDate }),
+        ]);
+
+        setDashboardData(data);
+
+        const dayLabels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+        const weekTemplate: WeekFlowItem[] = dayLabels.map((day) => ({ day, income: 0, expense: 0 }));
+
+        weeklyIncomes.content.forEach((item) => {
+          const date = new Date(item.transactionDate);
+          const index = (date.getDay() + 6) % 7;
+          weekTemplate[index].income += Number(item.amount);
+        });
+
+        weeklyExpenses.content.forEach((item) => {
+          const date = new Date(item.transactionDate);
+          const index = (date.getDay() + 6) % 7;
+          weekTemplate[index].expense += Number(item.amount);
+        });
+
+        setWeeklyFlow(weekTemplate);
+
+        const totalMonthlyExpense = monthlyExpenses.content.reduce((sum, item) => sum + Number(item.amount), 0);
+        const expenseByCategory = monthlyExpenses.content.reduce<Record<string, number>>((acc, item) => {
+          const key = item.categoryName;
+          acc[key] = (acc[key] ?? 0) + Number(item.amount);
+          return acc;
+        }, {});
+
+        const split = Object.entries(expenseByCategory)
+          .map(([label, amount]) => ({
+            label,
+            value: totalMonthlyExpense > 0 ? Number(((amount / totalMonthlyExpense) * 100).toFixed(1)) : 0,
+          }))
+          .sort((a, b) => b.value - a.value);
+
+        setCategorySplit(split);
+      } catch (error) {
+        setDashboardError(extractApiError(error, "Không thể tải dữ liệu dashboard."));
+      } finally {
+        setDashboardLoading(false);
+      }
+    };
+
+    void fetchDashboard();
+  }, []);
+
+  const dynamicMetrics = useMemo(() => {
+    if (!dashboardData) {
+      return dashboardMetrics;
+    }
+
+    const savingRate = dashboardData.totalIncome > 0 ? (dashboardData.totalBalance / dashboardData.totalIncome) * 100 : 0;
+
+    const currency = (value: number) =>
+      new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+      }).format(value);
+
+    return [
+      { label: "Tổng số dư", value: currency(dashboardData.totalBalance), change: "Live", icon: "Wallet", positive: true },
+      { label: "Thu nhập tháng", value: currency(dashboardData.monthlyIncome), change: "Live", icon: "ArrowDownRight", positive: true },
+      { label: "Chi tiêu tháng", value: currency(dashboardData.monthlyExpense), change: "Live", icon: "ArrowUpRight", positive: false },
+      { label: "Tỷ lệ tiết kiệm", value: `${savingRate.toFixed(1)}%`, change: "Live", icon: "PiggyBank", positive: savingRate >= 0 },
+    ];
+  }, [dashboardData]);
+
+  const recentRows = useMemo(() => {
+    if (!dashboardData) {
+      return undefined;
+    }
+
+    return mapApiTransactions(dashboardData.recentTransactions);
+  }, [dashboardData]);
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  const monthlyIncome = dashboardData?.monthlyIncome ?? 0;
+  const monthlyExpense = dashboardData?.monthlyExpense ?? 0;
+  const monthlyBalance = monthlyIncome - monthlyExpense;
+  const expenseRate = monthlyIncome > 0 ? (monthlyExpense / monthlyIncome) * 100 : 0;
+  const savingRate = monthlyIncome > 0 ? Math.max(0, (monthlyBalance / monthlyIncome) * 100) : 0;
+  const budgetHealth = Math.max(0, 100 - expenseRate);
 
   return (
     <div className="space-y-8">
@@ -93,14 +276,14 @@ export default function DashboardPage() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => openQuickAction("income")}
+                  onClick={() => void openQuickAction("income")}
                   className="inline-flex items-center justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
                 >
                   + Thêm thu nhập
                 </button>
                 <button
                   type="button"
-                  onClick={() => openQuickAction("expense")}
+                  onClick={() => void openQuickAction("expense")}
                   className="inline-flex items-center justify-center rounded-2xl border border-rose-300/40 bg-rose-400/10 px-5 py-2.5 text-sm font-medium text-rose-100 transition hover:bg-rose-400/20"
                 >
                   + Thêm chi tiêu
@@ -110,9 +293,9 @@ export default function DashboardPage() {
 
             <div className="grid gap-3 sm:grid-cols-3">
               {[
-                ["Ngân sách hoạt động", "12"],
-                ["Ví đang theo dõi", "05"],
-                ["Mục tiêu đã đạt", "08"],
+                ["Thu tháng", formatCurrency(monthlyIncome)],
+                ["Chi tháng", formatCurrency(monthlyExpense)],
+                ["Số dư tháng", formatCurrency(monthlyBalance)],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-center backdrop-blur-xl">
                   <p className="text-xs uppercase tracking-[0.35em] text-slate-400">{label}</p>
@@ -128,9 +311,9 @@ export default function DashboardPage() {
 
             <div className="mt-5 space-y-4">
               {[
-                { label: "Tiền vào hôm nay", value: "$2,180" },
-                { label: "Hóa đơn chờ thanh toán", value: "$430" },
-                { label: "Số tiền tiết kiệm khả dụng", value: "$9,240" },
+                { label: "Tổng thu tích lũy", value: formatCurrency(dashboardData?.totalIncome ?? 0) },
+                { label: "Tổng chi tích lũy", value: formatCurrency(dashboardData?.totalExpense ?? 0) },
+                { label: "Tổng số dư hiện tại", value: formatCurrency(dashboardData?.totalBalance ?? 0) },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                   <div className="flex items-center justify-between gap-4 text-sm">
@@ -155,7 +338,7 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {dashboardMetrics.map((metric) => {
+        {dynamicMetrics.map((metric) => {
           const Icon = icons[metric.icon as keyof typeof icons];
 
           return <MetricCard key={metric.label} {...metric} icon={Icon} />;
@@ -163,12 +346,16 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-        <ChartCard />
-        <CategoryCard />
+        <ChartCard data={weeklyFlow} />
+        <CategoryCard categories={categorySplit} spentPercent={expenseRate} />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_1fr]">
-        <TransactionList />
+        <div className="space-y-3">
+          {dashboardLoading && <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">Đang tải giao dịch gần đây...</div>}
+          {dashboardError && <div className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{dashboardError}</div>}
+          <TransactionList transactions={recentRows} />
+        </div>
 
         <article className="glass-panel rounded-3xl p-5">
           <div>
@@ -178,9 +365,9 @@ export default function DashboardPage() {
 
           <div className="mt-6 space-y-4">
             {[
-              { label: "Mục tiêu thu nhập", value: "84%" },
-              { label: "Giới hạn chi tiêu", value: "63%" },
-              { label: "Mục tiêu tiết kiệm", value: "51%" },
+              { label: "Hiệu suất thu - chi", value: `${budgetHealth.toFixed(1)}%` },
+              { label: "Tỷ lệ chi tiêu tháng", value: `${expenseRate.toFixed(1)}%` },
+              { label: "Tỷ lệ tiết kiệm tháng", value: `${savingRate.toFixed(1)}%` },
             ].map((item) => (
               <div key={item.label} className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
                 <div className="mb-3 flex items-center justify-between text-sm">
@@ -195,7 +382,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="mt-6 rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-            <p className="text-sm text-cyan-100">Khu vực này đang ở chế độ mock để trình diễn bố cục, cấp bậc thông tin và hành vi responsive trước khi kết nối API thật.</p>
+            <p className="text-sm text-cyan-100">Dữ liệu tổng kết đang được tính theo số liệu thật từ backend và cập nhật theo phiên làm việc hiện tại.</p>
           </div>
         </article>
       </section>
@@ -220,6 +407,8 @@ export default function DashboardPage() {
             </div>
 
             <form className="space-y-4" onSubmit={handleQuickActionSubmit}>
+              {quickActionError && <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{quickActionError}</p>}
+
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="quick-date" className="mb-2 block text-sm text-slate-300">
@@ -249,32 +438,21 @@ export default function DashboardPage() {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="quick-target" className="mb-2 block text-sm text-slate-300">
-                    {targetLabel}
-                  </label>
-                  <input
-                    id="quick-target"
-                    type="text"
-                    value={form.target}
-                    onChange={(event) => setForm((prev) => ({ ...prev, target: event.target.value }))}
-                    placeholder={targetPlaceholder}
-                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
-                  />
-                </div>
-
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="quick-category" className="mb-2 block text-sm text-slate-300">
                     Danh mục
                   </label>
-                  <input
+                  <select
                     id="quick-category"
-                    type="text"
-                    value={form.category}
-                    onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}
-                    placeholder={isIncome ? "Ví dụ: Freelance" : "Ví dụ: Ăn uống"}
+                    value={form.categoryId}
+                    onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
-                  />
+                  >
+                    <option value="">Chọn danh mục</option>
+                    {quickActionCategories.map((category) => (
+                      <option key={category.id} value={category.id} className="bg-slate-900">{category.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -302,9 +480,10 @@ export default function DashboardPage() {
                 </button>
                 <button
                   type="submit"
+                  disabled={quickActionSaving}
                   className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
                 >
-                  Lưu nhanh
+                  {quickActionSaving ? "Đang lưu..." : "Lưu nhanh"}
                 </button>
               </div>
             </form>
