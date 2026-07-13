@@ -27,18 +27,18 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     public void run(String... args) {
         User primaryUser = ensureUser(
             "Nguyen Van An",
-            "an@smartfinance.local",
+            "an@gmail.local",
             "Asia/Ho_Chi_Minh",
             CurrencyCode.VND,
-            bCryptPasswordEncoder.encode("123456")
+            bCryptPasswordEncoder.encode("12345678")
         );
 
         User secondaryUser = ensureUser(
             "Tran Minh Chau",
-            "chau@smartfinance.local",
+            "chau@gmail.local",
             "Asia/Ho_Chi_Minh",
             CurrencyCode.VND,
-            bCryptPasswordEncoder.encode("123456")
+            bCryptPasswordEncoder.encode("12345678")
         );
 
         Category salary = ensureCategory(primaryUser, "Salary", CategoryType.INCOME, "Luong hang thang");

@@ -8,6 +8,7 @@ export type RegisterFormValues = {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 export type LoginFormErrors = Partial<Record<keyof Omit<LoginFormValues, "rememberMe">, string>>;
@@ -34,6 +35,34 @@ export const validatePassword = (password: string) => {
 
   if (password.length < 8) {
     return "Mật khẩu phải có ít nhất 8 ký tự.";
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    return "Mật khẩu phải có ít nhất 1 chữ in hoa.";
+  }
+
+  if (!/[a-z]/.test(password)) {
+    return "Mật khẩu phải có ít nhất 1 chữ thường.";
+  }
+
+  if (!/\d/.test(password)) {
+    return "Mật khẩu phải có ít nhất 1 chữ số.";
+  }
+
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    return "Mật khẩu phải có ít nhất 1 ký tự đặc biệt.";
+  }
+
+  return "";
+};
+
+export const validateConfirmPassword = (password: string, confirmPassword: string) => {
+  if (!confirmPassword) {
+    return "Xác nhận mật khẩu không được để trống.";
+  }
+
+  if (password !== confirmPassword) {
+    return "Mật khẩu xác nhận không khớp.";
   }
 
   return "";
@@ -67,6 +96,7 @@ export const validateRegisterForm = (values: RegisterFormValues) => {
 
   const emailError = validateEmail(values.email);
   const passwordError = validatePassword(values.password);
+  const confirmPasswordError = validateConfirmPassword(values.password, values.confirmPassword);
 
   if (emailError) {
     errors.email = emailError;
@@ -74,6 +104,10 @@ export const validateRegisterForm = (values: RegisterFormValues) => {
 
   if (passwordError) {
     errors.password = passwordError;
+  }
+
+  if (confirmPasswordError) {
+    errors.confirmPassword = confirmPasswordError;
   }
 
   return errors;

@@ -168,7 +168,7 @@ export default function DashboardPage() {
           apiService.getDashboard(),
           apiService.getIncomes({ page: 0, size: 100, fromDate, toDate }),
           apiService.getExpenses({ page: 0, size: 100, fromDate, toDate }),
-          apiService.getExpenses({ page: 0, size: 500, fromDate: startOfMonth, toDate }),
+          apiService.getExpenses({ page: 0, size: 100, fromDate: startOfMonth, toDate }),
         ]);
 
         setDashboardData(data);
@@ -288,6 +288,12 @@ export default function DashboardPage() {
                 >
                   + Thêm chi tiêu
                 </button>
+                <Link
+                  to="/category"
+                  className="inline-flex items-center justify-center rounded-2xl border border-emerald-300/40 bg-emerald-400/10 px-5 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20"
+                >
+                  + Thêm danh mục
+                </Link>
               </div>
             </div>
 

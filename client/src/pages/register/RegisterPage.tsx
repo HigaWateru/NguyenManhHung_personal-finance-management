@@ -14,9 +14,11 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -36,7 +38,7 @@ export default function RegisterPage() {
       fullName: values.name,
       email: values.email,
       password: values.password,
-      confirmPassword: values.password,
+      confirmPassword: values.confirmPassword,
       timezone,
       currencyCode: "VND",
     }));
@@ -109,6 +111,26 @@ export default function RegisterPage() {
                 </div>
                 <p className={`mt-2 text-xs ${submitted && errors.password ? "text-rose-300" : "text-slate-500"}`}>
                   {submitted && errors.password ? errors.password : "Nên dùng ít nhất 8 ký tự, ưu tiên thêm số và ký tự đặc biệt."}
+                </p>
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-sm text-slate-300">Xác nhận mật khẩu</span>
+                <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.confirmPassword ? "border-rose-400/50" : "border-white/10"}`}>
+                  <LockKeyhole size={18} className="text-cyan-300/80" />
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Nhập lại mật khẩu"
+                    value={values.confirmPassword}
+                    onChange={(event) => setValues((current) => ({ ...current, confirmPassword: event.target.value }))}
+                    className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
+                  />
+                  <button type="button" onClick={() => setShowConfirmPassword((current) => !current)} className="text-slate-400 transition hover:text-cyan-200" aria-label="Hiển thị hoặc ẩn xác nhận mật khẩu">
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <p className={`mt-2 text-xs ${submitted && errors.confirmPassword ? "text-rose-300" : "text-slate-500"}`}>
+                  {submitted && errors.confirmPassword ? errors.confirmPassword : "Vui lòng nhập lại đúng mật khẩu vừa tạo."}
                 </p>
               </label>
 
