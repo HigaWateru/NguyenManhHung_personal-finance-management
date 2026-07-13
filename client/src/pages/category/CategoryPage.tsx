@@ -1,32 +1,317 @@
-import CrudModulePage from "../../components/module/CrudModulePage";
+import { useState } from "react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 
-const columns = [
-  { key: "name", label: "Tên danh mục" },
-  { key: "type", label: "Loại" },
-  { key: "records", label: "Giao dịch", align: "right" as const },
-  { key: "status", label: "Trạng thái" },
-  { key: "description", label: "Mô tả" },
+type CategoryType = "INCOME" | "EXPENSE";
+type CategoryStatus = "Hoạt động" | "Rà soát";
+
+type CategoryRecord = {
+  id: number;
+  name: string;
+  type: CategoryType;
+  records: number;
+  status: CategoryStatus;
+  description: string;
+};
+
+type CategoryFormState = {
+  name: string;
+  type: CategoryType;
+  status: CategoryStatus;
+  description: string;
+};
+
+type FormErrors = Partial<Record<keyof CategoryFormState, string>>;
+
+const initialRecords: CategoryRecord[] = [
+  { id: 1, name: "Lương", type: "INCOME", records: 12, status: "Hoạt động", description: "Nguồn thu nhập chính" },
+  { id: 2, name: "Freelance", type: "INCOME", records: 8, status: "Hoạt động", description: "Dự án ngoài" },
+  { id: 3, name: "Ăn uống", type: "EXPENSE", records: 37, status: "Hoạt động", description: "Ăn uống và thực phẩm" },
+  { id: 4, name: "Di chuyển", type: "EXPENSE", records: 21, status: "Hoạt động", description: "Taxi, xe buýt, xăng" },
+  { id: 5, name: "Mua sắm", type: "EXPENSE", records: 9, status: "Rà soát", description: "Thời trang và thiết bị" },
 ];
 
-const rows = [
-  { name: "Lương", type: "INCOME", records: "12", status: "Hoạt động", description: "Nguồn thu nhập chính" },
-  { name: "Freelance", type: "INCOME", records: "8", status: "Hoạt động", description: "Dự án ngoài" },
-  { name: "Ăn uống", type: "EXPENSE", records: "37", status: "Hoạt động", description: "Ăn uống và thực phẩm" },
-  { name: "Di chuyển", type: "EXPENSE", records: "21", status: "Hoạt động", description: "Taxi, xe buýt, xăng" },
-  { name: "Mua sắm", type: "EXPENSE", records: "9", status: "Rà soát", description: "Thời trang và thiết bị" },
-];
+const emptyForm = (): CategoryFormState => ({
+  name: "",
+  type: "EXPENSE",
+  status: "Hoạt động",
+  description: "",
+});
+
+const validateForm = (form: CategoryFormState): FormErrors => {
+  const errors: FormErrors = {};
+
+  if (!form.name.trim()) {
+    errors.name = "Tên danh mục không được để trống";
+  }
+
+  if (form.description.length > 120) {
+    errors.description = "Mô tả tối đa 120 ký tự";
+  }
+
+  return errors;
+};
 
 export default function CategoryPage() {
+  const [records, setRecords] = useState<CategoryRecord[]>(initialRecords);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState<CategoryFormState>(emptyForm());
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingId(null);
+    setForm(emptyForm());
+    setErrors({});
+  };
+
+  const openCreateModal = () => {
+    setEditingId(null);
+    setForm(emptyForm());
+    setErrors({});
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (record: CategoryRecord) => {
+    setEditingId(record.id);
+    setForm({
+      name: record.name,
+      type: record.type,
+      status: record.status,
+      description: record.description,
+    });
+    setErrors({});
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: number) => {
+    const record = records.find((item) => item.id === id);
+    if (!record) return;
+
+    if (window.confirm(`Xóa danh mục "${record.name}"?`)) {
+      setRecords((prev) => prev.filter((item) => item.id !== id));
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const validationErrors = validateForm(form);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
+
+    const normalizedName = form.name.trim();
+    const duplicated = records.some(
+      (item) => item.id !== editingId && item.type === form.type && item.name.toLowerCase() === normalizedName.toLowerCase(),
+    );
+
+    if (duplicated) {
+      setErrors({ name: "Tên danh mục đã tồn tại trong cùng loại" });
+      return;
+    }
+
+    const payload: Omit<CategoryRecord, "id" | "records"> = {
+      name: normalizedName,
+      type: form.type,
+      status: form.status,
+      description: form.description.trim(),
+    };
+
+    if (editingId === null) {
+      const nextId = records.length > 0 ? Math.max(...records.map((item) => item.id)) + 1 : 1;
+      setRecords((prev) => [{ id: nextId, records: 0, ...payload }, ...prev]);
+    } else {
+      setRecords((prev) => prev.map((item) => (item.id === editingId ? { ...item, ...payload } : item)));
+    }
+
+    closeModal();
+  };
+
   return (
-    <CrudModulePage
-      kicker="Dữ liệu gốc"
-      title="Quản lý danh mục"
-      description="Không gian quản lý danh mục cho Thu nhập/Chi tiêu, bảo đảm tính duy nhất theo người dùng và quy tắc xóa an toàn khi đã phát sinh giao dịch."
-      entities={["Danh mục", "Loại danh mục (INCOME | EXPENSE)"]}
-      columns={columns}
-      rows={rows}
-      actionLabel="Tạo danh mục"
-      filterPlaceholder="Tìm danh mục theo tên hoặc loại..."
-    />
+    <section className="space-y-6">
+      <header className="glass-panel rounded-[2rem] p-6 sm:p-8">
+        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Dữ liệu gốc</p>
+        <h3 className="mt-3 text-3xl font-semibold text-white">Quản lý danh mục</h3>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
+          Quản lý danh mục Thu nhập và Chi tiêu với luồng thao tác CRUD đầy đủ, đảm bảo cấu trúc dữ liệu rõ ràng trước khi liên kết API thực tế.
+        </p>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          {["Danh mục", "Loại danh mục (INCOME | EXPENSE)", "CRUD + Modal"].map((chip) => (
+            <span key={chip} className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-100">
+              {chip}
+            </span>
+          ))}
+        </div>
+      </header>
+
+      <article className="glass-panel rounded-3xl p-5">
+        <div className="flex items-center justify-end">
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
+          >
+            <Plus size={16} />
+            Tạo danh mục
+          </button>
+        </div>
+
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10">
+          <table className="w-full min-w-[860px] border-collapse text-sm">
+            <thead className="bg-slate-900/80 text-slate-300">
+              <tr>
+                <th className="px-4 py-3 text-left">Tên danh mục</th>
+                <th className="px-4 py-3 text-left">Loại</th>
+                <th className="px-4 py-3 text-right">Giao dịch</th>
+                <th className="px-4 py-3 text-left">Trạng thái</th>
+                <th className="px-4 py-3 text-left">Mô tả</th>
+                <th className="px-4 py-3 text-right">Hành động</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-white/10 bg-slate-950/40 text-slate-200">
+              {records.map((row) => (
+                <tr key={row.id} className="hover:bg-white/5">
+                  <td className="px-4 py-3 font-medium text-white">{row.name}</td>
+                  <td className="px-4 py-3">
+                    <span className={`rounded-full px-2.5 py-1 text-xs ${row.type === "INCOME" ? "bg-cyan-400/15 text-cyan-100" : "bg-rose-400/15 text-rose-100"}`}>
+                      {row.type}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right">{row.records}</td>
+                  <td className="px-4 py-3">{row.status}</td>
+                  <td className="px-4 py-3 text-slate-300">{row.description || "-"}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => openEditModal(row)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
+                      >
+                        <Pencil size={14} />
+                        Sửa
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(row.id)}
+                        className="inline-flex items-center gap-1 rounded-xl border border-rose-300/30 bg-rose-400/10 px-2.5 py-1.5 text-xs text-rose-100 transition hover:bg-rose-400/20"
+                      >
+                        <Trash2 size={14} />
+                        Xóa
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
+          <div className="glass-panel-strong w-full max-w-2xl rounded-3xl p-5 sm:p-6">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/70">Category Form</p>
+                <h4 className="mt-2 text-xl font-semibold text-white">{editingId === null ? "Tạo danh mục" : "Cập nhật danh mục"}</h4>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeModal}
+                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
+                aria-label="Đóng"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="category-name" className="mb-2 block text-sm text-slate-300">
+                  Tên danh mục
+                </label>
+                <input
+                  id="category-name"
+                  type="text"
+                  value={form.name}
+                  onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                  placeholder="Ví dụ: Lương"
+                  className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                />
+                {errors.name && <p className="mt-1 text-xs text-rose-300">{errors.name}</p>}
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label htmlFor="category-type" className="mb-2 block text-sm text-slate-300">
+                    Loại
+                  </label>
+                  <select
+                    id="category-type"
+                    value={form.type}
+                    onChange={(event) => setForm((prev) => ({ ...prev, type: event.target.value as CategoryType }))}
+                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                  >
+                    <option value="INCOME">INCOME</option>
+                    <option value="EXPENSE">EXPENSE</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="category-status" className="mb-2 block text-sm text-slate-300">
+                    Trạng thái
+                  </label>
+                  <select
+                    id="category-status"
+                    value={form.status}
+                    onChange={(event) => setForm((prev) => ({ ...prev, status: event.target.value as CategoryStatus }))}
+                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                  >
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Rà soát">Rà soát</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="category-description" className="mb-2 block text-sm text-slate-300">
+                  Mô tả
+                </label>
+                <textarea
+                  id="category-description"
+                  rows={3}
+                  value={form.description}
+                  onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
+                  placeholder="Mô tả ngắn cho danh mục"
+                  className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                />
+                {errors.description && <p className="mt-1 text-xs text-rose-300">{errors.description}</p>}
+              </div>
+
+              <div className="flex flex-wrap justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
+                >
+                  Hủy
+                </button>
+
+                <button
+                  type="submit"
+                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
+                >
+                  {editingId === null ? "Tạo danh mục" : "Cập nhật"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
