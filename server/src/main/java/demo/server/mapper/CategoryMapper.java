@@ -19,11 +19,20 @@ public class CategoryMapper {
     }
 
     public CategoryResponse toResponse(Category category) {
+        long transactionCount = 0;
+        if (category.getIncomes() != null) {
+            transactionCount += category.getIncomes().size();
+        }
+        if (category.getExpenses() != null) {
+            transactionCount += category.getExpenses().size();
+        }
+
         return new CategoryResponse(
                 category.getId(),
                 category.getName(),
                 category.getType(),
                 category.getDescription(),
+                transactionCount,
                 category.getCreatedAt(),
                 category.getUpdatedAt()
         );

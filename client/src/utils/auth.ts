@@ -2,18 +2,12 @@ const ACCESS_TOKEN_KEY = "sf_access_token";
 const REFRESH_TOKEN_KEY = "sf_refresh_token";
 
 export function getAccessToken(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
 export function getRefreshToken(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
 

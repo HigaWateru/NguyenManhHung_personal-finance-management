@@ -1,29 +1,50 @@
 type CategorySplit = {
-  label: string;
-  value: number;
-};
+  label: string
+  value: number
+}
 
 type CategoryCardProps = {
-  categories?: CategorySplit[];
-  spentPercent?: number;
+  categories?: CategorySplit[]
+  spentPercent?: number
 };
 
 export default function CategoryCard({ categories, spentPercent }: CategoryCardProps) {
   const categoryData = categories ?? [];
-  const total = categoryData.reduce((sum, item) => sum + item.value, 0);
+  const total = categoryData.reduce((sum, item) => sum + item.value, 0)
+  const colors = [
+    "#22d3ee", // Cyan
+    "#f43f5e", // Rose
+    "#3b82f6", // Blue
+    "#10b981", // Emerald
+    "#8b5cf6", // Purple
+    "#f59e0b", // Amber
+    "#ec4899", // Pink
+    "#14b8a6", // Teal
+    "#6366f1", // Indigo
+    "#f97316", // Orange
+    "#a855f7", // Violet
+    "#06b6d4", // Light Cyan
+    "#84cc16", // Lime
+    "#e11d48", // Crimson
+    "#d946ef", // Fuchsia
+    "#0ea5e9", // Sky Blue
+    "#facc15", // Yellow
+    "#22c55e", // Green
+    "#fbbf24", // Gold
+    "#fb7185", // Soft Rose
+  ]
 
-  let start = 0;
-  const segments = categoryData.map((item, index) => {
-    const percent = total > 0 ? (item.value / total) * 100 : 0;
-    const end = start + percent;
-    const colors = ["#06b6d4", "#10b981", "#6366f1", "#f59e0b", "#3b82f6", "#f43f5e"];
-    const color = colors[index % colors.length];
+  const segments = categoryData.reduce<{ offset: number; values: string[] }>((acc, item, index) => {
+    const percent = total > 0 ? (item.value / total) * 100 : 0
+    const start = acc.offset
+    const end = start + percent
+    const color = colors[index % colors.length]
 
-    const segment = `${color} ${start.toFixed(2)}% ${end.toFixed(2)}%`;
-    start = end;
+    acc.values.push(`${color} ${start.toFixed(2)}% ${end.toFixed(2)}%`)
+    acc.offset = end
 
-    return segment;
-  });
+    return acc;
+  }, { offset: 0, values: [] }).values;
 
   const donutBackground = segments.length > 0 ? `conic-gradient(${segments.join(", ")})` : "conic-gradient(#1e293b 0% 100%)";
 
@@ -62,5 +83,5 @@ export default function CategoryCard({ categories, spentPercent }: CategoryCardP
         )}
       </div>
     </article>
-  );
+  )
 }

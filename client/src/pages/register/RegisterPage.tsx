@@ -29,9 +29,7 @@ export default function RegisterPage() {
     const nextErrors = validateRegisterForm(values);
     setErrors(nextErrors);
 
-    if (Object.keys(nextErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(nextErrors).length > 0) return;
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Ho_Chi_Minh";
     const result = await dispatch(register({
@@ -43,9 +41,7 @@ export default function RegisterPage() {
       currencyCode: "VND",
     }));
 
-    if (register.fulfilled.match(result)) {
-      navigate("/login", { replace: true });
-    }
+    if (register.fulfilled.match(result)) navigate("/login", { replace: true });
   };
 
   return (
@@ -64,9 +60,7 @@ export default function RegisterPage() {
                 <span className="mb-2 block text-sm text-slate-300">Họ và tên</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.name ? "border-rose-400/50" : "border-white/10"}`}>
                   <UserRound size={18} className="text-cyan-300/80" />
-                  <input
-                    type="text"
-                    placeholder="Nguyễn Văn A"
+                  <input type="text" placeholder="Nguyễn Văn A"
                     value={values.name}
                     onChange={(event) => setValues((current) => ({ ...current, name: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
@@ -81,10 +75,7 @@ export default function RegisterPage() {
                 <span className="mb-2 block text-sm text-slate-300">Email</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.email ? "border-rose-400/50" : "border-white/10"}`}>
                   <Mail size={18} className="text-cyan-300/80" />
-                  <input
-                    type="email"
-                    placeholder="yourname@example.com"
-                    value={values.email}
+                  <input type="email" placeholder="yourname@example.com" value={values.email}
                     onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
                   />
@@ -98,9 +89,7 @@ export default function RegisterPage() {
                 <span className="mb-2 block text-sm text-slate-300">Mật khẩu</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.password ? "border-rose-400/50" : "border-white/10"}`}>
                   <LockKeyhole size={18} className="text-cyan-300/80" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter strong password"
+                  <input type={showPassword ? "text" : "password"} placeholder="Enter strong password"
                     value={values.password}
                     onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
@@ -118,9 +107,7 @@ export default function RegisterPage() {
                 <span className="mb-2 block text-sm text-slate-300">Xác nhận mật khẩu</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.confirmPassword ? "border-rose-400/50" : "border-white/10"}`}>
                   <LockKeyhole size={18} className="text-cyan-300/80" />
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Nhập lại mật khẩu"
+                  <input type={showConfirmPassword ? "text" : "password"} placeholder="Re-enter your password"
                     value={values.confirmPassword}
                     onChange={(event) => setValues((current) => ({ ...current, confirmPassword: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
@@ -134,9 +121,7 @@ export default function RegisterPage() {
                 </p>
               </label>
 
-              <button
-                type="submit"
-                disabled={loading}
+              <button type="submit" disabled={loading}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-sky-300 px-4 py-3 font-semibold text-slate-950 transition hover:brightness-110"
               >
                 {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}

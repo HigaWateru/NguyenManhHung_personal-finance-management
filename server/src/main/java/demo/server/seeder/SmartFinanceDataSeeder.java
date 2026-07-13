@@ -27,18 +27,20 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     public void run(String... args) {
         User primaryUser = ensureUser(
             "Nguyen Van An",
-            "an@gmail.local",
+            "an@gmail.com",
             "Asia/Ho_Chi_Minh",
             CurrencyCode.VND,
-            bCryptPasswordEncoder.encode("12345678")
+            bCryptPasswordEncoder.encode("12345678"),
+            "https://api.dicebear.com/7.x/adventurer/svg?seed=An"
         );
 
         User secondaryUser = ensureUser(
             "Tran Minh Chau",
-            "chau@gmail.local",
+            "chau@gmail.com",
             "Asia/Ho_Chi_Minh",
             CurrencyCode.VND,
-            bCryptPasswordEncoder.encode("12345678")
+            bCryptPasswordEncoder.encode("12345678"),
+            "https://api.dicebear.com/7.x/adventurer/svg?seed=Chau"
         );
 
         Category salary = ensureCategory(primaryUser, "Salary", CategoryType.INCOME, "Luong hang thang");
@@ -55,20 +57,80 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         ensureCategory(secondaryUser, "Food", CategoryType.EXPENSE, "Bua an hang ngay");
         ensureCategory(secondaryUser, "Transport", CategoryType.EXPENSE, "Chi phi di lai");
 
-        ensureIncome(primaryUser, salary, new BigDecimal("25000000.00"), LocalDate.now().minusDays(24), "Luong thang nay");
-        ensureIncome(primaryUser, bonus, new BigDecimal("3500000.00"), LocalDate.now().minusDays(15), "Thuong dat KPI quy");
-        ensureIncome(primaryUser, freelance, new BigDecimal("4800000.00"), LocalDate.now().minusDays(8), "Du an giao dien landing page");
+        // Generate historical data for primaryUser (past 12 months)
+        for (int i = 0; i < 12; i++) {
+            LocalDate monthDate = LocalDate.now().minusMonths(i);
+            
+            // Monthly Salary (e.g. 25th of each month)
+            LocalDate salaryDate = safeDate(monthDate, 25);
+            if (!salaryDate.isAfter(LocalDate.now())) {
+                ensureIncome(primaryUser, salary, new BigDecimal("25000000.00"), salaryDate, "Lương tháng " + salaryDate.getMonthValue());
+            }
+            
+            // Monthly Utilities (e.g. 5th of each month)
+            LocalDate utilityDate = safeDate(monthDate, 5);
+            if (!utilityDate.isAfter(LocalDate.now())) {
+                ensureExpense(primaryUser, utilities, new BigDecimal("800000.00").add(new BigDecimal(10000 * (i % 5))), utilityDate, "Tiền điện nước internet tháng " + utilityDate.getMonthValue());
+            }
 
-        ensureExpense(primaryUser, food, new BigDecimal("45000.00"), LocalDate.now().minusDays(7), "Coffee sang");
-        ensureExpense(primaryUser, food, new BigDecimal("120000.00"), LocalDate.now().minusDays(6), "Lunch voi dong nghiep");
-        ensureExpense(primaryUser, utilities, new BigDecimal("780000.00"), LocalDate.now().minusDays(5), "Tien dien va internet");
-        ensureExpense(primaryUser, entertainment, new BigDecimal("180000.00"), LocalDate.now().minusDays(4), "Netflix Premium");
-        ensureExpense(primaryUser, shopping, new BigDecimal("950000.00"), LocalDate.now().minusDays(3), "Mua sam cuoi tuan");
-        ensureExpense(primaryUser, transport, new BigDecimal("250000.00"), LocalDate.now().minusDays(2), "Do xang xe may");
-        ensureExpense(primaryUser, health, new BigDecimal("300000.00"), LocalDate.now().minusDays(1), "Kham suc khoe dinh ky");
+            // Food & Drink
+            ensureExpense(primaryUser, food, new BigDecimal("50000.00"), safeDate(monthDate, 3), "Cà phê sáng");
+            ensureExpense(primaryUser, food, new BigDecimal("150000.00"), safeDate(monthDate, 10), "Ăn trưa đồng nghiệp");
+            ensureExpense(primaryUser, food, new BigDecimal("450000.00"), safeDate(monthDate, 20), "Liên hoan gia đình");
+
+            // Transport
+            ensureExpense(primaryUser, transport, new BigDecimal("200000.00"), safeDate(monthDate, 7), "Đổ xăng xe");
+            ensureExpense(primaryUser, transport, new BigDecimal("200000.00"), safeDate(monthDate, 21), "Đổ xăng xe");
+
+            // Entertainment
+            ensureExpense(primaryUser, entertainment, new BigDecimal("180000.00"), safeDate(monthDate, 15), "Netflix Premium");
+            if (i % 2 == 0) {
+                ensureExpense(primaryUser, entertainment, new BigDecimal("350000.00"), safeDate(monthDate, 28), "Xem phim rạp");
+            }
+
+            // Shopping (every 2 months)
+            if (i % 2 == 1) {
+                ensureExpense(primaryUser, shopping, new BigDecimal("1200000.00"), safeDate(monthDate, 18), "Mua sắm quần áo");
+            }
+
+            // Freelance project (every 3 months)
+            if (i % 3 == 0) {
+                LocalDate freelanceDate = safeDate(monthDate, 12);
+                ensureIncome(primaryUser, freelance, new BigDecimal("5000000.00"), freelanceDate, "Dự án ngoài tháng " + freelanceDate.getMonthValue());
+            }
+
+            // Bonus (every 4 months)
+            if (i % 4 == 0) {
+                LocalDate bonusDate = safeDate(monthDate, 30);
+                if (!bonusDate.isAfter(LocalDate.now())) {
+                    ensureIncome(primaryUser, bonus, new BigDecimal("4000000.00"), bonusDate, "Thưởng hiệu suất tháng " + bonusDate.getMonthValue());
+                }
+            }
+        }
+
+        // Generate historical data for secondaryUser (past 6 months)
+        Category secSalary = findCategory(secondaryUser, "Salary", CategoryType.INCOME);
+        Category secFood = findCategory(secondaryUser, "Food", CategoryType.EXPENSE);
+        Category secTransport = findCategory(secondaryUser, "Transport", CategoryType.EXPENSE);
+
+        if (secSalary != null && secFood != null && secTransport != null) {
+            for (int i = 0; i < 6; i++) {
+                LocalDate monthDate = LocalDate.now().minusMonths(i);
+
+                LocalDate salDate = safeDate(monthDate, 25);
+                if (!salDate.isAfter(LocalDate.now())) {
+                    ensureIncome(secondaryUser, secSalary, new BigDecimal("18000000.00"), salDate, "Lương fixed tháng " + salDate.getMonthValue());
+                }
+
+                ensureExpense(secondaryUser, secFood, new BigDecimal("130000.00"), safeDate(monthDate, 8), "Ăn cơm văn phòng");
+                ensureExpense(secondaryUser, secFood, new BigDecimal("95000.00"), safeDate(monthDate, 18), "Trà sữa");
+
+                ensureExpense(secondaryUser, secTransport, new BigDecimal("150000.00"), safeDate(monthDate, 12), "Đổ xăng");
+            }
+        }
     }
 
-    private User ensureUser(String fullName, String email, String timezone, CurrencyCode currencyCode, String encodedPassword) {
+    private User ensureUser(String fullName, String email, String timezone, CurrencyCode currencyCode, String encodedPassword, String avatarUrl) {
         User existingUser = findUserByEmail(email);
         if (existingUser != null) {
             return existingUser;
@@ -80,6 +142,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
                 .passwordHash(encodedPassword)
                 .timezone(timezone)
                 .currencyCode(currencyCode)
+                .avatarUrl(avatarUrl)
                 .active(true)
                 .build();
         entityManager.persist(user);
@@ -103,6 +166,10 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     }
 
     private void ensureIncome(User user, Category category, BigDecimal amount, LocalDate transactionDate, String note) {
+        if (transactionDate.isAfter(LocalDate.now())) {
+            return;
+        }
+
         Long count = entityManager.createQuery(
             "select count(i) from Income i where i.user = :user and i.category = :category and i.amount = :amount and i.transactionDate = :transactionDate and i.note = :note",
                         Long.class
@@ -129,6 +196,10 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     }
 
     private void ensureExpense(User user, Category category, BigDecimal amount, LocalDate transactionDate, String note) {
+        if (transactionDate.isAfter(LocalDate.now())) {
+            return;
+        }
+
         Long count = entityManager.createQuery(
                         "select count(e) from Expense e where e.user = :user and e.category = :category and e.amount = :amount and e.transactionDate = :transactionDate and e.note = :note",
                         Long.class
@@ -180,5 +251,11 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         } catch (NoResultException exception) {
             return null;
         }
+    }
+
+    private LocalDate safeDate(LocalDate reference, int day) {
+        int maxDays = reference.lengthOfMonth();
+        int safeDay = Math.min(day, maxDays);
+        return reference.withDayOfMonth(safeDay);
     }
 }

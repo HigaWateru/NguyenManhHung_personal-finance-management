@@ -9,18 +9,14 @@ export function RequireAuth() {
   const { initialized, isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!initialized) {
-      void dispatch(initializeAuth());
-    }
+    if (!initialized) void dispatch(initializeAuth());
   }, [dispatch, initialized]);
 
   if (!initialized || loading) {
     return <div className="grid min-h-screen place-items-center text-sm text-slate-300">Đang xác thực phiên đăng nhập...</div>;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
 
   return <Outlet />;
 }
@@ -30,18 +26,14 @@ export function PublicOnly() {
   const { initialized, isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!initialized) {
-      void dispatch(initializeAuth());
-    }
+    if (!initialized) void dispatch(initializeAuth());
   }, [dispatch, initialized]);
 
   if (!initialized || loading) {
     return <div className="grid min-h-screen place-items-center text-sm text-slate-300">Đang tải...</div>;
   }
 
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
   return <Outlet />;
 }

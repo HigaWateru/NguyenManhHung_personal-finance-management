@@ -84,4 +84,14 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    public void updateProfile(String fullName, String timezone, CurrencyCode currencyCode) {
+        this.fullName = fullName;
+        this.timezone = timezone;
+        this.currencyCode = currencyCode;
+    }
+
+    public void updateAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 }

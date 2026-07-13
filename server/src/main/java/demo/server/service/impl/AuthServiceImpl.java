@@ -2,6 +2,7 @@ package demo.server.service.impl;
 
 import demo.server.common.enums.CurrencyCode;
 import demo.server.dto.request.LoginRequest;
+import demo.server.dto.request.ProfileUpdateRequest;
 import demo.server.dto.request.RefreshTokenRequest;
 import demo.server.dto.request.RegisterRequest;
 import demo.server.dto.response.AuthResponse;
@@ -15,6 +16,7 @@ import demo.server.repository.RefreshTokenRepository;
 import demo.server.repository.UserRepository;
 import demo.server.security.jwt.JwtTokenProvider;
 import demo.server.service.AuthService;
+import demo.server.service.CloudinaryService;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthMapper authMapper;
+    private final CloudinaryService cloudinaryService;
 
     @Value("${jwt.refresh-token-days}")
     private long refreshTokenDays;
@@ -107,6 +111,34 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> ApiException.notFound("User not found"));
         return authMapper.toUserProfileResponse(user);
+    }
+
+    @Override
+    @Transactional
+    public UserProfileResponse updateProfile(Long userId, ProfileUpdateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> ApiException.notFound("User not found"));
+
+        user.updateProfile(request.fullName().trim(), request.timezone().trim(), request.currencyCode());
+        User savedUser = userRepository.save(user);
+        return authMapper.toUserProfileResponse(savedUser);
+    }
+
+    @Override
+    @Transactional
+    public UserProfileResponse updateAvatar(Long userId, MultipartFile file) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> ApiException.notFound("User not found"));
+
+        if (file == null || file.isEmpty()) {
+            throw ApiException.badRequest("File must not be empty");
+        }
+
+        String avatarUrl = cloudinaryService.uploadFile(file, "avatars");
+
+        user.updateAvatarUrl(avatarUrl);
+        User savedUser = userRepository.save(user);
+        return authMapper.toUserProfileResponse(savedUser);
     }
 
     private AuthResponse buildAuthResponse(User user, String refreshToken) {

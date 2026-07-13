@@ -1,12 +1,12 @@
-import { type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react"
 
 type MetricCardProps = {
-  label: string;
-  value: string;
-  change: string;
-  icon: LucideIcon;
-  positive: boolean;
-};
+  label: string
+  value: string
+  change: string
+  icon: LucideIcon
+  positive: boolean
+}
 
 export default function MetricCard({ label, value, change, icon: Icon, positive }: MetricCardProps) {
   return (
@@ -24,5 +24,5 @@ export default function MetricCard({ label, value, change, icon: Icon, positive 
 
       <p className={`mt-6 text-sm font-medium ${positive ? "text-emerald-300" : "text-rose-300"}`}>{change} so với tháng trước</p>
     </article>
-  );
+  )
 }

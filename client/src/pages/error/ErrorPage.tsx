@@ -1,5 +1,5 @@
-import { AlertTriangle, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { AlertTriangle, ArrowLeft } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export default function ErrorPage() {
   return (
@@ -16,16 +16,13 @@ export default function ErrorPage() {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            to="/login"
+          <Link to="/login"
             className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10"
           >
-            <ArrowLeft size={16} />
-            Về trang đăng nhập
+            <ArrowLeft size={16} /> Về trang đăng nhập
           </Link>
 
-          <Link
-            to="/"
+          <Link to="/"
             className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
           >
             Đến bảng điều khiển
@@ -33,5 +30,5 @@ export default function ErrorPage() {
         </div>
       </section>
     </div>
-  );
+  )
 }

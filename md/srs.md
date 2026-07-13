@@ -729,6 +729,18 @@ System là vai trò kỹ thuật nội bộ thực thi các cơ chế nền như
 | Exception | Redis không khả dụng, lỗi ghi/đọc blacklist, sai lệch đồng hồ hệ thống. |
 | API liên quan | Áp dụng tại các luồng POST /api/v1/auth/logout, PUT /api/v1/users/me/password, POST /api/v1/auth/refresh-token |
 
+#### 8.8.6 Avatar Upload using Cloudinary
+
+| Thuộc tính | Nội dung |
+|---|---|
+| Mục đích | Cho phép người dùng tải lên hoặc cập nhật ảnh đại diện lên bộ lưu trữ đám mây Cloudinary và cập nhật đường dẫn ảnh vào hồ sơ. |
+| Input | File ảnh (multipart/form-data) từ client. |
+| Output | URL của ảnh đại diện đã được lưu trữ trên Cloudinary và thông tin cập nhật của người dùng. |
+| Business Rule | Chỉ cho phép người dùng đã xác thực tải lên ảnh đại diện cho chính mình. Ảnh cũ trên Cloudinary của người dùng đó (nếu có) nên được xóa hoặc ghi đè để tiết kiệm dung lượng. Định dạng file ảnh được phép: jpg, jpeg, png. Dung lượng tối đa: 2MB. |
+| Validation | File tải lên không được rỗng, đúng định dạng hình ảnh và không vượt quá kích thước giới hạn. |
+| Exception | Định dạng file không hợp lệ, dung lượng quá lớn, lỗi kết nối hoặc phân quyền với dịch vụ Cloudinary. |
+| API liên quan | POST /api/v1/users/me/avatar |
+
 ## 9. Non Functional Requirements
 
 ### 9.1 Hiệu năng

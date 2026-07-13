@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { apiService } from "../../apis/service";
 import { extractApiError } from "../../apis/http";
@@ -73,7 +73,7 @@ export default function IncomePage() {
   const [form, setForm] = useState<IncomeFormState>(emptyForm());
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setApiError(null);
 
@@ -101,11 +101,15 @@ export default function IncomePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, query]);
 
   useEffect(() => {
-    void fetchData();
-  }, [page, query]);
+    const timerId = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+
+    return () => window.clearTimeout(timerId);
+  }, [fetchData]);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -197,25 +201,18 @@ export default function IncomePage() {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
             <Search size={16} className="text-cyan-300/80" />
-            <input
-              type="text"
-              value={query}
-              onChange={(event) => {
+            <input type="text" value={query} onChange={(event) => {
                 setQuery(event.target.value);
                 setPage(1);
-              }}
-              placeholder="Tìm ghi chú hoặc danh mục..."
+              }} placeholder="Tìm ghi chú hoặc danh mục..."
               className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
             />
           </label>
 
-          <button
-            type="button"
-            onClick={openCreateModal}
+          <button type="button" onClick={openCreateModal}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
           >
-            <Plus size={16} />
-            Thêm thu nhập
+            <Plus size={16} /> Thêm thu nhập
           </button>
         </div>
 
@@ -241,22 +238,16 @@ export default function IncomePage() {
                     <td className="px-4 py-3 text-slate-300">{row.note || "-"}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEditModal(row)}
+                        <button type="button" onClick={() => openEditModal(row)}
                           className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
                         >
-                          <Pencil size={14} />
-                          Sửa
+                          <Pencil size={14} /> Sửa
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(row.id)}
+                        <button type="button" onClick={() => handleDelete(row.id)}
                           className="inline-flex items-center gap-1 rounded-xl border border-rose-300/30 bg-rose-400/10 px-2.5 py-1.5 text-xs text-rose-100 transition hover:bg-rose-400/20"
                         >
-                          <Trash2 size={14} />
-                          Xóa
+                          <Trash2 size={14} /> Xóa
                         </button>
                       </div>
                     </td>
@@ -277,9 +268,7 @@ export default function IncomePage() {
           <p>Hiển thị {resultStart}-{resultEnd} trong tổng số {totalElements} bản ghi</p>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+            <button type="button" onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               disabled={page === 1}
               className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -288,9 +277,7 @@ export default function IncomePage() {
 
             <span className="rounded-xl border border-cyan-300/40 bg-cyan-400/10 px-3 py-1.5 text-cyan-100">{page} / {totalPages}</span>
 
-            <button
-              type="button"
-              onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+            <button type="button" onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={page === totalPages}
               className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -309,9 +296,7 @@ export default function IncomePage() {
                 <h4 className="mt-2 text-xl font-semibold text-white">{editingId === null ? "Thêm thu nhập" : "Cập nhật thu nhập"}</h4>
               </div>
 
-              <button
-                type="button"
-                onClick={closeModal}
+              <button type="button" onClick={closeModal}
                 className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
                 aria-label="Đóng"
               >
@@ -323,10 +308,7 @@ export default function IncomePage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="income-date" className="mb-2 block text-sm text-slate-300">Ngày</label>
-                  <input
-                    id="income-date"
-                    type="date"
-                    value={form.date}
+                  <input id="income-date" type="date" value={form.date}
                     onChange={(event) => setForm((prev) => ({ ...prev, date: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
@@ -335,11 +317,7 @@ export default function IncomePage() {
 
                 <div>
                   <label htmlFor="income-amount" className="mb-2 block text-sm text-slate-300">Số tiền</label>
-                  <input
-                    id="income-amount"
-                    type="number"
-                    min="0"
-                    value={form.amount}
+                  <input id="income-amount" type="number" min="0" value={form.amount}
                     onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
                     placeholder="Ví dụ: 2500000"
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
@@ -349,9 +327,7 @@ export default function IncomePage() {
 
                 <div className="md:col-span-2">
                   <label htmlFor="income-category" className="mb-2 block text-sm text-slate-300">Danh mục</label>
-                  <select
-                    id="income-category"
-                    value={form.categoryId}
+                  <select id="income-category" value={form.categoryId}
                     onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   >
@@ -367,10 +343,7 @@ export default function IncomePage() {
 
               <div>
                 <label htmlFor="income-note" className="mb-2 block text-sm text-slate-300">Ghi chú</label>
-                <textarea
-                  id="income-note"
-                  rows={3}
-                  value={form.note}
+                <textarea id="income-note" rows={3} value={form.note}
                   onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
                   placeholder="Mô tả ngắn cho giao dịch"
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
@@ -379,16 +352,13 @@ export default function IncomePage() {
               </div>
 
               <div className="flex flex-wrap justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
+                <button type="button" onClick={closeModal}
                   className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
                 >
                   Hủy
                 </button>
 
-                <button
-                  type="submit"
+                <button type="submit" 
                   className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
                 >
                   {editingId === null ? "Lưu giao dịch" : "Cập nhật"}

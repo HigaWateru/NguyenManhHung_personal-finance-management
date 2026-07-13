@@ -27,14 +27,10 @@ export default function LoginPage() {
     const nextErrors = validateLoginForm(values);
     setErrors(nextErrors);
 
-    if (Object.keys(nextErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(nextErrors).length > 0) return;
 
     const result = await dispatch(login({ email: values.email, password: values.password }));
-    if (login.fulfilled.match(result)) {
-      navigate("/", { replace: true });
-    }
+    if (login.fulfilled.match(result)) navigate("/", { replace: true });
   };
 
   return (
@@ -75,10 +71,7 @@ export default function LoginPage() {
                 <span className="mb-2 block text-sm text-slate-300">Email</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.email ? "border-rose-400/50" : "border-white/10"}`}>
                   <Mail size={18} className="text-cyan-300/80" />
-                  <input
-                    type="email"
-                    placeholder="yourname@example.com"
-                    value={values.email}
+                  <input type="email" placeholder="yourname@example.com" value={values.email}
                     onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
                   />
@@ -92,9 +85,7 @@ export default function LoginPage() {
                 <span className="mb-2 block text-sm text-slate-300">Mật khẩu</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.password ? "border-rose-400/50" : "border-white/10"}`}>
                   <LockKeyhole size={18} className="text-cyan-300/80" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                  <input type={showPassword ? "text" : "password"} placeholder="Enter your password"
                     value={values.password}
                     onChange={(event) => setValues((current) => ({ ...current, password: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
@@ -110,9 +101,7 @@ export default function LoginPage() {
 
               <div className="flex items-center justify-between gap-4 text-sm text-slate-400">
                 <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={values.rememberMe}
+                  <input type="checkbox" checked={values.rememberMe}
                     onChange={(event) => setValues((current) => ({ ...current, rememberMe: event.target.checked }))}
                     className="h-4 w-4 rounded border-white/20 bg-white/5 text-cyan-400"
                   />
@@ -123,9 +112,7 @@ export default function LoginPage() {
 
               {error && <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
 
-              <button
-                type="submit"
-                disabled={loading}
+              <button type="submit" disabled={loading}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 via-blue-500 to-sky-300 px-4 py-3 font-semibold text-slate-950 transition hover:brightness-110"
               >
                 {loading ? "Đang đăng nhập..." : "Đăng nhập"}

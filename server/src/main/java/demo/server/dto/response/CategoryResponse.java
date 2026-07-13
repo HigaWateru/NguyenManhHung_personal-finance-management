@@ -8,6 +8,7 @@ public record CategoryResponse(
         String name,
         CategoryType type,
         String description,
+        long transactionCount,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {

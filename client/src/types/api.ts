@@ -48,6 +48,7 @@ export type CategoryItem = {
   name: string;
   type: CategoryType;
   description: string | null;
+  transactionCount: number;
   createdAt: string;
   updatedAt: string;
 };

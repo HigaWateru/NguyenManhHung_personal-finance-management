@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { apiService, type LoginInput, type RegisterInput } from "../../apis/service";
+import { apiService, type LoginInput, type ProfileUpdateInput, type RegisterInput } from "../../apis/service";
 import { extractApiError } from "../../apis/http";
 import type { UserProfile } from "../../types/api";
 import { clearAuthTokens, getAccessToken, getRefreshToken, saveAuthTokens } from "../../utils/auth";
@@ -24,9 +24,7 @@ export const initializeAuth = createAsyncThunk<UserProfile | null, void, { rejec
   "auth/initialize",
   async (_, thunkApi) => {
     try {
-      if (!getAccessToken()) {
-        return null;
-      }
+      if (!getAccessToken()) return null;
 
       const profile = await apiService.getProfile();
       return profile;
@@ -72,14 +70,34 @@ export const fetchProfile = createAsyncThunk<UserProfile, void, { rejectValue: s
   },
 );
 
+export const updateProfile = createAsyncThunk<UserProfile, ProfileUpdateInput, { rejectValue: string }>(
+  "auth/updateProfile",
+  async (payload, thunkApi) => {
+    try {
+      return await apiService.updateProfile(payload);
+    } catch (error) {
+      return thunkApi.rejectWithValue(extractApiError(error, "Không thể cập nhật hồ sơ."));
+    }
+  },
+);
+
+export const uploadAvatar = createAsyncThunk<UserProfile, File, { rejectValue: string }>(
+  "auth/uploadAvatar",
+  async (file, thunkApi) => {
+    try {
+      return await apiService.uploadAvatar(file);
+    } catch (error) {
+      return thunkApi.rejectWithValue(extractApiError(error, "Không thể tải lên ảnh đại diện."));
+    }
+  },
+);
+
 export const logout = createAsyncThunk<void, void, { rejectValue: string }>(
   "auth/logout",
   async (_, thunkApi) => {
     try {
       const refreshToken = getRefreshToken();
-      if (refreshToken) {
-        await apiService.logout(refreshToken);
-      }
+      if (refreshToken) await apiService.logout(refreshToken);
       clearAuthTokens();
     } catch (error) {
       clearAuthTokens();
@@ -153,6 +171,32 @@ const authSlide = createSlice({
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Không thể tải hồ sơ.";
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Không thể cập nhật hồ sơ.";
+      })
+      .addCase(uploadAvatar.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadAvatar.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(uploadAvatar.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Không thể tải lên ảnh đại diện.";
       })
       .addCase(logout.pending, (state) => {
         state.loading = true;

@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
-import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
-import { apiService } from "../../apis/service";
-import { extractApiError } from "../../apis/http";
-import type { CategoryItem } from "../../types/api";
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { Pencil, Plus, Search, Trash2, X } from "lucide-react"
+import { apiService } from "../../apis/service"
+import { extractApiError } from "../../apis/http"
+import type { CategoryItem } from "../../types/api"
 
 type ExpenseRecord = {
-  id: number;
-  date: string;
-  categoryId: number;
-  category: string;
-  amount: number;
-  note: string;
-};
+  id: number
+  date: string
+  categoryId: number
+  category: string
+  amount: number
+  note: string
+}
 
 type ExpenseFormState = {
-  date: string;
-  categoryId: string;
-  amount: string;
-  note: string;
-};
+  date: string
+  categoryId: string
+  amount: string
+  note: string
+}
 
 type FormErrors = Partial<Record<keyof ExpenseFormState, string>>;
 
@@ -29,59 +29,54 @@ const emptyForm = (): ExpenseFormState => ({
   categoryId: "",
   amount: "",
   note: "",
-});
+})
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
     maximumFractionDigits: 0,
-  }).format(value);
+  }).format(value)
 
 const validateForm = (form: ExpenseFormState): FormErrors => {
-  const errors: FormErrors = {};
+  const errors: FormErrors = {}
 
-  if (!form.date.trim()) errors.date = "Vui lòng chọn ngày";
-  if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục";
+  if (!form.date.trim()) errors.date = "Vui lòng chọn ngày"
+  if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục"
 
-  const amount = Number(form.amount);
-  if (!form.amount.trim()) {
-    errors.amount = "Số tiền không được để trống";
-  } else if (!Number.isFinite(amount) || amount <= 0) {
-    errors.amount = "Số tiền phải lớn hơn 0";
-  }
+  const amount = Number(form.amount)
+  if (!form.amount.trim()) errors.amount = "Số tiền không được để trống"
+  else if (!Number.isFinite(amount) || amount <= 0) errors.amount = "Số tiền phải lớn hơn 0"
 
-  if (form.note.length > 255) {
-    errors.note = "Ghi chú tối đa 255 ký tự";
-  }
+  if (form.note.length > 255) errors.note = "Ghi chú tối đa 255 ký tự"
 
-  return errors;
-};
+  return errors
+}
 
 export default function ExpensePage() {
-  const [records, setRecords] = useState<ExpenseRecord[]>([]);
-  const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalElements, setTotalElements] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [records, setRecords] = useState<ExpenseRecord[]>([])
+  const [categories, setCategories] = useState<CategoryItem[]>([])
+  const [query, setQuery] = useState("")
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalElements, setTotalElements] = useState(0)
+  const [loading, setLoading] = useState(true)
   const [apiError, setApiError] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [form, setForm] = useState<ExpenseFormState>(emptyForm());
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<ExpenseFormState>(emptyForm())
+  const [errors, setErrors] = useState<FormErrors>({})
 
-  const fetchData = async () => {
-    setLoading(true);
-    setApiError(null);
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    setApiError(null)
 
     try {
       const [expensePage, expenseCategories] = await Promise.all([
         apiService.getExpenses({ page: page - 1, size: PAGE_SIZE, keyword: query || undefined }),
         apiService.getCategories("EXPENSE"),
-      ]);
+      ])
 
       setRecords(
         expensePage.content.map((item) => ({
@@ -101,55 +96,59 @@ export default function ExpensePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, query])
 
   useEffect(() => {
-    void fetchData();
-  }, [page, query]);
+    const timerId = window.setTimeout(() => {
+      void fetchData()
+    }, 0)
+
+    return () => window.clearTimeout(timerId)
+  }, [fetchData])
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingId(null);
-    setForm(emptyForm());
-    setErrors({});
+    setIsModalOpen(false)
+    setEditingId(null)
+    setForm(emptyForm())
+    setErrors({})
   };
 
   const openCreateModal = () => {
-    setEditingId(null);
-    setForm(emptyForm());
-    setErrors({});
-    setIsModalOpen(true);
+    setEditingId(null)
+    setForm(emptyForm())
+    setErrors({})
+    setIsModalOpen(true)
   };
 
   const openEditModal = (record: ExpenseRecord) => {
-    setEditingId(record.id);
+    setEditingId(record.id)
     setForm({
       date: record.date,
       categoryId: String(record.categoryId),
       amount: String(record.amount),
       note: record.note,
-    });
-    setErrors({});
-    setIsModalOpen(true);
-  };
+    })
+    setErrors({})
+    setIsModalOpen(true)
+  }
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Xóa giao dịch chi tiêu này?")) return;
+    if (!window.confirm("Xóa giao dịch chi tiêu này?")) return
 
     try {
-      await apiService.deleteExpense(id);
-      await fetchData();
+      await apiService.deleteExpense(id)
+      await fetchData()
     } catch (error) {
-      setApiError(extractApiError(error, "Xóa giao dịch thất bại."));
+      setApiError(extractApiError(error, "Xóa giao dịch thất bại."))
     }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const validationErrors = validateForm(form);
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    const validationErrors = validateForm(form)
+    setErrors(validationErrors)
+    if (Object.keys(validationErrors).length > 0) return
 
     const payload = {
       transactionDate: form.date,
@@ -197,25 +196,18 @@ export default function ExpensePage() {
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
             <Search size={16} className="text-cyan-300/80" />
-            <input
-              type="text"
-              value={query}
-              onChange={(event) => {
+            <input type="text" value={query} onChange={(event) => {
                 setQuery(event.target.value);
                 setPage(1);
-              }}
-              placeholder="Tìm ghi chú hoặc danh mục..."
+              }} placeholder="Tìm ghi chú hoặc danh mục..."
               className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
             />
           </label>
 
-          <button
-            type="button"
-            onClick={openCreateModal}
+          <button type="button" onClick={openCreateModal}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
           >
-            <Plus size={16} />
-            Thêm chi tiêu
+            <Plus size={16} /> Thêm chi tiêu
           </button>
         </div>
 
@@ -241,22 +233,16 @@ export default function ExpensePage() {
                     <td className="px-4 py-3 text-slate-300">{row.note || "-"}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEditModal(row)}
+                        <button type="button" onClick={() => openEditModal(row)}
                           className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
                         >
-                          <Pencil size={14} />
-                          Sửa
+                          <Pencil size={14} /> Sửa
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(row.id)}
+                        <button type="button" onClick={() => handleDelete(row.id)}
                           className="inline-flex items-center gap-1 rounded-xl border border-rose-300/30 bg-rose-400/10 px-2.5 py-1.5 text-xs text-rose-100 transition hover:bg-rose-400/20"
                         >
-                          <Trash2 size={14} />
-                          Xóa
+                          <Trash2 size={14} /> Xóa
                         </button>
                       </div>
                     </td>
@@ -264,9 +250,7 @@ export default function ExpensePage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
-                    Không có dữ liệu phù hợp.
-                  </td>
+                  <td colSpan={5} className="px-4 py-10 text-center text-slate-400"> Không có dữ liệu phù hợp. </td>
                 </tr>
               )}
             </tbody>
@@ -277,10 +261,7 @@ export default function ExpensePage() {
           <p>Hiển thị {resultStart}-{resultEnd} trong tổng số {totalElements} bản ghi</p>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              disabled={page === 1}
+            <button type="button" onClick={() => setPage((prev) => Math.max(1, prev - 1))} disabled={page === 1}
               className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Trước
@@ -288,9 +269,7 @@ export default function ExpensePage() {
 
             <span className="rounded-xl border border-cyan-300/40 bg-cyan-400/10 px-3 py-1.5 text-cyan-100">{page} / {totalPages}</span>
 
-            <button
-              type="button"
-              onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+            <button type="button" onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={page === totalPages}
               className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -308,10 +287,7 @@ export default function ExpensePage() {
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/70">Expense Form</p>
                 <h4 className="mt-2 text-xl font-semibold text-white">{editingId === null ? "Thêm chi tiêu" : "Cập nhật chi tiêu"}</h4>
               </div>
-
-              <button
-                type="button"
-                onClick={closeModal}
+              <button type="button" onClick={closeModal}
                 className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
                 aria-label="Đóng"
               >
@@ -323,10 +299,7 @@ export default function ExpensePage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="expense-date" className="mb-2 block text-sm text-slate-300">Ngày</label>
-                  <input
-                    id="expense-date"
-                    type="date"
-                    value={form.date}
+                  <input id="expense-date" type="date" value={form.date}
                     onChange={(event) => setForm((prev) => ({ ...prev, date: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
@@ -335,11 +308,7 @@ export default function ExpensePage() {
 
                 <div>
                   <label htmlFor="expense-amount" className="mb-2 block text-sm text-slate-300">Số tiền</label>
-                  <input
-                    id="expense-amount"
-                    type="number"
-                    min="0"
-                    value={form.amount}
+                  <input id="expense-amount" type="number" min="0" value={form.amount}
                     onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
                     placeholder="Ví dụ: 350000"
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
@@ -349,9 +318,7 @@ export default function ExpensePage() {
 
                 <div className="md:col-span-2">
                   <label htmlFor="expense-category" className="mb-2 block text-sm text-slate-300">Danh mục</label>
-                  <select
-                    id="expense-category"
-                    value={form.categoryId}
+                  <select id="expense-category" value={form.categoryId}
                     onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   >
@@ -367,10 +334,7 @@ export default function ExpensePage() {
 
               <div>
                 <label htmlFor="expense-note" className="mb-2 block text-sm text-slate-300">Ghi chú</label>
-                <textarea
-                  id="expense-note"
-                  rows={3}
-                  value={form.note}
+                <textarea id="expense-note" rows={3} value={form.note}
                   onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
                   placeholder="Mô tả ngắn cho giao dịch"
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
@@ -379,16 +343,13 @@ export default function ExpensePage() {
               </div>
 
               <div className="flex flex-wrap justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
+                <button type="button" onClick={closeModal}
                   className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
                 >
                   Hủy
                 </button>
 
-                <button
-                  type="submit"
+                <button type="submit"
                   className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
                 >
                   {editingId === null ? "Lưu giao dịch" : "Cập nhật"}

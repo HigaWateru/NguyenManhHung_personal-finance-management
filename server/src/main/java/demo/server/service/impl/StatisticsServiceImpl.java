@@ -87,10 +87,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<CategoryAmountProjection> incomeByCategory = incomeRepository.sumAmountGroupByCategory(userId, fromDate, toDate);
         List<CategoryAmountProjection> expenseByCategory = expenseRepository.sumAmountGroupByCategory(userId, fromDate, toDate);
 
-        BigDecimal total = sumCategoryTotals(incomeByCategory).add(sumCategoryTotals(expenseByCategory));
+        BigDecimal totalIncome = sumCategoryTotals(incomeByCategory);
+        BigDecimal totalExpense = sumCategoryTotals(expenseByCategory);
 
-        incomeByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.INCOME, total)));
-        expenseByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.EXPENSE, total)));
+        incomeByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.INCOME, totalIncome)));
+        expenseByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.EXPENSE, totalExpense)));
 
         results.sort(
                 Comparator.comparing(CategoryStatisticsResponse::totalAmount, Comparator.reverseOrder())

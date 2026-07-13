@@ -7,5 +7,5 @@ export default function Footer() {
         <p>React + TypeScript + Tailwind</p>
       </div>
     </footer>
-  );
+  )
 }

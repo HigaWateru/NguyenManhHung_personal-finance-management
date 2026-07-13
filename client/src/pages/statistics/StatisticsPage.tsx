@@ -1,19 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import {Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer,
+  Tooltip, XAxis, YAxis, } from "recharts";
 import { apiService } from "../../apis/service";
 import { extractApiError } from "../../apis/http";
 import type { StatisticsData } from "../../types/api";
@@ -41,7 +28,28 @@ const expenseByCategory = [
   { name: "Sức khỏe", value: 12, amount: 2.1 },
 ];
 
-const pieColors = ["#22d3ee", "#38bdf8", "#3b82f6", "#0ea5e9", "#14b8a6"];
+const pieColors = [
+  "#22d3ee", // Cyan
+  "#f43f5e", // Rose
+  "#3b82f6", // Blue
+  "#10b981", // Emerald
+  "#8b5cf6", // Purple
+  "#f59e0b", // Amber
+  "#ec4899", // Pink
+  "#14b8a6", // Teal
+  "#6366f1", // Indigo
+  "#f97316", // Orange
+  "#a855f7", // Violet
+  "#06b6d4", // Light Cyan
+  "#84cc16", // Lime
+  "#e11d48", // Crimson
+  "#d946ef", // Fuchsia
+  "#0ea5e9", // Sky Blue
+  "#facc15", // Yellow
+  "#22c55e", // Green
+  "#fbbf24", // Gold
+  "#fb7185", // Soft Rose
+];
 
 const formatMoney = (value: number) => `${value.toFixed(1)}M`;
 const formatTooltipMoney = (value: unknown) => formatMoney(Number(value ?? 0));
@@ -71,9 +79,7 @@ export default function StatisticsPage() {
   }, [selectedYear]);
 
   const monthlyChartData = useMemo(() => {
-    if (!stats?.monthlyStatistics?.length) {
-      return monthlyFinance;
-    }
+    if (!stats?.monthlyStatistics?.length) return monthlyFinance;
 
     return stats.monthlyStatistics.map((item) => ({
       month: `T${item.month}`,
@@ -84,31 +90,22 @@ export default function StatisticsPage() {
   }, [stats]);
 
   const categoryChartData = useMemo(() => {
-    if (!stats?.categoryStatistics?.length) {
-      return expenseByCategory;
-    }
+    if (!stats?.categoryStatistics?.length) return expenseByCategory;
 
     const expenseCategories = stats.categoryStatistics.filter((item) => item.type === "EXPENSE");
-    if (!expenseCategories.length) {
-      return expenseByCategory;
-    }
+    if (!expenseCategories.length) return expenseByCategory;
 
     return expenseCategories.map((item) => {
-      const rawPercentage = Number(item.percentage);
-      const normalizedPercentage = rawPercentage > 1 ? rawPercentage : rawPercentage * 100;
-
       return {
         name: item.categoryName,
-        value: Number(normalizedPercentage.toFixed(2)),
+        value: Number(Number(item.percentage || 0).toFixed(2)),
         amount: Number(item.totalAmount) / 1_000_000,
       };
     });
   }, [stats]);
 
   const availableYears = useMemo(() => {
-    if (!stats?.yearlyStatistics?.length) {
-      return [selectedYear, selectedYear - 1, selectedYear - 2];
-    }
+    if (!stats?.yearlyStatistics?.length) return [selectedYear, selectedYear - 1, selectedYear - 2];
 
     return Array.from(new Set(stats.yearlyStatistics.map((item) => item.year))).sort((a, b) => b - a);
   }, [stats, selectedYear]);
@@ -130,9 +127,7 @@ export default function StatisticsPage() {
         <div className="mt-5 grid gap-3 md:grid-cols-4">
           <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
             Năm
-            <select
-              value={selectedYear}
-              onChange={(event) => setSelectedYear(Number(event.target.value))}
+            <select value={selectedYear} onChange={(event) => setSelectedYear(Number(event.target.value))}
               className="mt-1 w-full bg-transparent text-white outline-none"
             >
               {availableYears.map((year) => (
@@ -187,8 +182,7 @@ export default function StatisticsPage() {
                 <CartesianGrid strokeDasharray="4 4" stroke="rgba(148, 163, 184, 0.15)" />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} tickFormatter={formatMoney} />
-                <Tooltip
-                  contentStyle={{
+                <Tooltip contentStyle={{
                     background: "rgba(15, 23, 42, 0.92)",
                     border: "1px solid rgba(34, 211, 238, 0.2)",
                     borderRadius: "14px",
@@ -209,10 +203,7 @@ export default function StatisticsPage() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={categoryChartData}
-                  dataKey="value"
-                  nameKey="name"
+                <Pie data={categoryChartData} dataKey="value" nameKey="name"
                   innerRadius={62}
                   outerRadius={96}
                   paddingAngle={2}
@@ -255,8 +246,7 @@ export default function StatisticsPage() {
                 <CartesianGrid strokeDasharray="4 4" stroke="rgba(148, 163, 184, 0.15)" />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} tickFormatter={formatMoney} />
-                <Tooltip
-                  contentStyle={{
+                <Tooltip contentStyle={{
                     background: "rgba(15, 23, 42, 0.92)",
                     border: "1px solid rgba(34, 211, 238, 0.2)",
                     borderRadius: "14px",
@@ -265,33 +255,12 @@ export default function StatisticsPage() {
                   formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="net"
-                  name="Số dư ròng"
-                  stroke="#22d3ee"
-                  strokeWidth={3}
-                  dot={{ r: 3, fill: "#22d3ee" }}
-                  activeDot={{ r: 6 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  name="Thu nhập"
-                  stroke="#38bdf8"
-                  strokeWidth={2}
-                  strokeDasharray="5 4"
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expense"
-                  name="Chi tiêu"
-                  stroke="#fb7185"
-                  strokeWidth={2}
-                  strokeDasharray="5 4"
-                  dot={false}
-                />
+                <Line type="monotone" dataKey="net" name="Số dư ròng" stroke="#22d3ee"
+                  strokeWidth={3} dot={{ r: 3, fill: "#22d3ee" }} activeDot={{ r: 6 }}/>
+                <Line type="monotone" dataKey="income" name="Thu nhập" stroke="#38bdf8"
+                  strokeWidth={2} strokeDasharray="5 4" dot={false}/>
+                <Line type="monotone" dataKey="expense" name="Chi tiêu" stroke="#fb7185"
+                  strokeWidth={2} strokeDasharray="5 4" dot={false}/>
               </LineChart>
             </ResponsiveContainer>
           </div>

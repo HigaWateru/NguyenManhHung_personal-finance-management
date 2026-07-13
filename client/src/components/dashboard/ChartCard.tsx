@@ -1,12 +1,12 @@
 type WeekFlowItem = {
-  day: string;
-  income: number;
-  expense: number;
-};
+  day: string
+  income: number
+  expense: number
+}
 
 type ChartCardProps = {
-  data?: WeekFlowItem[];
-};
+  data?: WeekFlowItem[]
+}
 
 const defaultData: WeekFlowItem[] = [
   { day: "T2", income: 72, expense: 44 },
@@ -16,7 +16,7 @@ const defaultData: WeekFlowItem[] = [
   { day: "T6", income: 77, expense: 61 },
   { day: "T7", income: 96, expense: 67 },
   { day: "CN", income: 84, expense: 52 },
-];
+]
 
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("vi-VN", {
@@ -26,10 +26,10 @@ const formatMoney = (value: number) =>
   }).format(value);
 
 export default function ChartCard({ data }: ChartCardProps) {
-  const cashFlowByDay = data && data.length > 0 ? data : defaultData;
-  const maxValue = Math.max(1, ...cashFlowByDay.flatMap((item) => [item.income, item.expense]));
+  const cashFlowByDay = data && data.length > 0 ? data : defaultData
+  const maxValue = Math.max(1, ...cashFlowByDay.flatMap((item) => [item.income, item.expense]))
 
-  const toPercent = (value: number) => (value / maxValue) * 100;
+  const toPercent = (value: number) => (value / maxValue) * 100
 
   return (
     <article className="glass-panel rounded-3xl p-5">
@@ -52,13 +52,11 @@ export default function ChartCard({ data }: ChartCardProps) {
         {cashFlowByDay.map((item) => (
           <div key={item.day} className="flex flex-1 flex-col items-center gap-2">
             <div className="flex h-44 w-full items-end justify-center gap-1 rounded-xl bg-slate-950/40 p-2">
-              <div
-                className="w-1/2 rounded-sm bg-gradient-to-t from-emerald-500 to-emerald-300"
+              <div className="w-1/2 rounded-sm bg-gradient-to-t from-emerald-500 to-emerald-300"
                 style={{ height: `${toPercent(item.income)}%` }}
                 title={`Thu vào: ${formatMoney(item.income)}`}
               />
-              <div
-                className="w-1/2 rounded-sm bg-gradient-to-t from-rose-500 to-rose-300"
+              <div className="w-1/2 rounded-sm bg-gradient-to-t from-rose-500 to-rose-300"
                 style={{ height: `${toPercent(item.expense)}%` }}
                 title={`Chi ra: ${formatMoney(item.expense)}`}
               />
@@ -74,5 +72,5 @@ export default function ChartCard({ data }: ChartCardProps) {
         ))}
       </div>
     </article>
-  );
+  )
 }

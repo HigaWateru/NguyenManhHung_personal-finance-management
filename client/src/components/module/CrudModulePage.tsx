@@ -1,34 +1,26 @@
-import { Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react"
 
 type CrudColumn = {
-  key: string;
-  label: string;
-  align?: "left" | "right";
-};
+  key: string
+  label: string
+  align?: "left" | "right"
+}
 
-type CrudRow = Record<string, string>;
+type CrudRow = Record<string, string>
 
 type CrudModulePageProps = {
-  kicker: string;
-  title: string;
-  description: string;
-  entities: string[];
-  columns: CrudColumn[];
-  rows: CrudRow[];
-  actionLabel: string;
-  filterPlaceholder: string;
-};
+  kicker: string
+  title: string
+  description: string
+  entities: string[]
+  columns: CrudColumn[]
+  rows: CrudRow[]
+  actionLabel: string
+  filterPlaceholder: string
+}
 
-export default function CrudModulePage({
-  kicker,
-  title,
-  description,
-  entities,
-  columns,
-  rows,
-  actionLabel,
-  filterPlaceholder,
-}: CrudModulePageProps) {
+export default function CrudModulePage({kicker, title, description, entities, columns, rows, actionLabel,
+  filterPlaceholder}: CrudModulePageProps) {
   return (
     <section className="space-y-6">
       <header className="glass-panel rounded-[2rem] p-6 sm:p-8">
@@ -49,19 +41,15 @@ export default function CrudModulePage({
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
             <Search size={16} className="text-cyan-300/80" />
-            <input
-              type="text"
-              placeholder={filterPlaceholder}
+            <input type="text" placeholder={filterPlaceholder}
               className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
             />
           </label>
 
-          <button
-            type="button"
+          <button type="button"
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
           >
-            <Plus size={16} />
-            {actionLabel}
+            <Plus size={16} /> {actionLabel}
           </button>
         </div>
 

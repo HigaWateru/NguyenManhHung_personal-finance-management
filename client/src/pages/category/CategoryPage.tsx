@@ -1,28 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
-import { Pencil, Plus, Trash2, X } from "lucide-react";
-import { apiService } from "../../apis/service";
-import { extractApiError } from "../../apis/http";
-import type { CategoryType } from "../../types/api";
+import { useCallback, useEffect, useState } from "react"
+import { Pencil, Plus, Trash2, X } from "lucide-react"
+import { apiService } from "../../apis/service"
+import { extractApiError } from "../../apis/http"
+import type { CategoryType } from "../../types/api"
 
-type CategoryStatus = "Hoạt động" | "Rà soát";
+type CategoryStatus = "Hoạt động" | "Rà soát"
 
 type CategoryRecord = {
-  id: number;
-  name: string;
-  type: CategoryType;
-  records: number;
-  status: CategoryStatus;
-  description: string;
-};
+  id: number
+  name: string
+  type: CategoryType
+  records: number
+  status: CategoryStatus
+  description: string
+}
 
 type CategoryFormState = {
-  name: string;
-  type: CategoryType;
-  status: CategoryStatus;
-  description: string;
-};
+  name: string
+  type: CategoryType
+  status: CategoryStatus
+  description: string
+}
 
-type FormErrors = Partial<Record<keyof CategoryFormState, string>>;
+type FormErrors = Partial<Record<keyof CategoryFormState, string>>
 
 const emptyForm = (): CategoryFormState => ({
   name: "",
@@ -32,114 +32,109 @@ const emptyForm = (): CategoryFormState => ({
 });
 
 const validateForm = (form: CategoryFormState): FormErrors => {
-  const errors: FormErrors = {};
+  const errors: FormErrors = {}
 
-  if (!form.name.trim()) {
-    errors.name = "Tên danh mục không được để trống";
-  }
-
-  if (form.description.length > 120) {
-    errors.description = "Mô tả tối đa 120 ký tự";
-  }
+  if (!form.name.trim()) errors.name = "Tên danh mục không được để trống"
+  if (form.description.length > 120) errors.description = "Mô tả tối đa 120 ký tự"
 
   return errors;
-};
+}
 
 export default function CategoryPage() {
-  const [records, setRecords] = useState<CategoryRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [form, setForm] = useState<CategoryFormState>(emptyForm());
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [records, setRecords] = useState<CategoryRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [apiError, setApiError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<CategoryFormState>(emptyForm())
+  const [errors, setErrors] = useState<FormErrors>({})
 
   const fetchCategories = useCallback(async () => {
-    setLoading(true);
-    setApiError(null);
+    setLoading(true)
+    setApiError(null)
 
     try {
-      const categories = await apiService.getCategories();
+      const categories = await apiService.getCategories()
       setRecords(
         categories.map((item) => ({
           id: item.id,
           name: item.name,
           type: item.type,
-          records: 0,
+          records: item.transactionCount || 0,
           status: "Hoạt động",
           description: item.description || "",
         })),
-      );
+      )
     } catch (error) {
-      setApiError(extractApiError(error, "Không thể tải danh sách danh mục."));
+      setApiError(extractApiError(error, "Không thể tải danh sách danh mục."))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      void fetchCategories();
-    }, 0);
+      void fetchCategories()
+    }, 0)
 
-    return () => clearTimeout(timer);
-  }, [fetchCategories]);
+    return () => clearTimeout(timer)
+  }, [fetchCategories])
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingId(null);
-    setForm(emptyForm());
-    setErrors({});
-  };
+    setIsModalOpen(false)
+    setEditingId(null)
+    setForm(emptyForm())
+    setErrors({})
+  }
 
   const openCreateModal = () => {
-    setEditingId(null);
-    setForm(emptyForm());
-    setErrors({});
-    setIsModalOpen(true);
-  };
+    setEditingId(null)
+    setForm(emptyForm())
+    setErrors({})
+    setIsModalOpen(true)
+  }
 
   const openEditModal = (record: CategoryRecord) => {
-    setEditingId(record.id);
+    setEditingId(record.id)
     setForm({
       name: record.name,
       type: record.type,
       status: record.status,
       description: record.description,
-    });
-    setErrors({});
-    setIsModalOpen(true);
+    })
+    setErrors({})
+    setIsModalOpen(true)
   };
 
   const handleDelete = async (id: number) => {
-    const record = records.find((item) => item.id === id);
-    if (!record) return;
+    const record = records.find((item) => item.id === id)
+    if (!record) return
 
     if (window.confirm(`Xóa danh mục "${record.name}"?`)) {
       try {
-        await apiService.deleteCategory(id);
-        await fetchCategories();
+        await apiService.deleteCategory(id)
+        await fetchCategories()
       } catch (error) {
-        setApiError(extractApiError(error, "Xóa danh mục thất bại."));
+        setApiError(extractApiError(error, "Xóa danh mục thất bại."))
       }
     }
-  };
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const validationErrors = validateForm(form);
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    const validationErrors = validateForm(form)
+    setErrors(validationErrors)
+    if (Object.keys(validationErrors).length > 0) return
 
-    const normalizedName = form.name.trim();
+    const normalizedName = form.name.trim()
     const duplicated = records.some(
       (item) => item.id !== editingId && item.type === form.type && item.name.toLowerCase() === normalizedName.toLowerCase(),
-    );
+    )
 
     if (duplicated) {
-      setErrors({ name: "Tên danh mục đã tồn tại trong cùng loại" });
-      return;
+      setErrors({ name: "Tên danh mục đã tồn tại trong cùng loại" })
+      return
     }
 
     const payload = {
@@ -149,18 +144,15 @@ export default function CategoryPage() {
     };
 
     try {
-      if (editingId === null) {
-        await apiService.createCategory(payload);
-      } else {
-        await apiService.updateCategory(editingId, payload);
-      }
-
-      await fetchCategories();
-      closeModal();
+      if (editingId === null) await apiService.createCategory(payload)
+      else await apiService.updateCategory(editingId, payload)
+    
+      await fetchCategories()
+      closeModal()
     } catch (error) {
-      setApiError(extractApiError(error, "Lưu danh mục thất bại."));
+      setApiError(extractApiError(error, "Lưu danh mục thất bại."))
     }
-  };
+  }
 
   return (
     <section className="space-y-6">
@@ -185,13 +177,10 @@ export default function CategoryPage() {
         {apiError && <p className="mb-4 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{apiError}</p>}
 
         <div className="flex items-center justify-end">
-          <button
-            type="button"
-            onClick={openCreateModal}
+          <button type="button" onClick={openCreateModal}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
           >
-            <Plus size={16} />
-            Tạo danh mục
+            <Plus size={16} /> Tạo danh mục
           </button>
         </div>
 
@@ -222,22 +211,16 @@ export default function CategoryPage() {
                   <td className="px-4 py-3 text-slate-300">{row.description || "-"}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => openEditModal(row)}
+                      <button type="button" onClick={() => openEditModal(row)}
                         className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
                       >
-                        <Pencil size={14} />
-                        Sửa
+                        <Pencil size={14} /> Sửa
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(row.id)}
+                      <button type="button" onClick={() => handleDelete(row.id)}
                         className="inline-flex items-center gap-1 rounded-xl border border-rose-300/30 bg-rose-400/10 px-2.5 py-1.5 text-xs text-rose-100 transition hover:bg-rose-400/20"
                       >
-                        <Trash2 size={14} />
-                        Xóa
+                        <Trash2 size={14} /> Xóa
                       </button>
                     </div>
                   </td>
@@ -257,9 +240,7 @@ export default function CategoryPage() {
                 <h4 className="mt-2 text-xl font-semibold text-white">{editingId === null ? "Tạo danh mục" : "Cập nhật danh mục"}</h4>
               </div>
 
-              <button
-                type="button"
-                onClick={closeModal}
+              <button type="button" onClick={closeModal}
                 className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
                 aria-label="Đóng"
               >
@@ -272,25 +253,19 @@ export default function CategoryPage() {
                 <label htmlFor="category-name" className="mb-2 block text-sm text-slate-300">
                   Tên danh mục
                 </label>
-                <input
-                  id="category-name"
-                  type="text"
-                  value={form.name}
+                <input id="category-name" type="text" value={form.name}
                   onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                   placeholder="Ví dụ: Lương"
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                 />
-                {errors.name && <p className="mt-1 text-xs text-rose-300">{errors.name}</p>}
+                  {errors.name && <p className="mt-1 text-xs text-rose-300">{errors.name}</p>}
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="category-type" className="mb-2 block text-sm text-slate-300">
-                    Loại
+                  <label htmlFor="category-type" className="mb-2 block text-sm text-slate-300"> Loại
                   </label>
-                  <select
-                    id="category-type"
-                    value={form.type}
+                  <select id="category-type" value={form.type}
                     onChange={(event) => setForm((prev) => ({ ...prev, type: event.target.value as CategoryType }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   >
@@ -300,12 +275,8 @@ export default function CategoryPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="category-status" className="mb-2 block text-sm text-slate-300">
-                    Trạng thái
-                  </label>
-                  <select
-                    id="category-status"
-                    value={form.status}
+                  <label htmlFor="category-status" className="mb-2 block text-sm text-slate-300">Trạng thái</label>
+                  <select id="category-status" value={form.status}
                     onChange={(event) => setForm((prev) => ({ ...prev, status: event.target.value as CategoryStatus }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   >
@@ -316,31 +287,23 @@ export default function CategoryPage() {
               </div>
 
               <div>
-                <label htmlFor="category-description" className="mb-2 block text-sm text-slate-300">
-                  Mô tả
-                </label>
-                <textarea
-                  id="category-description"
-                  rows={3}
-                  value={form.description}
+                <label htmlFor="category-description" className="mb-2 block text-sm text-slate-300"> Mô tả </label>
+                <textarea id="category-description" rows={3} value={form.description}
                   onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
                   placeholder="Mô tả ngắn cho danh mục"
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                 />
-                {errors.description && <p className="mt-1 text-xs text-rose-300">{errors.description}</p>}
+                  {errors.description && <p className="mt-1 text-xs text-rose-300">{errors.description}</p>}
               </div>
 
               <div className="flex flex-wrap justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
+                <button type="button" onClick={closeModal}
                   className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
-                >
-                  Hủy
+                > 
+                  Hủy 
                 </button>
 
-                <button
-                  type="submit"
+                <button type="submit"
                   className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
                 >
                   {editingId === null ? "Tạo danh mục" : "Cập nhật"}

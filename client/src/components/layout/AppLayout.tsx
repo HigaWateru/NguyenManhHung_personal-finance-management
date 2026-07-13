@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
-import Footer from "./Footer";
+import { useMemo, useState } from "react"
+import { Outlet, useLocation } from "react-router-dom"
+import Sidebar from "./Sidebar"
+import Header from "./Header"
+import Footer from "./Footer"
 
 const titles: Record<string, string> = {
   "/": "Tổng quan tài chính",
@@ -11,13 +11,13 @@ const titles: Record<string, string> = {
   "/category": "Quản lý danh mục",
   "/statistics": "Thống kê tài chính",
   "/profile": "Hồ sơ và bảo mật",
-};
+}
 
 export default function AppLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { pathname } = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { pathname } = useLocation()
 
-  const pageTitle = useMemo(() => titles[pathname] ?? "Smart Finance", [pathname]);
+  const pageTitle = useMemo(() => titles[pathname] ?? "Smart Finance", [pathname])
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-transparent text-slate-100 md:grid md:h-screen md:grid-cols-[18rem_minmax(0,1fr)] md:overflow-hidden">

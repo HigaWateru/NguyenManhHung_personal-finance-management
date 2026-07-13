@@ -1,21 +1,21 @@
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { recentTransactions } from "../../utils/mockData";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react"
+import { recentTransactions } from "../../utils/mockData"
 
 type DashboardTransaction = {
-  id: number;
-  title: string;
-  category: string;
-  amount: string;
-  time: string;
-  type: "income" | "expense";
-};
+  id: number
+  title: string
+  category: string
+  amount: string
+  time: string
+  type: "income" | "expense"
+}
 
 type TransactionListProps = {
-  transactions?: DashboardTransaction[];
-};
+  transactions?: DashboardTransaction[]
+}
 
 export default function TransactionList({ transactions }: TransactionListProps) {
-  const rows = transactions ?? recentTransactions;
+  const rows = transactions ?? recentTransactions
 
   return (
     <article className="glass-panel rounded-3xl p-5">
@@ -40,7 +40,7 @@ export default function TransactionList({ transactions }: TransactionListProps) 
           </thead>
           <tbody className="divide-y divide-white/10 bg-slate-950/40 text-slate-200">
             {rows.map((transaction) => {
-              const isIncome = transaction.type === "income";
+              const isIncome = transaction.type === "income"
 
               return (
                 <tr key={transaction.id} className="hover:bg-white/5">
@@ -55,11 +55,11 @@ export default function TransactionList({ transactions }: TransactionListProps) 
                   <td className="px-4 py-3 text-slate-400">{transaction.time}</td>
                   <td className={`px-4 py-3 text-right font-semibold ${isIncome ? "text-emerald-300" : "text-rose-300"}`}>{transaction.amount}</td>
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
       </div>
     </article>
-  );
+  )
 }
