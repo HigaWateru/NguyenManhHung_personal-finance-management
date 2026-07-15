@@ -1,37 +1,37 @@
-import { useState } from "react";
-import { ArrowRight, Eye, EyeOff, Mail, LockKeyhole, ShieldCheck } from "lucide-react";
-import { authHighlights } from "../../utils/mockData";
-import { Link, useNavigate } from "react-router-dom";
-import { validateLoginForm, type LoginFormErrors, type LoginFormValues } from "../../utils/authValidation";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { clearAuthError, login } from "../../redux/slides/authSlide";
+import { useState } from "react"
+import { ArrowRight, Eye, EyeOff, Mail, LockKeyhole, ShieldCheck } from "lucide-react"
+import { authHighlights } from "../../utils/mockData"
+import { Link, useNavigate } from "react-router-dom"
+import { validateLoginForm, type LoginFormErrors, type LoginFormValues } from "../../utils/authValidation"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { clearAuthError, login } from "../../redux/slides/authSlide"
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const { loading, error } = useAppSelector((state) => state.auth)
   const [values, setValues] = useState<LoginFormValues>({
     email: "",
     password: "",
     rememberMe: false,
-  });
-  const [errors, setErrors] = useState<LoginFormErrors>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  })
+  const [errors, setErrors] = useState<LoginFormErrors>({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubmitted(true);
-    dispatch(clearAuthError());
+    event.preventDefault()
+    setSubmitted(true)
+    dispatch(clearAuthError())
 
-    const nextErrors = validateLoginForm(values);
-    setErrors(nextErrors);
+    const nextErrors = validateLoginForm(values)
+    setErrors(nextErrors)
 
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0) return
 
-    const result = await dispatch(login({ email: values.email, password: values.password }));
-    if (login.fulfilled.match(result)) navigate("/", { replace: true });
-  };
+    const result = await dispatch(login({ email: values.email, password: values.password }))
+    if (login.fulfilled.match(result)) navigate("/", { replace: true })
+  }
 
   return (
     <div className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -107,7 +107,7 @@ export default function LoginPage() {
                   />
                   Ghi nhớ đăng nhập
                 </label>
-                <button type="button" className="text-cyan-300 transition hover:text-cyan-200">Quên mật khẩu?</button>
+                <Link to="/forgot-password" className="text-cyan-300 transition hover:text-cyan-200">Quên mật khẩu?</Link>
               </div>
 
               {error && <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
@@ -127,5 +127,5 @@ export default function LoginPage() {
         </section>
       </div>
     </div>
-  );
+  )
 }

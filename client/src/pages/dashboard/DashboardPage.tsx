@@ -148,12 +148,22 @@ export default function DashboardPage() {
       setDashboardError(null)
 
       try {
+        const formatLocalDate = (d: Date) => {
+          const y = d.getFullYear()
+          const m = String(d.getMonth() + 1).padStart(2, "0")
+          const r = String(d.getDate()).padStart(2, "0")
+          return `${y}-${m}-${r}`
+        }
+
         const now = new Date()
-        const toDate = now.toISOString().slice(0, 10)
-        const from = new Date(now)
-        from.setDate(now.getDate() - 6)
-        const fromDate = from.toISOString().slice(0, 10)
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+        const day = now.getDay()
+        const diffToMonday = day === 0 ? -6 : 1 - day
+        const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMonday)
+        const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6)
+
+        const fromDate = formatLocalDate(monday)
+        const toDate = formatLocalDate(sunday)
+        const startOfMonth = formatLocalDate(new Date(now.getFullYear(), now.getMonth(), 1))
 
         const [data, weeklyIncomes, weeklyExpenses, monthlyExpenses] = await Promise.all([
           apiService.getDashboard(),
@@ -194,6 +204,7 @@ export default function DashboardPage() {
             value: totalMonthlyExpense > 0 ? Number(((amount / totalMonthlyExpense) * 100).toFixed(1)) : 0,
           }))
           .sort((a, b) => b.value - a.value)
+          .slice(0, 3)
 
         setCategorySplit(split)
       } catch (error) {
@@ -257,7 +268,7 @@ export default function DashboardPage() {
                 Trung tâm điều phối dòng tiền tài chính cá nhân.
               </h3>
               <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
-                Dashboard theo project scope: tổng số dư, tổng thu, tổng chi, tiết kiệm, giao dịch gần đây và biểu đồ thống kê trên một màn hình duy nhất.
+                Dashboard: Tổng số dư, tổng thu, tổng chi, tiết kiệm, giao dịch gần đây và biểu đồ thống kê.
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">
@@ -320,7 +331,7 @@ export default function DashboardPage() {
           <Link key={item.route} to={item.route} className="glass-panel rounded-3xl p-5 transition hover:-translate-y-1">
             <p className="text-sm text-cyan-200">{item.name}</p>
             <p className="mt-3 text-sm leading-6 text-slate-300">{item.desc}</p>
-            <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">Mở module</p>
+            <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">Mở trang</p>
           </Link>
         ))}
       </section>
@@ -367,10 +378,6 @@ export default function DashboardPage() {
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="mt-6 rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-            <p className="text-sm text-cyan-100">Dữ liệu tổng kết đang được tính theo số liệu thật từ backend và cập nhật theo phiên làm việc hiện tại.</p>
           </div>
         </article>
       </section>

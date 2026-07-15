@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
-
     private static final BigDecimal ZERO = BigDecimal.ZERO;
     private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
 
@@ -42,7 +41,12 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<YearlyStatisticsResponse> yearlyStatistics = buildYearlyStatistics(userId);
         List<CategoryStatisticsResponse> categoryStatistics = buildCategoryStatistics(userId, selectedYear);
 
-        return new StatisticsResponse(selectedYear, monthlyStatistics, yearlyStatistics, categoryStatistics);
+        return StatisticsResponse.builder()
+            .selectedYear(selectedYear)
+            .monthlyStatistics(monthlyStatistics)
+            .yearlyStatistics(yearlyStatistics)
+            .categoryStatistics(categoryStatistics)
+            .build();
     }
 
     private List<MonthlyStatisticsResponse> buildMonthlyStatistics(Long userId, int year) {
@@ -57,7 +61,12 @@ public class StatisticsServiceImpl implements StatisticsService {
             BigDecimal income = incomeByMonth.getOrDefault(month, ZERO);
             BigDecimal expense = expenseByMonth.getOrDefault(month, ZERO);
 
-            results.add(new MonthlyStatisticsResponse(month, income, expense, income.subtract(expense)));
+            results.add(MonthlyStatisticsResponse.builder()
+                .month(month)
+                .income(income)
+                .expense(expense)
+                .balance(income.subtract(expense))
+                .build());
         }
 
         return results;
@@ -73,7 +82,12 @@ public class StatisticsServiceImpl implements StatisticsService {
             .map(year -> {
                 BigDecimal income = incomeByYear.getOrDefault(year, ZERO);
                 BigDecimal expense = expenseByYear.getOrDefault(year, ZERO);
-                return new YearlyStatisticsResponse(year, income, expense, income.subtract(expense));
+                return YearlyStatisticsResponse.builder()
+                    .year(year)
+                    .income(income)
+                    .expense(expense)
+                    .balance(income.subtract(expense))
+                    .build();
             })
             .toList();
     }
@@ -94,8 +108,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         expenseByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.EXPENSE, totalExpense)));
 
         results.sort(
-                Comparator.comparing(CategoryStatisticsResponse::totalAmount, Comparator.reverseOrder())
-                        .thenComparing(CategoryStatisticsResponse::categoryName)
+                Comparator.comparing(CategoryStatisticsResponse::getTotalAmount, Comparator.reverseOrder())
+                        .thenComparing(CategoryStatisticsResponse::getCategoryName)
         );
 
         return results;
@@ -110,7 +124,13 @@ public class StatisticsServiceImpl implements StatisticsService {
             percentage = amount.multiply(ONE_HUNDRED).divide(grandTotal, 2, RoundingMode.HALF_UP);
         }
 
-        return new CategoryStatisticsResponse(item.getCategoryId(), item.getCategoryName(), type, amount, percentage);
+        return CategoryStatisticsResponse.builder()
+            .categoryId(item.getCategoryId())
+            .categoryName(item.getCategoryName())
+            .type(type)
+            .totalAmount(amount)
+            .percentage(percentage)
+            .build();
     }
 
     private BigDecimal sumCategoryTotals(List<CategoryAmountProjection> items) {

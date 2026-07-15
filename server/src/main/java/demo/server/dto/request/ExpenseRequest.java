@@ -8,20 +8,31 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record ExpenseRequest(
-        @NotNull(message = "Category is required")
-        Long categoryId,
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-        @NotNull(message = "Amount is required")
-        @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
-        @Digits(integer = 12, fraction = 2, message = "Amount format is invalid")
-        BigDecimal amount,
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class ExpenseRequest {
+                @NotNull(message = "Category is required")
+                private Long categoryId;
 
-        @NotNull(message = "Transaction date is required")
-        @PastOrPresent(message = "Transaction date cannot be in the future")
-        LocalDate transactionDate,
+                @NotNull(message = "Amount is required")
+                @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
+                @Digits(integer = 12, fraction = 2, message = "Amount format is invalid")
+                private BigDecimal amount;
 
-        @Size(max = 255, message = "Note must not exceed 255 characters")
-        String note
-) {
+                @NotNull(message = "Transaction date is required")
+                @PastOrPresent(message = "Transaction date cannot be in the future")
+                private LocalDate transactionDate;
+
+                @Size(max = 255, message = "Note must not exceed 255 characters")
+                private String note;
 }

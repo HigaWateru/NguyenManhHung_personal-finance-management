@@ -4,9 +4,7 @@ import demo.server.exception.ApiException;
 import java.time.LocalDate;
 
 public final class ServiceInputUtils {
-
-    private ServiceInputUtils() {
-    }
+    private ServiceInputUtils() {}
 
     public static void validateDateRange(LocalDate fromDate, LocalDate toDate) {
         if (fromDate != null && toDate != null && fromDate.isAfter(toDate)) {
@@ -15,9 +13,7 @@ public final class ServiceInputUtils {
     }
 
     public static String normalizeOptionalText(String value) {
-        if (value == null) {
-            return null;
-        }
+        if (value == null) return null;
 
         String normalized = value.trim();
         return normalized.isEmpty() ? null : normalized;

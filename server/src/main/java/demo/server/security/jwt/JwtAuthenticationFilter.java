@@ -25,8 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -54,18 +54,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        CurrentUserPrincipal principal = new CurrentUserPrincipal(
-            user.getId(),
-            user.getEmail(),
-            user.getFullName(),
-            user.isActive()
-        );
+        java.util.Date issuedAt = jwtTokenProvider.extractIssuedAt(token);
+        if (user.getCredentialsUpdatedAt() != null && issuedAt.before(java.sql.Timestamp.valueOf(user.getCredentialsUpdatedAt()))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        CurrentUserPrincipal principal = CurrentUserPrincipal.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .active(user.isActive())
+                .build();
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 principal,
                 null,
-                Collections.emptyList()
-        );
+                Collections.emptyList());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 

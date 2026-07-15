@@ -1,4 +1,15 @@
 package demo.server.dto.response;
 
-public record MessageResponse(String message) {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class MessageResponse {
+    private String message;
 }

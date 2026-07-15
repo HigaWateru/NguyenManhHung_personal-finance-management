@@ -1,37 +1,37 @@
-import { useState } from "react";
-import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, UserRound, ShieldCheck } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { authHighlights } from "../../utils/mockData";
-import { validateRegisterForm, type RegisterFormErrors, type RegisterFormValues } from "../../utils/authValidation";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { clearAuthError, register } from "../../redux/slides/authSlide";
+import { useState } from "react"
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, UserRound, ShieldCheck } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { authHighlights } from "../../utils/mockData"
+import { validateRegisterForm, type RegisterFormErrors, type RegisterFormValues } from "../../utils/authValidation"
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import { clearAuthError, register } from "../../redux/slides/authSlide"
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const { loading, error } = useAppSelector((state) => state.auth)
   const [values, setValues] = useState<RegisterFormValues>({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  });
-  const [errors, setErrors] = useState<RegisterFormErrors>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  })
+  const [errors, setErrors] = useState<RegisterFormErrors>({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubmitted(true);
-    dispatch(clearAuthError());
+    event.preventDefault()
+    setSubmitted(true)
+    dispatch(clearAuthError())
 
-    const nextErrors = validateRegisterForm(values);
-    setErrors(nextErrors);
+    const nextErrors = validateRegisterForm(values)
+    setErrors(nextErrors)
 
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0) return
 
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Ho_Chi_Minh";
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Ho_Chi_Minh"
     const result = await dispatch(register({
       fullName: values.name,
       email: values.email,
@@ -39,10 +39,10 @@ export default function RegisterPage() {
       confirmPassword: values.confirmPassword,
       timezone,
       currencyCode: "VND",
-    }));
+    }))
 
-    if (register.fulfilled.match(result)) navigate("/login", { replace: true });
-  };
+    if (register.fulfilled.match(result)) navigate("/login", { replace: true })
+  }
 
   return (
     <div className="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
@@ -160,5 +160,5 @@ export default function RegisterPage() {
         </section>
       </div>
     </div>
-  );
+  )
 }

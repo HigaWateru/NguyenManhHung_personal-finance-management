@@ -29,7 +29,7 @@ public class StatisticsController {
         @Max(value = 2100, message = "Year must be less than or equal to 2100") Integer year
     ) {
         return ResponseEntity.ok(
-            ApiResponse.success("Statistics fetched successfully", statisticsService.getStatistics(principal.id(), year))
+            ApiResponse.success("Statistics fetched successfully", statisticsService.getStatistics(principal.getId(), year))
         );
     }
 }

@@ -65,6 +65,9 @@ public class User extends BaseEntity {
     @Builder.Default
     private boolean active = true;
 
+    @Column(name = "credentials_updated_at")
+    private java.time.LocalDateTime credentialsUpdatedAt;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -93,5 +96,13 @@ public class User extends BaseEntity {
 
     public void updateAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public void updatePassword(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void updateCredentialsUpdatedAt(java.time.LocalDateTime credentialsUpdatedAt) {
+        this.credentialsUpdatedAt = credentialsUpdatedAt;
     }
 }

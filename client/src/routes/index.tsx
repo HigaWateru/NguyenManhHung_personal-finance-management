@@ -1,15 +1,16 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import AppLayout from "../components/layout/AppLayout";
-import DashboardPage from "../pages/dashboard/DashboardPage";
-import CategoryPage from "../pages/category/CategoryPage";
-import ExpensePage from "../pages/expense/ExpensePage";
-import IncomePage from "../pages/income/IncomePage";
-import ErrorPage from "../pages/error/ErrorPage";
-import LoginPage from "../pages/login/LoginPage";
-import ProfilePage from "../pages/profile/ProfilePage";
-import RegisterPage from "../pages/register/RegisterPage";
-import StatisticsPage from "../pages/statistics/StatisticsPage";
-import { PublicOnly, RequireAuth } from "./guards";
+import { createBrowserRouter, Navigate } from "react-router-dom"
+import AppLayout from "../components/layout/AppLayout"
+import DashboardPage from "../pages/dashboard/DashboardPage"
+import CategoryPage from "../pages/category/CategoryPage"
+import ExpensePage from "../pages/expense/ExpensePage"
+import IncomePage from "../pages/income/IncomePage"
+import ErrorPage from "../pages/error/ErrorPage"
+import LoginPage from "../pages/login/LoginPage"
+import ProfilePage from "../pages/profile/ProfilePage"
+import RegisterPage from "../pages/register/RegisterPage"
+import StatisticsPage from "../pages/statistics/StatisticsPage"
+import ForgotPasswordPage from "../pages/forgot-password/ForgotPasswordPage"
+import { PublicOnly, RequireAuth } from "./guards"
 
 const routers = createBrowserRouter([
   {
@@ -34,10 +35,11 @@ const routers = createBrowserRouter([
     children: [
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
+      { path: "/forgot-password", element: <ForgotPasswordPage /> },
     ],
   },
   { path: "/404", element: <ErrorPage /> },
   { path: "*", element: <Navigate to="/404" replace /> },
-]);
+])
 
-export default routers;
+export default routers

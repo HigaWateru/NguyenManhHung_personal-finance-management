@@ -29,12 +29,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryResponse> getCategories(Long userId, CategoryType type) {
         List<Category> categories = type == null
-                ? categoryRepository.findByUserIdOrderByNameAsc(userId)
-                : categoryRepository.findByUserIdAndTypeOrderByNameAsc(userId, type);
+            ? categoryRepository.findByUserIdOrderByNameAsc(userId)
+            : categoryRepository.findByUserIdAndTypeOrderByNameAsc(userId, type);
 
-        return categories.stream()
-                .map(categoryMapper::toResponse)
-                .toList();
+        return categories.stream().map(categoryMapper::toResponse).toList();
     }
 
     @Override
@@ -47,12 +45,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryResponse createCategory(Long userId, CategoryRequest request) {
         User user = findActiveUser(userId);
-        String normalizedName = normalizeName(request.name());
-        String normalizedDescription = normalizeDescription(request.description());
+        String normalizedName = normalizeName(request.getName());
+        String normalizedDescription = normalizeDescription(request.getDescription());
 
-        validateDuplicateCategory(userId, normalizedName, request.type(), null);
+        validateDuplicateCategory(userId, normalizedName, request.getType(), null);
 
-        Category category = categoryMapper.toEntity(user, normalizedName, request.type(), normalizedDescription);
+        Category category = categoryMapper.toEntity(user, normalizedName, request.getType(), normalizedDescription);
         Category savedCategory = categoryRepository.save(category);
         return categoryMapper.toResponse(savedCategory);
     }
@@ -61,13 +59,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryResponse updateCategory(Long userId, Long categoryId, CategoryRequest request) {
         Category category = findOwnedCategory(userId, categoryId);
-        String normalizedName = normalizeName(request.name());
-        String normalizedDescription = normalizeDescription(request.description());
+        String normalizedName = normalizeName(request.getName());
+        String normalizedDescription = normalizeDescription(request.getDescription());
 
-        validateDuplicateCategory(userId, normalizedName, request.type(), categoryId);
-        validateTypeChange(category, request.type());
+        validateDuplicateCategory(userId, normalizedName, request.getType(), categoryId);
+        validateTypeChange(category, request.getType());
 
-        category.updateDetails(normalizedName, request.type(), normalizedDescription);
+        category.updateDetails(normalizedName, request.getType(), normalizedDescription);
         return categoryMapper.toResponse(category);
     }
 
@@ -77,7 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = findOwnedCategory(userId, categoryId);
         validateCategoryDeletion(category);
         categoryRepository.delete(category);
-        return new MessageResponse("Category deleted successfully");
+        return MessageResponse.builder().message("Category deleted successfully").build();
     }
 
     private Category findOwnedCategory(Long userId, Long categoryId) {
@@ -92,18 +90,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void validateDuplicateCategory(Long userId, String name, CategoryType type, Long excludedCategoryId) {
         boolean exists = excludedCategoryId == null
-                ? categoryRepository.existsByUserIdAndNameIgnoreCaseAndType(userId, name, type)
-                : categoryRepository.existsByUserIdAndNameIgnoreCaseAndTypeAndIdNot(userId, name, type, excludedCategoryId);
+            ? categoryRepository.existsByUserIdAndNameIgnoreCaseAndType(userId, name, type)
+            : categoryRepository.existsByUserIdAndNameIgnoreCaseAndTypeAndIdNot(userId, name, type, excludedCategoryId);
 
-        if (exists) {
-            throw ApiException.conflict("Category already exists");
-        }
+        if (exists) throw ApiException.conflict("Category already exists");
     }
 
     private void validateTypeChange(Category category, CategoryType newType) {
-        if (category.getType() == newType) {
-            return;
-        }
+        if (category.getType() == newType) return;
 
         if (!category.getIncomes().isEmpty() || !category.getExpenses().isEmpty()) {
             throw ApiException.conflict("Cannot change category type when transactions exist");

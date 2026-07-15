@@ -18,8 +18,8 @@ public class JwtTokenProvider {
     private final long accessTokenMinutes;
 
     public JwtTokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-minutes}") long accessTokenMinutes
+        @Value("${jwt.secret}") String secret,
+        @Value("${jwt.access-token-minutes}") long accessTokenMinutes
     ) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.accessTokenMinutes = accessTokenMinutes;
@@ -55,6 +55,10 @@ public class JwtTokenProvider {
 
     public long getAccessTokenExpirySeconds() {
         return accessTokenMinutes * 60L;
+    }
+
+    public java.util.Date extractIssuedAt(String token) {
+        return parseClaims(token).getIssuedAt();
     }
 
     private Claims parseClaims(String token) {

@@ -4,14 +4,23 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record IncomeResponse(
-        Long id,
-        Long categoryId,
-        String categoryName,
-        BigDecimal amount,
-        LocalDate transactionDate,
-        String note,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
-) {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class IncomeResponse {
+        private Long id;
+        private Long categoryId;
+        private String categoryName;
+        private BigDecimal amount;
+        private LocalDate transactionDate;
+        private String note;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
 }

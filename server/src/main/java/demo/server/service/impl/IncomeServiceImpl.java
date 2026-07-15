@@ -35,25 +35,24 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     @Transactional(readOnly = true)
     public PageResponse<IncomeResponse> getIncomes(
-            Long userId,
-            Long categoryId,
-            LocalDate fromDate,
-            LocalDate toDate,
-            String keyword,
-            int page,
-            int size
+        Long userId,
+        Long categoryId,
+        LocalDate fromDate,
+        LocalDate toDate,
+        String keyword,
+        int page,
+        int size
     ) {
         ServiceInputUtils.validateDateRange(fromDate, toDate);
 
         Page<IncomeResponse> incomes = incomeRepository.search(
-                        userId,
-                        categoryId,
-                        fromDate,
-                        toDate,
-                        ServiceInputUtils.normalizeOptionalText(keyword),
-                        PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
-                )
-                .map(incomeMapper::toResponse);
+                userId,
+                categoryId,
+                fromDate,
+                toDate,
+                ServiceInputUtils.normalizeOptionalText(keyword),
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
+            ).map(incomeMapper::toResponse);
 
         return PageResponse.from(incomes);
     }
@@ -68,14 +67,14 @@ public class IncomeServiceImpl implements IncomeService {
     @Transactional
     public IncomeResponse createIncome(Long userId, IncomeRequest request) {
         User user = findActiveUser(userId);
-        Category category = findCategory(userId, request.categoryId(), CategoryType.INCOME);
+        Category category = findCategory(userId, request.getCategoryId(), CategoryType.INCOME);
 
         Income income = incomeMapper.toEntity(
-                user,
-                category,
-                request.amount(),
-                request.transactionDate(),
-                ServiceInputUtils.normalizeOptionalText(request.note())
+            user,
+            category,
+            request.getAmount(),
+            request.getTransactionDate(),
+            ServiceInputUtils.normalizeOptionalText(request.getNote())
         );
 
         return incomeMapper.toResponse(incomeRepository.save(income));
@@ -85,13 +84,13 @@ public class IncomeServiceImpl implements IncomeService {
     @Transactional
     public IncomeResponse updateIncome(Long userId, Long incomeId, IncomeRequest request) {
         Income income = findOwnedIncome(userId, incomeId);
-        Category category = findCategory(userId, request.categoryId(), CategoryType.INCOME);
+        Category category = findCategory(userId, request.getCategoryId(), CategoryType.INCOME);
 
         income.updateDetails(
-                category,
-                request.amount(),
-                request.transactionDate(),
-                ServiceInputUtils.normalizeOptionalText(request.note())
+            category,
+            request.getAmount(),
+            request.getTransactionDate(),
+            ServiceInputUtils.normalizeOptionalText(request.getNote())
         );
 
         return incomeMapper.toResponse(income);
@@ -102,7 +101,7 @@ public class IncomeServiceImpl implements IncomeService {
     public MessageResponse deleteIncome(Long userId, Long incomeId) {
         Income income = findOwnedIncome(userId, incomeId);
         incomeRepository.delete(income);
-        return new MessageResponse("Income deleted successfully");
+        return MessageResponse.builder().message("Income deleted successfully").build();
     }
 
     private Income findOwnedIncome(Long userId, Long incomeId) {
@@ -119,9 +118,7 @@ public class IncomeServiceImpl implements IncomeService {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> ApiException.notFound("Category not found"));
 
-        if (category.getType() != expectedType) {
-            throw ApiException.badRequest("Selected category type is invalid");
-        }
+        if (category.getType() != expectedType) throw ApiException.badRequest("Selected category type is invalid");
 
         return category;
     }

@@ -5,15 +5,26 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record CategoryRequest(
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CategoryRequest {
         @NotBlank(message = "Category name is required")
         @Size(max = 50, message = "Category name must not exceed 50 characters")
-        String name,
+        private String name;
 
         @NotNull(message = "Category type is required")
-        CategoryType type,
+        private CategoryType type;
 
         @Size(max = 255, message = "Description must not exceed 255 characters")
-        String description
-) {
+        private String description;
 }

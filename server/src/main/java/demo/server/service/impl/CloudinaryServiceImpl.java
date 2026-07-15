@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class CloudinaryServiceImpl implements CloudinaryService {
-
     private final Cloudinary cloudinary;
 
     @Override

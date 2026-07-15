@@ -47,7 +47,7 @@ public class ExpenseController {
     ) {
         return ResponseEntity.ok(ApiResponse.success(
                 "Expenses fetched successfully",
-                expenseService.getExpenses(principal.id(), categoryId, fromDate, toDate, keyword, page, size)
+                expenseService.getExpenses(principal.getId(), categoryId, fromDate, toDate, keyword, page, size)
         ));
     }
 
@@ -56,7 +56,7 @@ public class ExpenseController {
             @AuthenticationPrincipal CurrentUserPrincipal principal,
             @PathVariable Long expenseId
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Expense fetched successfully", expenseService.getExpense(principal.id(), expenseId)));
+        return ResponseEntity.ok(ApiResponse.success("Expense fetched successfully", expenseService.getExpense(principal.getId(), expenseId)));
     }
 
     @PostMapping
@@ -65,7 +65,7 @@ public class ExpenseController {
             @Valid @RequestBody ExpenseRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Expense created successfully", expenseService.createExpense(principal.id(), request)));
+                .body(ApiResponse.success("Expense created successfully", expenseService.createExpense(principal.getId(), request)));
     }
 
     @PutMapping("/{expenseId}")
@@ -74,7 +74,7 @@ public class ExpenseController {
             @PathVariable Long expenseId,
             @Valid @RequestBody ExpenseRequest request
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Expense updated successfully", expenseService.updateExpense(principal.id(), expenseId, request)));
+        return ResponseEntity.ok(ApiResponse.success("Expense updated successfully", expenseService.updateExpense(principal.getId(), expenseId, request)));
     }
 
     @DeleteMapping("/{expenseId}")
@@ -82,6 +82,6 @@ public class ExpenseController {
             @AuthenticationPrincipal CurrentUserPrincipal principal,
             @PathVariable Long expenseId
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Expense deleted successfully", expenseService.deleteExpense(principal.id(), expenseId)));
+        return ResponseEntity.ok(ApiResponse.success("Expense deleted successfully", expenseService.deleteExpense(principal.getId(), expenseId)));
     }
 }

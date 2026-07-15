@@ -35,7 +35,7 @@ public class CategoryController {
         @RequestParam(required = false) CategoryType type
     ) {
         return ResponseEntity.ok(
-            ApiResponse.success("Categories fetched successfully", categoryService.getCategories(principal.id(), type))
+            ApiResponse.success("Categories fetched successfully", categoryService.getCategories(principal.getId(), type))
         );
     }
 
@@ -45,7 +45,7 @@ public class CategoryController {
         @PathVariable Long categoryId
     ) {
         return ResponseEntity.ok(
-            ApiResponse.success("Category fetched successfully", categoryService.getCategory(principal.id(), categoryId))
+            ApiResponse.success("Category fetched successfully", categoryService.getCategory(principal.getId(), categoryId))
         );
     }
 
@@ -55,7 +55,7 @@ public class CategoryController {
         @Valid @RequestBody CategoryRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success("Category created successfully", categoryService.createCategory(principal.id(), request)));
+            .body(ApiResponse.success("Category created successfully", categoryService.createCategory(principal.getId(), request)));
     }
 
     @PutMapping("/{categoryId}")
@@ -65,7 +65,7 @@ public class CategoryController {
         @Valid @RequestBody CategoryRequest request
     ) {
         return ResponseEntity.ok(
-            ApiResponse.success("Category updated successfully", categoryService.updateCategory(principal.id(), categoryId, request))
+            ApiResponse.success("Category updated successfully", categoryService.updateCategory(principal.getId(), categoryId, request))
         );
     }
 
@@ -75,7 +75,7 @@ public class CategoryController {
         @PathVariable Long categoryId
     ) {
         return ResponseEntity.ok(
-            ApiResponse.success("Category deleted successfully", categoryService.deleteCategory(principal.id(), categoryId))
+            ApiResponse.success("Category deleted successfully", categoryService.deleteCategory(principal.getId(), categoryId))
         );
     }
 }

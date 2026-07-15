@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException exception,
-            HttpServletRequest request
+        MethodArgumentNotValidException exception,
+        HttpServletRequest request
     ) {
         Map<String, Object> errors = new LinkedHashMap<>();
 
@@ -43,8 +43,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleConstraintViolation(
-            ConstraintViolationException exception,
-            HttpServletRequest request
+        ConstraintViolationException exception,
+        HttpServletRequest request
     ) {
         Map<String, Object> errors = exception.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
@@ -59,16 +59,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException exception,
-            HttpServletRequest request
+        HttpMessageNotReadableException exception,
+        HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Malformed request body", null, request);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(
-            ResponseStatusException exception,
-            HttpServletRequest request
+        ResponseStatusException exception,
+        HttpServletRequest request
     ) {
         return buildErrorResponse(
                 HttpStatus.valueOf(exception.getStatusCode().value()),
@@ -80,8 +80,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAccessDenied(
-            AccessDeniedException exception,
-            HttpServletRequest request
+        AccessDeniedException exception,
+        HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, "Access denied", null, request);
     }
@@ -92,10 +92,10 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ApiResponse<Void>> buildErrorResponse(
-            HttpStatus status,
-            String message,
-            Map<String, Object> errors,
-            HttpServletRequest request
+        HttpStatus status,
+        String message,
+        Map<String, Object> errors,
+        HttpServletRequest request
     ) {
         return ResponseEntity.status(status)
                 .body(ApiResponse.failure(message, errors == null || errors.isEmpty() ? null : errors, request.getRequestURI()));

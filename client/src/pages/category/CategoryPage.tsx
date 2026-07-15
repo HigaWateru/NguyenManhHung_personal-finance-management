@@ -146,7 +146,7 @@ export default function CategoryPage() {
     try {
       if (editingId === null) await apiService.createCategory(payload)
       else await apiService.updateCategory(editingId, payload)
-    
+
       await fetchCategories()
       closeModal()
     } catch (error) {
@@ -314,5 +314,5 @@ export default function CategoryPage() {
         </div>
       )}
     </section>
-  );
+  )
 }

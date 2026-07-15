@@ -7,7 +7,6 @@ import demo.server.dto.response.MessageResponse;
 import java.util.List;
 
 public interface CategoryService {
-
     List<CategoryResponse> getCategories(Long userId, CategoryType type);
 
     CategoryResponse getCategory(Long userId, Long categoryId);

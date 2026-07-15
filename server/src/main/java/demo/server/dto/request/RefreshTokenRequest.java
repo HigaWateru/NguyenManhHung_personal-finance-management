@@ -2,8 +2,19 @@ package demo.server.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record RefreshTokenRequest(
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class RefreshTokenRequest {
         @NotBlank(message = "Refresh token is required")
-        String refreshToken
-) {
+        private String refreshToken;
 }

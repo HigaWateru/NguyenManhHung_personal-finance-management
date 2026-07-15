@@ -1,87 +1,87 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Pencil, Plus, Search, Trash2, X } from "lucide-react";
-import { apiService } from "../../apis/service";
-import { extractApiError } from "../../apis/http";
-import type { CategoryItem } from "../../types/api";
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { Pencil, Plus, Search, Trash2, X } from "lucide-react"
+import { apiService } from "../../apis/service"
+import { extractApiError } from "../../apis/http"
+import type { CategoryItem } from "../../types/api"
 
 type IncomeRecord = {
-  id: number;
-  date: string;
-  categoryId: number;
-  category: string;
-  amount: number;
-  note: string;
-};
+  id: number
+  date: string
+  categoryId: number
+  category: string
+  amount: number
+  note: string
+}
 
 type IncomeFormState = {
-  date: string;
-  categoryId: string;
-  amount: string;
-  note: string;
-};
+  date: string
+  categoryId: string
+  amount: string
+  note: string
+}
 
-type FormErrors = Partial<Record<keyof IncomeFormState, string>>;
+type FormErrors = Partial<Record<keyof IncomeFormState, string>>
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 10
 
 const emptyForm = (): IncomeFormState => ({
   date: new Date().toISOString().slice(0, 10),
   categoryId: "",
   amount: "",
   note: "",
-});
+})
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
     maximumFractionDigits: 0,
-  }).format(value);
+  }).format(value)
 
 const validateForm = (form: IncomeFormState): FormErrors => {
-  const errors: FormErrors = {};
+  const errors: FormErrors = {}
 
-  if (!form.date.trim()) errors.date = "Vui lòng chọn ngày";
-  if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục";
+  if (!form.date.trim()) errors.date = "Vui lòng chọn ngày"
+  if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục"
+  const amount = Number(form.amount)
+  if (!form.amount.trim()) errors.amount = "Số tiền không được để trống"
+  else if (!Number.isFinite(amount) || amount <= 0) errors.amount = "Số tiền phải lớn hơn 0"
 
-  const amount = Number(form.amount);
-  if (!form.amount.trim()) {
-    errors.amount = "Số tiền không được để trống";
-  } else if (!Number.isFinite(amount) || amount <= 0) {
-    errors.amount = "Số tiền phải lớn hơn 0";
-  }
+  if (form.note.length > 255) errors.note = "Ghi chú tối đa 255 ký tự"
 
-  if (form.note.length > 255) {
-    errors.note = "Ghi chú tối đa 255 ký tự";
-  }
-
-  return errors;
-};
+  return errors
+}
 
 export default function IncomePage() {
-  const [records, setRecords] = useState<IncomeRecord[]>([]);
-  const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalElements, setTotalElements] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState<string | null>(null);
+  const [records, setRecords] = useState<IncomeRecord[]>([])
+  const [categories, setCategories] = useState<CategoryItem[]>([])
+  const [query, setQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalElements, setTotalElements] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [apiError, setApiError] = useState<string | null>(null)
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [form, setForm] = useState<IncomeFormState>(emptyForm());
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [form, setForm] = useState<IncomeFormState>(emptyForm())
+  const [errors, setErrors] = useState<FormErrors>({})
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
-    setApiError(null);
+    setLoading(true)
+    setApiError(null)
 
     try {
       const [incomePage, incomeCategories] = await Promise.all([
-        apiService.getIncomes({ page: page - 1, size: PAGE_SIZE, keyword: query || undefined }),
+        apiService.getIncomes({
+          page: page - 1,
+          size: PAGE_SIZE,
+          keyword: query || undefined,
+          categoryId: selectedCategory ? Number(selectedCategory) : undefined,
+        }),
         apiService.getCategories("INCOME"),
-      ]);
+      ])
 
       setRecords(
         incomePage.content.map((item) => ({
@@ -92,38 +92,38 @@ export default function IncomePage() {
           amount: Number(item.amount),
           note: item.note || "",
         })),
-      );
-      setTotalPages(Math.max(1, incomePage.totalPages));
-      setTotalElements(incomePage.totalElements);
-      setCategories(incomeCategories);
+      )
+      setTotalPages(Math.max(1, incomePage.totalPages))
+      setTotalElements(incomePage.totalElements)
+      setCategories(incomeCategories)
     } catch (error) {
-      setApiError(extractApiError(error, "Không thể tải dữ liệu thu nhập."));
+      setApiError(extractApiError(error, "Không thể tải dữ liệu thu nhập."))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [page, query]);
+  }, [page, query, selectedCategory])
 
   useEffect(() => {
     const timerId = window.setTimeout(() => {
-      void fetchData();
-    }, 0);
+      void fetchData()
+    }, 0)
 
-    return () => window.clearTimeout(timerId);
-  }, [fetchData]);
+    return () => window.clearTimeout(timerId)
+  }, [fetchData])
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingId(null);
-    setForm(emptyForm());
-    setErrors({});
-  };
+    setIsModalOpen(false)
+    setEditingId(null)
+    setForm(emptyForm())
+    setErrors({})
+  }
 
   const openCreateModal = () => {
-    setEditingId(null);
-    setForm(emptyForm());
-    setErrors({});
-    setIsModalOpen(true);
-  };
+    setEditingId(null)
+    setForm(emptyForm())
+    setErrors({})
+    setIsModalOpen(true)
+  }
 
   const openEditModal = (record: IncomeRecord) => {
     setEditingId(record.id);
@@ -132,57 +132,54 @@ export default function IncomePage() {
       categoryId: String(record.categoryId),
       amount: String(record.amount),
       note: record.note,
-    });
-    setErrors({});
-    setIsModalOpen(true);
-  };
+    })
+    setErrors({})
+    setIsModalOpen(true)
+  }
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Xóa giao dịch thu nhập này?")) return;
+    if (!window.confirm("Xóa giao dịch thu nhập này?")) return
 
     try {
       await apiService.deleteIncome(id);
-      await fetchData();
+      await fetchData()
     } catch (error) {
-      setApiError(extractApiError(error, "Xóa giao dịch thất bại."));
+      setApiError(extractApiError(error, "Xóa giao dịch thất bại."))
     }
-  };
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    const validationErrors = validateForm(form);
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+    const validationErrors = validateForm(form)
+    setErrors(validationErrors)
+    if (Object.keys(validationErrors).length > 0) return
 
     const payload = {
       transactionDate: form.date,
       categoryId: Number(form.categoryId),
       amount: Number(form.amount),
       note: form.note.trim(),
-    };
+    }
 
     try {
-      if (editingId === null) {
-        await apiService.createIncome(payload);
-      } else {
-        await apiService.updateIncome(editingId, payload);
-      }
+      if (editingId === null) await apiService.createIncome(payload)
+      else await apiService.updateIncome(editingId, payload)
 
-      closeModal();
-      await fetchData();
+      closeModal()
+      await fetchData()
     } catch (error) {
-      setApiError(extractApiError(error, "Lưu giao dịch thu nhập thất bại."));
+      setApiError(extractApiError(error, "Lưu giao dịch thu nhập thất bại."))
     }
-  };
+  }
 
-  const resultStart = totalElements === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const resultEnd = Math.min(page * PAGE_SIZE, totalElements);
+  const resultStart = totalElements === 0 ? 0 : (page - 1) * PAGE_SIZE + 1
+  const resultEnd = Math.min(page * PAGE_SIZE, totalElements)
 
   const selectedCategoryName = useMemo(
     () => categories.find((category) => String(category.id) === form.categoryId)?.name || "",
     [categories, form.categoryId],
-  );
+  )
 
   return (
     <section className="space-y-6">
@@ -199,15 +196,33 @@ export default function IncomePage() {
         {apiError && <p className="mb-3 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{apiError}</p>}
 
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
-            <Search size={16} className="text-cyan-300/80" />
-            <input type="text" value={query} onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }} placeholder="Tìm ghi chú hoặc danh mục..."
-              className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
-            />
-          </label>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:w-full md:w-auto">
+            <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[320px]">
+              <Search size={16} className="text-cyan-300/80" />
+              <input type="text" value={query} onChange={(event) => {
+                  setQuery(event.target.value)
+                  setPage(1)
+                }} placeholder="Tìm ghi chú hoặc danh mục..."
+                className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
+              />
+            </label>
+
+            <select
+              value={selectedCategory}
+              onChange={(event) => {
+                setSelectedCategory(event.target.value)
+                setPage(1)
+              }}
+              className="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-2 text-sm text-slate-300 outline-none focus:border-cyan-300/40 sm:w-[200px]"
+            >
+              <option value="" className="bg-slate-900">Tất cả danh mục</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id} className="bg-slate-900">
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button type="button" onClick={openCreateModal}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
@@ -369,5 +384,5 @@ export default function IncomePage() {
         </div>
       )}
     </section>
-  );
+  )
 }

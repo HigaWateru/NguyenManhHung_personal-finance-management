@@ -79,7 +79,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
             and (:categoryId is null or e.category.id = :categoryId)
             and (:fromDate is null or e.transactionDate >= :fromDate)
             and (:toDate is null or e.transactionDate <= :toDate)
-            and (:keyword is null or lower(coalesce(e.note, '')) like lower(concat('%', :keyword, '%')))
+            and (:keyword is null or lower(coalesce(e.note, '')) like lower(concat('%', :keyword, '%')) or lower(e.category.name) like lower(concat('%', :keyword, '%')))
         """)
     Page<Expense> search(
         @Param("userId") Long userId,

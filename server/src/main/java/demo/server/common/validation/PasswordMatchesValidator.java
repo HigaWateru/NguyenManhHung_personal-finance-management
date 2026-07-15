@@ -11,7 +11,7 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
     public boolean isValid(RegisterRequest value, ConstraintValidatorContext context) {
         if (value == null) return true;
 
-        boolean matches = Objects.equals(value.password(), value.confirmPassword());
+        boolean matches = Objects.equals(value.getPassword(), value.getConfirmPassword());
         if (matches) return true;
 
         context.disableDefaultConstraintViolation();

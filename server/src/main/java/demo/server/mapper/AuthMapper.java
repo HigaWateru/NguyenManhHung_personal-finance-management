@@ -7,16 +7,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthMapper {
     public UserProfileResponse toUserProfileResponse(User user) {
-        return new UserProfileResponse(
-            user.getId(),
-            user.getFullName(),
-            user.getEmail(),
-            user.getAvatarUrl(),
-            user.getTimezone(),
-            user.getCurrencyCode(),
-            user.isActive(),
-            user.getCreatedAt(),
-            user.getUpdatedAt()
-        );
+        return UserProfileResponse.builder()
+            .id(user.getId())
+            .fullName(user.getFullName())
+            .email(user.getEmail())
+            .avatarUrl(user.getAvatarUrl())
+            .timezone(user.getTimezone())
+            .currencyCode(user.getCurrencyCode())
+            .active(user.isActive())
+            .createdAt(user.getCreatedAt())
+            .updatedAt(user.getUpdatedAt())
+            .build();
     }
 }

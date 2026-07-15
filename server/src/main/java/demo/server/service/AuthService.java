@@ -9,8 +9,11 @@ import demo.server.dto.response.MessageResponse;
 import demo.server.dto.response.UserProfileResponse;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface AuthService {
+import demo.server.dto.request.ForgotPasswordRequest;
+import demo.server.dto.request.VerifyOtpRequest;
+import demo.server.dto.request.ResetPasswordRequest;
 
+public interface AuthService {
     UserProfileResponse register(RegisterRequest request);
 
     AuthResponse login(LoginRequest request);
@@ -24,4 +27,10 @@ public interface AuthService {
     UserProfileResponse updateProfile(Long userId, ProfileUpdateRequest request);
 
     UserProfileResponse updateAvatar(Long userId, MultipartFile file);
+
+    void requestForgotPassword(ForgotPasswordRequest request);
+
+    void verifyOtp(VerifyOtpRequest request);
+
+    void resetPassword(ResetPasswordRequest request);
 }

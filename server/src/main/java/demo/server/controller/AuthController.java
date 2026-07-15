@@ -25,6 +25,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import demo.server.dto.request.ForgotPasswordRequest;
+import demo.server.dto.request.VerifyOtpRequest;
+import demo.server.dto.request.ResetPasswordRequest;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -49,14 +53,14 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<MessageResponse>> logout(@Valid @RequestBody LogoutRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Logout successful", authService.logout(request.refreshToken())));
+        return ResponseEntity.ok(ApiResponse.success("Logout successful", authService.logout(request.getRefreshToken())));
     }
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<UserProfileResponse>> getProfile(
         @AuthenticationPrincipal CurrentUserPrincipal principal
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Profile fetched successfully", authService.getCurrentUserProfile(principal.id())));
+        return ResponseEntity.ok(ApiResponse.success("Profile fetched successfully", authService.getCurrentUserProfile(principal.getId())));
     }
 
     @PutMapping("/profile")
@@ -64,7 +68,7 @@ public class AuthController {
         @AuthenticationPrincipal CurrentUserPrincipal principal,
         @Valid @RequestBody ProfileUpdateRequest request
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", authService.updateProfile(principal.id(), request)));
+        return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", authService.updateProfile(principal.getId(), request)));
     }
 
     @PostMapping(value = "/profile/avatar", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -72,6 +76,33 @@ public class AuthController {
         @AuthenticationPrincipal CurrentUserPrincipal principal,
         @RequestParam("file") MultipartFile file
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Avatar updated successfully", authService.updateAvatar(principal.id(), file)));
+        return ResponseEntity.ok(ApiResponse.success("Avatar updated successfully", authService.updateAvatar(principal.getId(), file)));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<MessageResponse>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.requestForgotPassword(request);
+        return ResponseEntity.ok(ApiResponse.success(
+            "Nếu email tồn tại trong hệ thống, mã OTP đã được gửi đến email của bạn.",
+            MessageResponse.builder().message("Mã OTP đã được gửi thành công.").build()
+        ));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<ApiResponse<MessageResponse>> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+        authService.verifyOtp(request);
+        return ResponseEntity.ok(ApiResponse.success(
+            "Mã OTP hợp lệ.",
+            MessageResponse.builder().message("Xác thực OTP thành công.").build()
+        ));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.ok(ApiResponse.success(
+            "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.",
+            MessageResponse.builder().message("Đặt lại mật khẩu thành công.").build()
+        ));
     }
 }

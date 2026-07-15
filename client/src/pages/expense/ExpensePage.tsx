@@ -57,6 +57,7 @@ export default function ExpensePage() {
   const [records, setRecords] = useState<ExpenseRecord[]>([])
   const [categories, setCategories] = useState<CategoryItem[]>([])
   const [query, setQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("")
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalElements, setTotalElements] = useState(0)
@@ -74,7 +75,12 @@ export default function ExpensePage() {
 
     try {
       const [expensePage, expenseCategories] = await Promise.all([
-        apiService.getExpenses({ page: page - 1, size: PAGE_SIZE, keyword: query || undefined }),
+        apiService.getExpenses({
+          page: page - 1,
+          size: PAGE_SIZE,
+          keyword: query || undefined,
+          categoryId: selectedCategory ? Number(selectedCategory) : undefined,
+        }),
         apiService.getCategories("EXPENSE"),
       ])
 
@@ -96,7 +102,7 @@ export default function ExpensePage() {
     } finally {
       setLoading(false);
     }
-  }, [page, query])
+  }, [page, query, selectedCategory])
 
   useEffect(() => {
     const timerId = window.setTimeout(() => {
@@ -155,29 +161,26 @@ export default function ExpensePage() {
       categoryId: Number(form.categoryId),
       amount: Number(form.amount),
       note: form.note.trim(),
-    };
+    }
 
     try {
-      if (editingId === null) {
-        await apiService.createExpense(payload);
-      } else {
-        await apiService.updateExpense(editingId, payload);
-      }
+      if (editingId === null) await apiService.createExpense(payload)
+      else await apiService.updateExpense(editingId, payload)
 
-      closeModal();
-      await fetchData();
+      closeModal()
+      await fetchData()
     } catch (error) {
-      setApiError(extractApiError(error, "Lưu giao dịch chi tiêu thất bại."));
+      setApiError(extractApiError(error, "Lưu giao dịch chi tiêu thất bại."))
     }
-  };
+  }
 
-  const resultStart = totalElements === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const resultEnd = Math.min(page * PAGE_SIZE, totalElements);
+  const resultStart = totalElements === 0 ? 0 : (page - 1) * PAGE_SIZE + 1
+  const resultEnd = Math.min(page * PAGE_SIZE, totalElements)
 
   const selectedCategoryName = useMemo(
     () => categories.find((category) => String(category.id) === form.categoryId)?.name || "",
     [categories, form.categoryId],
-  );
+  )
 
   return (
     <section className="space-y-6">
@@ -194,15 +197,33 @@ export default function ExpensePage() {
         {apiError && <p className="mb-3 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{apiError}</p>}
 
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[420px]">
-            <Search size={16} className="text-cyan-300/80" />
-            <input type="text" value={query} onChange={(event) => {
-                setQuery(event.target.value);
-                setPage(1);
-              }} placeholder="Tìm ghi chú hoặc danh mục..."
-              className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
-            />
-          </label>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:w-full md:w-auto">
+            <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 md:w-[320px]">
+              <Search size={16} className="text-cyan-300/80" />
+              <input type="text" value={query} onChange={(event) => {
+                  setQuery(event.target.value)
+                  setPage(1)
+                }} placeholder="Tìm ghi chú hoặc danh mục..."
+                className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
+              />
+            </label>
+
+            <select
+              value={selectedCategory}
+              onChange={(event) => {
+                setSelectedCategory(event.target.value)
+                setPage(1)
+              }}
+              className="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-2 text-sm text-slate-300 outline-none focus:border-cyan-300/40 sm:w-[200px]"
+            >
+              <option value="" className="bg-slate-900">Tất cả danh mục</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id} className="bg-slate-900">
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <button type="button" onClick={openCreateModal}
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
@@ -360,5 +381,5 @@ export default function ExpensePage() {
         </div>
       )}
     </section>
-  );
+  )
 }

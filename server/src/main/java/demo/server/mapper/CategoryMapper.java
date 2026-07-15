@@ -11,30 +11,26 @@ public class CategoryMapper {
 
     public Category toEntity(User user, String name, CategoryType type, String description) {
         return Category.builder()
-                .user(user)
-                .name(name)
-                .type(type)
-                .description(description)
-                .build();
+            .user(user)
+            .name(name)
+            .type(type)
+            .description(description)
+            .build();
     }
 
     public CategoryResponse toResponse(Category category) {
         long transactionCount = 0;
-        if (category.getIncomes() != null) {
-            transactionCount += category.getIncomes().size();
-        }
-        if (category.getExpenses() != null) {
-            transactionCount += category.getExpenses().size();
-        }
+        if (category.getIncomes() != null) transactionCount += category.getIncomes().size();
+        if (category.getExpenses() != null) transactionCount += category.getExpenses().size();
 
-        return new CategoryResponse(
-                category.getId(),
-                category.getName(),
-                category.getType(),
-                category.getDescription(),
-                transactionCount,
-                category.getCreatedAt(),
-                category.getUpdatedAt()
-        );
+        return CategoryResponse.builder()
+            .id(category.getId())
+            .name(category.getName())
+            .type(category.getType())
+            .description(category.getDescription())
+            .transactionCount(transactionCount)
+            .createdAt(category.getCreatedAt())
+            .updatedAt(category.getUpdatedAt())
+            .build();
     }
 }

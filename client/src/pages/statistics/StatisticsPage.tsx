@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react"
 import {Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer,
-  Tooltip, XAxis, YAxis, } from "recharts";
-import { apiService } from "../../apis/service";
-import { extractApiError } from "../../apis/http";
-import type { StatisticsData } from "../../types/api";
+  Tooltip, XAxis, YAxis, } from "recharts"
+import { apiService } from "../../apis/service"
+import { extractApiError } from "../../apis/http"
+import type { StatisticsData } from "../../types/api"
 
 const monthlyFinance = [
   { month: "T1", income: 18.5, expense: 11.2, net: 7.3 },
@@ -18,7 +18,7 @@ const monthlyFinance = [
   { month: "T10", income: 24.2, expense: 14.7, net: 9.5 },
   { month: "T11", income: 22.8, expense: 13.9, net: 8.9 },
   { month: "T12", income: 27.3, expense: 17.4, net: 9.9 },
-];
+]
 
 const expenseByCategory = [
   { name: "Ăn uống", value: 34, amount: 5.9 },
@@ -26,7 +26,7 @@ const expenseByCategory = [
   { name: "Tiện ích", value: 22, amount: 3.8 },
   { name: "Mua sắm", value: 14, amount: 2.4 },
   { name: "Sức khỏe", value: 12, amount: 2.1 },
-];
+]
 
 const pieColors = [
   "#22d3ee", // Cyan
@@ -49,71 +49,71 @@ const pieColors = [
   "#22c55e", // Green
   "#fbbf24", // Gold
   "#fb7185", // Soft Rose
-];
+]
 
-const formatMoney = (value: number) => `${value.toFixed(1)}M`;
-const formatTooltipMoney = (value: unknown) => formatMoney(Number(value ?? 0));
+const formatMoney = (value: number) => `${value.toFixed(1)}M`
+const formatTooltipMoney = (value: unknown) => formatMoney(Number(value ?? 0))
 
 export default function StatisticsPage() {
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-  const [stats, setStats] = useState<StatisticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
+  const [stats, setStats] = useState<StatisticsData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchStatistics = async () => {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
 
       try {
-        const data = await apiService.getStatistics(selectedYear);
-        setStats(data);
+        const data = await apiService.getStatistics(selectedYear)
+        setStats(data)
       } catch (fetchError) {
-        setError(extractApiError(fetchError, "Không thể tải dữ liệu thống kê."));
+        setError(extractApiError(fetchError, "Không thể tải dữ liệu thống kê."))
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    void fetchStatistics();
-  }, [selectedYear]);
+    void fetchStatistics()
+  }, [selectedYear])
 
   const monthlyChartData = useMemo(() => {
-    if (!stats?.monthlyStatistics?.length) return monthlyFinance;
+    if (!stats?.monthlyStatistics?.length) return monthlyFinance
 
     return stats.monthlyStatistics.map((item) => ({
       month: `T${item.month}`,
       income: Number(item.income),
       expense: Number(item.expense),
       net: Number(item.balance),
-    }));
-  }, [stats]);
+    }))
+  }, [stats])
 
   const categoryChartData = useMemo(() => {
-    if (!stats?.categoryStatistics?.length) return expenseByCategory;
+    if (!stats?.categoryStatistics?.length) return expenseByCategory
 
-    const expenseCategories = stats.categoryStatistics.filter((item) => item.type === "EXPENSE");
-    if (!expenseCategories.length) return expenseByCategory;
+    const expenseCategories = stats.categoryStatistics.filter((item) => item.type === "EXPENSE")
+    if (!expenseCategories.length) return expenseByCategory
 
     return expenseCategories.map((item) => {
       return {
         name: item.categoryName,
         value: Number(Number(item.percentage || 0).toFixed(2)),
         amount: Number(item.totalAmount) / 1_000_000,
-      };
-    });
-  }, [stats]);
+      }
+    })
+  }, [stats])
 
   const availableYears = useMemo(() => {
-    if (!stats?.yearlyStatistics?.length) return [selectedYear, selectedYear - 1, selectedYear - 2];
+    if (!stats?.yearlyStatistics?.length) return [selectedYear, selectedYear - 1, selectedYear - 2]
 
-    return Array.from(new Set(stats.yearlyStatistics.map((item) => item.year))).sort((a, b) => b - a);
-  }, [stats, selectedYear]);
+    return Array.from(new Set(stats.yearlyStatistics.map((item) => item.year))).sort((a, b) => b - a)
+  }, [stats, selectedYear])
 
-  const yearlyIncome = monthlyChartData.reduce((sum, item) => sum + item.income, 0);
-  const yearlyExpense = monthlyChartData.reduce((sum, item) => sum + item.expense, 0);
-  const yearlyNet = yearlyIncome - yearlyExpense;
-  const savingRate = yearlyIncome > 0 ? (yearlyNet / yearlyIncome) * 100 : 0;
+  const yearlyIncome = monthlyChartData.reduce((sum, item) => sum + item.income, 0)
+  const yearlyExpense = monthlyChartData.reduce((sum, item) => sum + item.expense, 0)
+  const yearlyNet = yearlyIncome - yearlyExpense
+  const savingRate = yearlyIncome > 0 ? (yearlyNet / yearlyIncome) * 100 : 0
 
   return (
     <section className="space-y-6">
@@ -204,10 +204,7 @@ export default function StatisticsPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={categoryChartData} dataKey="value" nameKey="name"
-                  innerRadius={62}
-                  outerRadius={96}
-                  paddingAngle={2}
-                  stroke="rgba(15, 23, 42, 0.8)"
+                  innerRadius={62} outerRadius={96} paddingAngle={2} stroke="rgba(15, 23, 42, 0.8)"
                 >
                   {categoryChartData.map((entry, index) => (
                     <Cell key={entry.name} fill={pieColors[index % pieColors.length]} />
@@ -278,5 +275,5 @@ export default function StatisticsPage() {
         ))}
       </section>
     </section>
-  );
+  )
 }

@@ -2,10 +2,19 @@ package demo.server.dto.response;
 
 import java.math.BigDecimal;
 
-public record MonthlyStatisticsResponse(
-        int month,
-        BigDecimal income,
-        BigDecimal expense,
-        BigDecimal balance
-) {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class MonthlyStatisticsResponse {
+        private int month;
+        private BigDecimal income;
+        private BigDecimal expense;
+        private BigDecimal balance;
 }

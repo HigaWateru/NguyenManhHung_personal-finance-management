@@ -47,7 +47,7 @@ public class IncomeController {
     ) {
         return ResponseEntity.ok(ApiResponse.success(
                 "Incomes fetched successfully",
-                incomeService.getIncomes(principal.id(), categoryId, fromDate, toDate, keyword, page, size)
+                incomeService.getIncomes(principal.getId(), categoryId, fromDate, toDate, keyword, page, size)
         ));
     }
 
@@ -56,7 +56,7 @@ public class IncomeController {
             @AuthenticationPrincipal CurrentUserPrincipal principal,
             @PathVariable Long incomeId
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Income fetched successfully", incomeService.getIncome(principal.id(), incomeId)));
+        return ResponseEntity.ok(ApiResponse.success("Income fetched successfully", incomeService.getIncome(principal.getId(), incomeId)));
     }
 
     @PostMapping
@@ -65,7 +65,7 @@ public class IncomeController {
             @Valid @RequestBody IncomeRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Income created successfully", incomeService.createIncome(principal.id(), request)));
+                .body(ApiResponse.success("Income created successfully", incomeService.createIncome(principal.getId(), request)));
     }
 
     @PutMapping("/{incomeId}")
@@ -74,7 +74,7 @@ public class IncomeController {
             @PathVariable Long incomeId,
             @Valid @RequestBody IncomeRequest request
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Income updated successfully", incomeService.updateIncome(principal.id(), incomeId, request)));
+        return ResponseEntity.ok(ApiResponse.success("Income updated successfully", incomeService.updateIncome(principal.getId(), incomeId, request)));
     }
 
     @DeleteMapping("/{incomeId}")
@@ -82,6 +82,6 @@ public class IncomeController {
             @AuthenticationPrincipal CurrentUserPrincipal principal,
             @PathVariable Long incomeId
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Income deleted successfully", incomeService.deleteIncome(principal.id(), incomeId)));
+        return ResponseEntity.ok(ApiResponse.success("Income deleted successfully", incomeService.deleteIncome(principal.getId(), incomeId)));
     }
 }

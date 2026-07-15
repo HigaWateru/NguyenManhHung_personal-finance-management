@@ -7,15 +7,14 @@ import demo.server.dto.response.PageResponse;
 import java.time.LocalDate;
 
 public interface ExpenseService {
-
     PageResponse<ExpenseResponse> getExpenses(
-            Long userId,
-            Long categoryId,
-            LocalDate fromDate,
-            LocalDate toDate,
-            String keyword,
-            int page,
-            int size
+        Long userId,
+        Long categoryId,
+        LocalDate fromDate,
+        LocalDate toDate,
+        String keyword,
+        int page,
+        int size
     );
 
     ExpenseResponse getExpense(Long userId, Long expenseId);

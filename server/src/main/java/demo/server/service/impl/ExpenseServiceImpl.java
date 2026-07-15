@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
-
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -35,25 +34,24 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     @Transactional(readOnly = true)
     public PageResponse<ExpenseResponse> getExpenses(
-            Long userId,
-            Long categoryId,
-            LocalDate fromDate,
-            LocalDate toDate,
-            String keyword,
-            int page,
-            int size
+        Long userId,
+        Long categoryId,
+        LocalDate fromDate,
+        LocalDate toDate,
+        String keyword,
+        int page,
+        int size
     ) {
         ServiceInputUtils.validateDateRange(fromDate, toDate);
 
         Page<ExpenseResponse> expenses = expenseRepository.search(
-                        userId,
-                        categoryId,
-                        fromDate,
-                        toDate,
-                        ServiceInputUtils.normalizeOptionalText(keyword),
-                        PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
-                )
-                .map(expenseMapper::toResponse);
+                userId,
+                categoryId,
+                fromDate,
+                toDate,
+                ServiceInputUtils.normalizeOptionalText(keyword),
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
+            ).map(expenseMapper::toResponse);
 
         return PageResponse.from(expenses);
     }
@@ -68,14 +66,14 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Transactional
     public ExpenseResponse createExpense(Long userId, ExpenseRequest request) {
         User user = findActiveUser(userId);
-        Category category = findCategory(userId, request.categoryId(), CategoryType.EXPENSE);
+        Category category = findCategory(userId, request.getCategoryId(), CategoryType.EXPENSE);
 
         Expense expense = expenseMapper.toEntity(
-                user,
-                category,
-                request.amount(),
-                request.transactionDate(),
-                ServiceInputUtils.normalizeOptionalText(request.note())
+            user,
+            category,
+            request.getAmount(),
+            request.getTransactionDate(),
+            ServiceInputUtils.normalizeOptionalText(request.getNote())
         );
 
         return expenseMapper.toResponse(expenseRepository.save(expense));
@@ -85,13 +83,13 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Transactional
     public ExpenseResponse updateExpense(Long userId, Long expenseId, ExpenseRequest request) {
         Expense expense = findOwnedExpense(userId, expenseId);
-        Category category = findCategory(userId, request.categoryId(), CategoryType.EXPENSE);
+        Category category = findCategory(userId, request.getCategoryId(), CategoryType.EXPENSE);
 
         expense.updateDetails(
-                category,
-                request.amount(),
-                request.transactionDate(),
-                ServiceInputUtils.normalizeOptionalText(request.note())
+            category,
+            request.getAmount(),
+            request.getTransactionDate(),
+            ServiceInputUtils.normalizeOptionalText(request.getNote())
         );
 
         return expenseMapper.toResponse(expense);
@@ -102,7 +100,7 @@ public class ExpenseServiceImpl implements ExpenseService {
     public MessageResponse deleteExpense(Long userId, Long expenseId) {
         Expense expense = findOwnedExpense(userId, expenseId);
         expenseRepository.delete(expense);
-        return new MessageResponse("Expense deleted successfully");
+        return MessageResponse.builder().message("Expense deleted successfully").build();
     }
 
     private Expense findOwnedExpense(Long userId, Long expenseId) {
@@ -119,9 +117,7 @@ public class ExpenseServiceImpl implements ExpenseService {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> ApiException.notFound("Category not found"));
 
-        if (category.getType() != expectedType) {
-            throw ApiException.badRequest("Selected category type is invalid");
-        }
+        if (category.getType() != expectedType) throw ApiException.badRequest("Selected category type is invalid");
 
         return category;
     }

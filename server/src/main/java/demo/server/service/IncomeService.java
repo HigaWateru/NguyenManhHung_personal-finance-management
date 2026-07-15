@@ -7,15 +7,14 @@ import demo.server.dto.response.PageResponse;
 import java.time.LocalDate;
 
 public interface IncomeService {
-
     PageResponse<IncomeResponse> getIncomes(
-            Long userId,
-            Long categoryId,
-            LocalDate fromDate,
-            LocalDate toDate,
-            String keyword,
-            int page,
-            int size
+        Long userId,
+        Long categoryId,
+        LocalDate fromDate,
+        LocalDate toDate,
+        String keyword,
+        int page,
+        int size
     );
 
     IncomeResponse getIncome(Long userId, Long incomeId);

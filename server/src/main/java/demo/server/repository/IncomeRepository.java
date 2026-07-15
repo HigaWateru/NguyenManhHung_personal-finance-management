@@ -79,7 +79,7 @@ public interface IncomeRepository extends JpaRepository<Income, Long> {
             and (:categoryId is null or i.category.id = :categoryId)
             and (:fromDate is null or i.transactionDate >= :fromDate)
             and (:toDate is null or i.transactionDate <= :toDate)
-            and (:keyword is null or lower(coalesce(i.note, '')) like lower(concat('%', :keyword, '%')))
+            and (:keyword is null or lower(coalesce(i.note, '')) like lower(concat('%', :keyword, '%')) or lower(i.category.name) like lower(concat('%', :keyword, '%')))
         """)
     Page<Income> search(
         @Param("userId") Long userId,

@@ -23,7 +23,7 @@ public class DashboardController {
             @AuthenticationPrincipal CurrentUserPrincipal principal
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success("Dashboard fetched successfully", dashboardService.getDashboard(principal.id()))
+                ApiResponse.success("Dashboard fetched successfully", dashboardService.getDashboard(principal.getId()))
         );
     }
 }

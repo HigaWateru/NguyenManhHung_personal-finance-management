@@ -2,11 +2,22 @@ package demo.server.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginRequest(
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class LoginRequest {
         @NotBlank(message = "Email is required")
-        String email,
+        private String email;
 
         @NotBlank(message = "Password is required")
-        String password
-) {
+        private String password;
 }

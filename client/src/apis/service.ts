@@ -42,6 +42,22 @@ export type ExpenseInput = {
   note?: string
 }
 
+export type ForgotPasswordInput = {
+  email: string
+}
+
+export type VerifyOtpInput = {
+  email: string
+  otp: string
+}
+
+export type ResetPasswordInput = {
+  email: string
+  otp: string
+  password: string
+  confirmPassword: string
+}
+
 export type PaginationQuery = {
   page?: number
   size?: number
@@ -171,5 +187,20 @@ export const apiService = {
 
   deleteExpense: async (id: number) => {
     await http.delete(`/api/v1/expenses/${id}`)
+  },
+
+  forgotPassword: async (payload: ForgotPasswordInput) => {
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/forgot-password", payload)
+    return response.data
+  },
+
+  verifyOtp: async (payload: VerifyOtpInput) => {
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/verify-otp", payload)
+    return response.data
+  },
+
+  resetPassword: async (payload: ResetPasswordInput) => {
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/reset-password", payload)
+    return response.data
   },
 }

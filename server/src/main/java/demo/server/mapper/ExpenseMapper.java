@@ -13,24 +13,24 @@ public class ExpenseMapper {
 
     public Expense toEntity(User user, Category category, BigDecimal amount, LocalDate transactionDate, String note) {
         return Expense.builder()
-                .user(user)
-                .category(category)
-                .amount(amount)
-                .transactionDate(transactionDate)
-                .note(note)
-                .build();
+            .user(user)
+            .category(category)
+            .amount(amount)
+            .transactionDate(transactionDate)
+            .note(note)
+            .build();
     }
 
     public ExpenseResponse toResponse(Expense expense) {
-        return new ExpenseResponse(
-                expense.getId(),
-                expense.getCategory().getId(),
-                expense.getCategory().getName(),
-                expense.getAmount(),
-                expense.getTransactionDate(),
-                expense.getNote(),
-                expense.getCreatedAt(),
-                expense.getUpdatedAt()
-        );
+        return ExpenseResponse.builder()
+            .id(expense.getId())
+            .categoryId(expense.getCategory().getId())
+            .categoryName(expense.getCategory().getName())
+            .amount(expense.getAmount())
+            .transactionDate(expense.getTransactionDate())
+            .note(expense.getNote())
+            .createdAt(expense.getCreatedAt())
+            .updatedAt(expense.getUpdatedAt())
+            .build();
     }
 }
