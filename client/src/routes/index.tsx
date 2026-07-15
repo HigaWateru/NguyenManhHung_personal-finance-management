@@ -6,6 +6,7 @@ import ExpensePage from "../pages/expense/ExpensePage"
 import IncomePage from "../pages/income/IncomePage"
 import ErrorPage from "../pages/error/ErrorPage"
 import LoginPage from "../pages/login/LoginPage"
+import OAuth2RedirectHandler from "../pages/login/OAuth2RedirectHandler"
 import ProfilePage from "../pages/profile/ProfilePage"
 import RegisterPage from "../pages/register/RegisterPage"
 import StatisticsPage from "../pages/statistics/StatisticsPage"
@@ -36,6 +37,7 @@ const routers = createBrowserRouter([
       { path: "/login", element: <LoginPage /> },
       { path: "/register", element: <RegisterPage /> },
       { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      { path: "/oauth2/redirect", element: <OAuth2RedirectHandler /> },
     ],
   },
   { path: "/404", element: <ErrorPage /> },
