@@ -20,7 +20,7 @@ public interface AuthService {
 
     AuthResponse refreshToken(RefreshTokenRequest request);
 
-    MessageResponse logout(String refreshToken);
+    MessageResponse logout(String accessToken, String refreshToken);
 
     UserProfileResponse getCurrentUserProfile(Long userId);
 
@@ -32,5 +32,5 @@ public interface AuthService {
 
     void verifyOtp(VerifyOtpRequest request);
 
-    void resetPassword(ResetPasswordRequest request);
+    void resetPassword(String accessToken, ResetPasswordRequest request);
 }

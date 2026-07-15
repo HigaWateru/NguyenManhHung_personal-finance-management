@@ -114,6 +114,6 @@ public class AuthServiceForgotPasswordTest {
                 .confirmPassword("DiffPass123!")
                 .build();
 
-        assertThrows(ApiException.class, () -> authService.resetPassword(request));
+        assertThrows(ApiException.class, () -> authService.resetPassword(null, request));
     }
 }

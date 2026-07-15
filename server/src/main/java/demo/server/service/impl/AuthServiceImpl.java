@@ -23,6 +23,7 @@ import demo.server.service.AuthService;
 import demo.server.service.CloudinaryService;
 import demo.server.service.RedisService;
 import demo.server.service.EmailService;
+import demo.server.service.JwtBlacklistService;
 import java.time.LocalDateTime;
 import java.security.SecureRandom;
 import java.util.Locale;
@@ -51,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
     private final CloudinaryService cloudinaryService;
     private final RedisService redisService;
     private final EmailService emailService;
+    private final JwtBlacklistService jwtBlacklistService;
 
     @Value("${jwt.refresh-token-days}")
     private long refreshTokenDays;
@@ -104,7 +106,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public MessageResponse logout(String refreshTokenValue) {
+    public MessageResponse logout(String accessToken, String refreshTokenValue) {
+        if (accessToken != null) {
+            jwtBlacklistService.blacklistToken(accessToken);
+        }
+
         refreshTokenRepository.findByToken(refreshTokenValue)
             .ifPresent(token -> {
                 if (!token.isRevoked()) revokeRefreshToken(token);
@@ -274,7 +280,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void resetPassword(ResetPasswordRequest request) {
+    public void resetPassword(String accessToken, ResetPasswordRequest request) {
         String email = normalizeEmail(request.getEmail());
         String otp = request.getOtp();
         log.info("Password reset initiated for email: {}", email);
@@ -304,6 +310,10 @@ public class AuthServiceImpl implements AuthService {
             token.revoke(LocalDateTime.now());
         }
         refreshTokenRepository.saveAll(activeTokens);
+
+        if (accessToken != null) {
+            jwtBlacklistService.blacklistToken(accessToken);
+        }
 
         redisService.deleteOtp(email);
         log.info("Password reset successful and all sessions revoked for email: {}", email);

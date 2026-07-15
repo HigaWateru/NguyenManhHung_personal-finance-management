@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import demo.server.dto.request.ForgotPasswordRequest;
@@ -52,8 +54,15 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<MessageResponse>> logout(@Valid @RequestBody LogoutRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Logout successful", authService.logout(request.getRefreshToken())));
+    public ResponseEntity<ApiResponse<MessageResponse>> logout(
+        @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader,
+        @Valid @RequestBody LogoutRequest request
+    ) {
+        String accessToken = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            accessToken = authHeader.substring(7);
+        }
+        return ResponseEntity.ok(ApiResponse.success("Logout successful", authService.logout(accessToken, request.getRefreshToken())));
     }
 
     @GetMapping("/profile")
@@ -98,8 +107,15 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        authService.resetPassword(request);
+    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(
+        @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader,
+        @Valid @RequestBody ResetPasswordRequest request
+    ) {
+        String accessToken = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            accessToken = authHeader.substring(7);
+        }
+        authService.resetPassword(accessToken, request);
         return ResponseEntity.ok(ApiResponse.success(
             "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.",
             MessageResponse.builder().message("Đặt lại mật khẩu thành công.").build()

@@ -61,6 +61,10 @@ public class JwtTokenProvider {
         return parseClaims(token).getIssuedAt();
     }
 
+    public java.util.Date extractExpiration(String token) {
+        return parseClaims(token).getExpiration();
+    }
+
     private Claims parseClaims(String token) {
         return Jwts.parser()
             .verifyWith(secretKey)

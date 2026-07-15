@@ -1,8 +1,11 @@
 package demo.server.security.jwt;
 
 import demo.server.entity.User;
+import demo.server.dto.response.ApiResponse;
 import demo.server.repository.UserRepository;
 import demo.server.security.principal.CurrentUserPrincipal;
+import demo.server.service.JwtBlacklistService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +26,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+    private final JwtBlacklistService jwtBlacklistService;
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -37,6 +42,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authorizationHeader.substring(7);
         if (!jwtTokenProvider.isTokenValid(token)) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (jwtBlacklistService.isBlacklisted(token)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            ApiResponse<Void> apiResponse = ApiResponse.failure("Token has been revoked.", null, request.getRequestURI());
+            response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
             return;
         }
 
