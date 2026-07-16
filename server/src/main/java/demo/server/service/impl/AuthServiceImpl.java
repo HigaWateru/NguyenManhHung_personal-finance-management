@@ -322,4 +322,30 @@ public class AuthServiceImpl implements AuthService {
     private String generateRefreshTokenValue() {
         return UUID.randomUUID() + "." + UUID.randomUUID();
     }
+
+    @Override
+    @Transactional
+    public AuthResponse loginOAuth2(String email, String fullName, String avatarUrl) {
+        String finalEmail = normalizeEmail(email);
+        User user = userRepository.findByEmail(finalEmail)
+                .orElseGet(() -> {
+                    User newUser = User.builder()
+                            .email(finalEmail)
+                            .fullName(fullName != null ? fullName.trim() : "OAuth2 User")
+                            .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                            .avatarUrl(avatarUrl)
+                            .timezone(DEFAULT_TIMEZONE)
+                            .currencyCode(CurrencyCode.VND)
+                            .active(true)
+                            .build();
+                    return userRepository.save(newUser);
+                });
+
+        if (!user.isActive()) {
+            throw ApiException.unauthorized("Tài khoản đang bị khóa.");
+        }
+
+        RefreshToken refreshToken = createRefreshToken(user);
+        return buildAuthResponse(user, refreshToken.getToken());
+    }
 }

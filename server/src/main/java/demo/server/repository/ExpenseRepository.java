@@ -38,6 +38,19 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     );
 
     @Query("""
+        select coalesce(sum(e.amount), 0) from Expense e
+        where e.user.id = :userId
+            and e.category.id = :categoryId
+            and e.transactionDate between :fromDate and :toDate
+        """)
+    BigDecimal sumAmountByUserIdAndCategoryIdAndTransactionDateBetween(
+        @Param("userId") Long userId,
+        @Param("categoryId") Long categoryId,
+        @Param("fromDate") LocalDate fromDate,
+        @Param("toDate") LocalDate toDate
+    );
+
+    @Query("""
         select month(e.transactionDate) as month, coalesce(sum(e.amount), 0) as totalAmount
         from Expense e
         where e.user.id = :userId

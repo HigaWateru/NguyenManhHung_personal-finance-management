@@ -1,6 +1,6 @@
 import { http } from "./http"
 import type {ApiResponse, AuthPayload, CategoryItem, CategoryType, CurrencyCode, DashboardData, ExpenseItem, IncomeItem,
-  PageResponse, StatisticsData, UserProfile, } from "../types/api"
+  PageResponse, StatisticsData, UserProfile, BankAccountResponse, BudgetResponse, GoalResponse, NotificationResponse } from "../types/api"
 
 export type LoginInput = {
   email: string
@@ -203,4 +203,98 @@ export const apiService = {
     const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/reset-password", payload)
     return response.data
   },
+
+  // Plaid Integration
+  getPlaidLinkToken: async () => {
+    const response = await http.post<ApiResponse<{ linkToken: string }>>("/api/v1/plaid/create-link-token")
+    return response.data.data
+  },
+
+  exchangePlaidPublicToken: async (publicToken: string, institutionName: string) => {
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/plaid/exchange-public-token", { publicToken, institutionName })
+    return response.data.data
+  },
+
+  syncPlaidTransactions: async () => {
+    const response = await http.post<ApiResponse<{ syncedCount: number }>>("/api/v1/plaid/sync")
+    return response.data.data
+  },
+
+  getPlaidBankAccounts: async () => {
+    const response = await http.get<ApiResponse<BankAccountResponse[]>>("/api/v1/plaid/accounts")
+    return response.data.data
+  },
+
+  getPlaidStatus: async () => {
+    const response = await http.get<ApiResponse<{ connected: boolean }>>("/api/v1/plaid/status")
+    return response.data.data
+  },
+
+  disconnectPlaid: async () => {
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/plaid/disconnect")
+    return response.data.data
+  },
+
+  // Budgets
+  getBudgets: async () => {
+    const response = await http.get<ApiResponse<BudgetResponse[]>>("/api/v1/budgets")
+    return response.data.data
+  },
+
+  createBudget: async (categoryId: number, limitAmount: number) => {
+    const response = await http.post<ApiResponse<BudgetResponse>>("/api/v1/budgets", { categoryId, limitAmount })
+    return response.data.data
+  },
+
+  updateBudget: async (id: number, limitAmount: number) => {
+    const response = await http.put<ApiResponse<BudgetResponse>>(`/api/v1/budgets/${id}`, { categoryId: 0, limitAmount })
+    return response.data.data
+  },
+
+  deleteBudget: async (id: number) => {
+    await http.delete(`/api/v1/budgets/${id}`)
+  },
+
+  // Goals
+  getGoals: async () => {
+    const response = await http.get<ApiResponse<GoalResponse[]>>("/api/v1/goals")
+    return response.data.data
+  },
+
+  createGoal: async (name: string, targetAmount: number, targetDate?: string) => {
+    const response = await http.post<ApiResponse<GoalResponse>>("/api/v1/goals", { name, targetAmount, targetDate })
+    return response.data.data
+  },
+
+  updateGoalProgress: async (id: number, currentAmount: number) => {
+    const response = await http.put<ApiResponse<GoalResponse>>(`/api/v1/goals/${id}/progress`, { currentAmount })
+    return response.data.data
+  },
+
+  updateGoal: async (id: number, name: string, targetAmount: number, targetDate?: string, status?: string) => {
+    const response = await http.put<ApiResponse<GoalResponse>>(`/api/v1/goals/${id}?status=${status || "ACTIVE"}`, { name, targetAmount, targetDate })
+    return response.data.data
+  },
+
+  deleteGoal: async (id: number) => {
+    await http.delete(`/api/v1/goals/${id}`)
+  },
+
+  // Notifications
+  getNotifications: async (unreadOnly?: boolean) => {
+    const response = await http.get<ApiResponse<NotificationResponse[]>>("/api/v1/notifications", {
+      params: unreadOnly ? { unreadOnly } : undefined
+    })
+    return response.data.data
+  },
+
+  markNotificationRead: async (id: number) => {
+    const response = await http.post<ApiResponse<{ message: string }>>(`/api/v1/notifications/${id}/read`)
+    return response.data.data
+  },
+
+  markAllNotificationsRead: async () => {
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/notifications/mark-all-read")
+    return response.data.data
+  }
 }

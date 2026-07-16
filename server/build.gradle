@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.cloudinary:cloudinary-http44:1.39.0'
     // Source: https://mvnrepository.com/artifact/com.cloudinary/cloudinary-core
     implementation("com.cloudinary:cloudinary-core:1.38.0")
+    implementation 'com.plaid:plaid-java:41.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-client'
     compileOnly 'org.projectlombok:lombok'

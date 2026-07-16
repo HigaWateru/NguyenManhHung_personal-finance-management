@@ -123,3 +123,43 @@ export type StatisticsData = {
   yearlyStatistics: YearlyStatistics[]
   categoryStatistics: CategoryStatistics[]
 }
+
+export type BankAccountResponse = {
+  id: number
+  institutionName: string
+  accountName: string
+  accountType: string
+  accountSubtype: string | null
+  currentBalance: number
+  lastSyncedAt: string | null
+  connectionStatus: string
+}
+
+export type BudgetResponse = {
+  id: number
+  categoryId: number
+  categoryName: string
+  limitAmount: number
+  spentAmount: number
+  startDate: string
+  endDate: string
+}
+
+export type GoalResponse = {
+  id: number
+  name: string
+  targetAmount: number
+  currentAmount: number
+  targetDate: string | null
+  status: string
+}
+
+export type NotificationResponse = {
+  id: number
+  title: string
+  message: string
+  read: boolean
+  type: string
+  createdAt: string
+}
+

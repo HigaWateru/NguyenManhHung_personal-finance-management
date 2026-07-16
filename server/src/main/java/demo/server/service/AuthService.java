@@ -33,4 +33,6 @@ public interface AuthService {
     void verifyOtp(VerifyOtpRequest request);
 
     void resetPassword(String accessToken, ResetPasswordRequest request);
+
+    AuthResponse loginOAuth2(String email, String fullName, String avatarUrl);
 }

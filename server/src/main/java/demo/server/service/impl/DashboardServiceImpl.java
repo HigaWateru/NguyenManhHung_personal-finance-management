@@ -5,8 +5,10 @@ import demo.server.dto.response.DashboardResponse;
 import demo.server.dto.response.RecentTransactionResponse;
 import demo.server.entity.Expense;
 import demo.server.entity.Income;
+import demo.server.entity.Transaction;
 import demo.server.repository.ExpenseRepository;
 import demo.server.repository.IncomeRepository;
+import demo.server.repository.TransactionRepository;
 import demo.server.service.DashboardService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,12 +28,19 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
+    private final TransactionRepository transactionRepository;
 
     @Override
     @Transactional(readOnly = true)
     public DashboardResponse getDashboard(Long userId) {
         BigDecimal totalIncome = valueOrZero(incomeRepository.sumAmountByUserId(userId));
         BigDecimal totalExpense = valueOrZero(expenseRepository.sumAmountByUserId(userId));
+        
+        BigDecimal plaidIncome = valueOrZero(transactionRepository.sumAmountByUserIdAndType(userId, CategoryType.INCOME));
+        BigDecimal plaidExpense = valueOrZero(transactionRepository.sumAmountByUserIdAndType(userId, CategoryType.EXPENSE));
+        
+        totalIncome = totalIncome.add(plaidIncome);
+        totalExpense = totalExpense.add(plaidExpense);
         BigDecimal totalBalance = totalIncome.subtract(totalExpense);
 
         LocalDate now = LocalDate.now();
@@ -40,6 +49,12 @@ public class DashboardServiceImpl implements DashboardService {
 
         BigDecimal monthlyIncome = valueOrZero(incomeRepository.sumAmountByUserIdAndTransactionDateBetween(userId, monthStart, monthEnd));
         BigDecimal monthlyExpense = valueOrZero(expenseRepository.sumAmountByUserIdAndTransactionDateBetween(userId, monthStart, monthEnd));
+
+        BigDecimal plaidMonthlyIncome = valueOrZero(transactionRepository.sumAmountByUserIdAndTypeAndTransactionDateBetween(userId, CategoryType.INCOME, monthStart, monthEnd));
+        BigDecimal plaidMonthlyExpense = valueOrZero(transactionRepository.sumAmountByUserIdAndTypeAndTransactionDateBetween(userId, CategoryType.EXPENSE, monthStart, monthEnd));
+
+        monthlyIncome = monthlyIncome.add(plaidMonthlyIncome);
+        monthlyExpense = monthlyExpense.add(plaidMonthlyExpense);
 
         List<RecentTransactionResponse> recentTransactions = buildRecentTransactions(userId);
 
@@ -60,8 +75,14 @@ public class DashboardServiceImpl implements DashboardService {
         List<RecentTransactionResponse> expenses = expenseRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
             .stream().map(this::toExpenseTransaction).toList();
 
-        return java.util.stream.Stream.concat(incomes.stream(), expenses.stream())
-            .sorted(RECENT_TRANSACTION_COMPARATOR).limit(5).toList();
+        List<RecentTransactionResponse> bankTxs = transactionRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
+            .stream().map(this::toBankTransaction).toList();
+
+        return java.util.stream.Stream.of(incomes, expenses, bankTxs)
+            .flatMap(List::stream)
+            .sorted(RECENT_TRANSACTION_COMPARATOR)
+            .limit(5)
+            .toList();
     }
 
     private RecentTransactionResponse toIncomeTransaction(Income income) {
@@ -87,6 +108,19 @@ public class DashboardServiceImpl implements DashboardService {
             .transactionDate(expense.getTransactionDate())
             .note(expense.getNote())
             .createdAt(expense.getCreatedAt())
+            .build();
+    }
+
+    private RecentTransactionResponse toBankTransaction(Transaction transaction) {
+        return RecentTransactionResponse.builder()
+            .id(transaction.getId())
+            .type(transaction.getType())
+            .categoryId(transaction.getCategory() != null ? transaction.getCategory().getId() : null)
+            .categoryName(transaction.getCategory() != null ? transaction.getCategory().getName() : "Uncategorized")
+            .amount(transaction.getAmount())
+            .transactionDate(transaction.getTransactionDate())
+            .note(transaction.getMerchantName() != null ? transaction.getMerchantName() : transaction.getNote())
+            .createdAt(transaction.getCreatedAt())
             .build();
     }
 
