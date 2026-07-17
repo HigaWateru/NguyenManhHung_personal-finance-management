@@ -2,10 +2,10 @@ import { X, type LucideIcon } from "lucide-react"
 import { useMemo } from "react"
 import { NavLink } from "react-router-dom"
 import { navigationItems } from "../../utils/mockData"
-import { LayoutDashboard, ArrowDownRight, ArrowUpRight, Tags, BarChart3, UserRound } from "lucide-react"
+import { LayoutDashboard, ArrowDownRight, ArrowUpRight, Tags, BarChart3, UserRound, TrendingUp } from "lucide-react"
 
 const icons: Record<string, LucideIcon> = {LayoutDashboard, ArrowDownRight, ArrowUpRight, Tags, BarChart3,
-  UserRound}
+  UserRound, TrendingUp}
 
 type SidebarProps = {
   open: boolean

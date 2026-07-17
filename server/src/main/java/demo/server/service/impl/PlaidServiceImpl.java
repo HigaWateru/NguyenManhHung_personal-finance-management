@@ -14,14 +14,18 @@ import com.plaid.client.model.TransactionsSyncRequest;
 import com.plaid.client.model.TransactionsSyncResponse;
 import com.plaid.client.request.PlaidApi;
 import demo.server.common.enums.CategoryType;
+import demo.server.common.enums.CurrencyCode;
 import demo.server.dto.response.BankAccountResponse;
 import demo.server.entity.BankAccount;
+
 import demo.server.entity.User;
 import demo.server.repository.BankAccountRepository;
 import demo.server.repository.TransactionRepository;
 import demo.server.repository.UserRepository;
 import demo.server.service.CategoryClassificationService;
+import demo.server.service.ExchangeRateService;
 import demo.server.service.PlaidService;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,6 +50,8 @@ public class PlaidServiceImpl implements PlaidService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final CategoryClassificationService categoryClassificationService;
+    private final ExchangeRateService exchangeRateService;
+
 
     @Value("${plaid.client-id:mock_client_id}")
     private String clientId;
@@ -203,6 +209,7 @@ public class PlaidServiceImpl implements PlaidService {
                     // Find matching BankAccount
                     BankAccount dbAccount = bankAccountRepository.findByPlaidAccountId(plaidTx.getAccountId())
                         .orElse(null);
+                    User userObj = dbAccount != null ? dbAccount.getUser() : userRepository.findById(userId).orElse(null);
 
                     // Convert Plaid transaction into our DB Transaction entity
                     BigDecimal amountVal = BigDecimal.valueOf(plaidTx.getAmount());
@@ -212,17 +219,33 @@ public class PlaidServiceImpl implements PlaidService {
                     // Let's normalize it to always positive in our DB amount column
                     BigDecimal normalizedAmount = amountVal.abs();
 
+                    String isoCode = plaidTx.getIsoCurrencyCode();
+                    CurrencyCode plaidCurrency = CurrencyCode.USD;
+                    if (isoCode != null) {
+                        try {
+                            plaidCurrency = CurrencyCode.valueOf(isoCode.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            // ignore fallback
+                        }
+                    }
+
+                    CurrencyCode userBaseCurrency = userObj != null ? userObj.getCurrencyCode() : CurrencyCode.VND;
+                    BigDecimal normalizedAmountInBaseCurrency = exchangeRateService.convert(normalizedAmount, plaidCurrency, userBaseCurrency);
+
                     demo.server.entity.Transaction tx = demo.server.entity.Transaction.builder()
-                        .user(dbAccount != null ? dbAccount.getUser() : userRepository.getReferenceById(userId))
+                        .user(userObj != null ? userObj : userRepository.getReferenceById(userId))
                         .bankAccount(dbAccount)
                         .plaidTransactionId(plaidTx.getTransactionId())
                         .merchantName(plaidTx.getMerchantName() != null ? plaidTx.getMerchantName() : plaidTx.getName())
                         .note(plaidTx.getName())
-                        .amount(normalizedAmount)
+                        .amount(normalizedAmountInBaseCurrency)
+                        .originalAmount(normalizedAmount)
+                        .originalCurrency(plaidCurrency)
                         .type(txType)
                         .transactionDate(plaidTx.getDate())
                         .pending(plaidTx.getPending())
                         .build();
+
 
                     // Save transaction initially without category
                     tx = transactionRepository.save(tx);

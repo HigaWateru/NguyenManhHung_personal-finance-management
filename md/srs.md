@@ -697,13 +697,13 @@ System là vai trò kỹ thuật nội bộ thực thi các cơ chế nền như
 
 | Thuộc tính | Nội dung |
 |---|---|
-| Mục đích | Cập nhật tỉ giá để quy đổi dữ liệu tài chính giữa các loại tiền tệ được hỗ trợ. |
-| Input | baseCurrency, targetCurrency, effectiveDate (hoặc nguồn provider tự động). |
-| Output | Bảng tỉ giá hiện hành và thời điểm cập nhật gần nhất. |
-| Business Rule | Tỉ giá được lưu theo ngày hiệu lực; chỉ sử dụng nguồn dữ liệu tin cậy; có cơ chế fallback khi nguồn ngoài lỗi. |
-| Validation | Mã tiền tệ thuộc ISO-4217 và trong danh sách hỗ trợ; tỉ giá lớn hơn 0. |
-| Exception | Provider không phản hồi, dữ liệu tỉ giá bất thường, lỗi đồng bộ lịch cập nhật. |
-| API liên quan | GET /api/v1/exchange-rates, POST /api/v1/exchange-rates/sync |
+| Mục đích | Xem tỉ giá ngoại tệ trực tuyến và tự động quy đổi dữ liệu tài chính hiển thị của hệ thống (Dashboard, Giao dịch, Báo cáo) theo tiền tệ hồ sơ của người dùng. |
+| Input | Don vi tien te goc trong Ho so ca nhan (VND, USD, EUR, JPY). |
+| Output | Bang ti gia ngoai te truc tuyen so voi VND va bang tinh quy doi. |
+| Business Rule | 1. Tỉ giá ngoại tệ được lưu trữ và cập nhật tự động lúc 1:00 AM hàng ngày từ open.er-api.com. <br>2. Tiền tệ hiển thị được đồng bộ tự động theo cài đặt tiền tệ trong Hồ sơ cá nhân. <br>3. Khi đổi tiền tệ trong Hồ sơ, hệ thống tự động quy đổi toàn bộ số dư và số tiền của dữ liệu lịch sử (Thu nhập, Chi tiêu, Ngân sách, Mục tiêu, Giao dịch) sang tiền tệ mới trong DB. <br>4. Các giá trị tiền tệ được làm tròn và lưu trữ với 2 chữ số thập phân. |
+| Validation | Mã tiền tệ thuộc tập hợp cho phép (VND, USD, EUR, JPY); tỷ giá lớn hơn 0. |
+| Exception | Lỗi kết nối API tỉ giá bên ngoài (sử dụng tỉ giá fallback mặc định trong DB); lỗi validation định dạng số tiền quy đổi. |
+| API liên quan | GET /api/v1/exchange-rate, GET /api/v1/exchange-rate/latest, PUT /api/v1/users/display-currency |
 
 #### 8.8.4 Language Switching (i18n)
 

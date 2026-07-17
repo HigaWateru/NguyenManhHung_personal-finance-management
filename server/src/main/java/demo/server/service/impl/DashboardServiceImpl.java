@@ -1,15 +1,19 @@
 package demo.server.service.impl;
 
 import demo.server.common.enums.CategoryType;
+import demo.server.common.enums.CurrencyCode;
 import demo.server.dto.response.DashboardResponse;
 import demo.server.dto.response.RecentTransactionResponse;
 import demo.server.entity.Expense;
 import demo.server.entity.Income;
 import demo.server.entity.Transaction;
+import demo.server.entity.User;
 import demo.server.repository.ExpenseRepository;
 import demo.server.repository.IncomeRepository;
 import demo.server.repository.TransactionRepository;
+import demo.server.repository.UserRepository;
 import demo.server.service.DashboardService;
+import demo.server.service.ExchangeRateService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
+
     private static final BigDecimal ZERO = BigDecimal.ZERO;
     private static final Comparator<RecentTransactionResponse> RECENT_TRANSACTION_COMPARATOR =
         Comparator.comparing(RecentTransactionResponse::getTransactionDate, Comparator.reverseOrder())
@@ -29,10 +34,19 @@ public class DashboardServiceImpl implements DashboardService {
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
+    private final ExchangeRateService exchangeRateService;
+
 
     @Override
     @Transactional(readOnly = true)
     public DashboardResponse getDashboard(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
+        CurrencyCode baseCurrency = user.getCurrencyCode();
+        CurrencyCode displayCurrency = user.getDisplayCurrency();
+
         BigDecimal totalIncome = valueOrZero(incomeRepository.sumAmountByUserId(userId));
         BigDecimal totalExpense = valueOrZero(expenseRepository.sumAmountByUserId(userId));
         
@@ -41,7 +55,6 @@ public class DashboardServiceImpl implements DashboardService {
         
         totalIncome = totalIncome.add(plaidIncome);
         totalExpense = totalExpense.add(plaidExpense);
-        BigDecimal totalBalance = totalIncome.subtract(totalExpense);
 
         LocalDate now = LocalDate.now();
         LocalDate monthStart = now.withDayOfMonth(1);
@@ -56,7 +69,15 @@ public class DashboardServiceImpl implements DashboardService {
         monthlyIncome = monthlyIncome.add(plaidMonthlyIncome);
         monthlyExpense = monthlyExpense.add(plaidMonthlyExpense);
 
-        List<RecentTransactionResponse> recentTransactions = buildRecentTransactions(userId);
+        // Convert summaries to display currency
+        totalIncome = exchangeRateService.convert(totalIncome, baseCurrency, displayCurrency);
+        totalExpense = exchangeRateService.convert(totalExpense, baseCurrency, displayCurrency);
+        monthlyIncome = exchangeRateService.convert(monthlyIncome, baseCurrency, displayCurrency);
+        monthlyExpense = exchangeRateService.convert(monthlyExpense, baseCurrency, displayCurrency);
+        
+        BigDecimal totalBalance = totalIncome.subtract(totalExpense);
+
+        List<RecentTransactionResponse> recentTransactions = buildRecentTransactions(userId, baseCurrency, displayCurrency);
 
         return DashboardResponse.builder()
             .totalIncome(totalIncome)
@@ -68,15 +89,16 @@ public class DashboardServiceImpl implements DashboardService {
             .build();
     }
 
-    private List<RecentTransactionResponse> buildRecentTransactions(Long userId) {
+
+    private List<RecentTransactionResponse> buildRecentTransactions(Long userId, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
         List<RecentTransactionResponse> incomes = incomeRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
-            .stream().map(this::toIncomeTransaction).toList();
+            .stream().map(income -> toIncomeTransaction(income, baseCurrency, displayCurrency)).toList();
 
         List<RecentTransactionResponse> expenses = expenseRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
-            .stream().map(this::toExpenseTransaction).toList();
+            .stream().map(expense -> toExpenseTransaction(expense, baseCurrency, displayCurrency)).toList();
 
         List<RecentTransactionResponse> bankTxs = transactionRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
-            .stream().map(this::toBankTransaction).toList();
+            .stream().map(tx -> toBankTransaction(tx, displayCurrency)).toList();
 
         return java.util.stream.Stream.of(incomes, expenses, bankTxs)
             .flatMap(List::stream)
@@ -85,44 +107,48 @@ public class DashboardServiceImpl implements DashboardService {
             .toList();
     }
 
-    private RecentTransactionResponse toIncomeTransaction(Income income) {
+    private RecentTransactionResponse toIncomeTransaction(Income income, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
+        BigDecimal convertedAmount = exchangeRateService.convert(income.getAmount(), baseCurrency, displayCurrency);
         return RecentTransactionResponse.builder()
             .id(income.getId())
             .type(CategoryType.INCOME)
             .categoryId(income.getCategory().getId())
             .categoryName(income.getCategory().getName())
-            .amount(income.getAmount())
+            .amount(convertedAmount)
             .transactionDate(income.getTransactionDate())
             .note(income.getNote())
             .createdAt(income.getCreatedAt())
             .build();
     }
 
-    private RecentTransactionResponse toExpenseTransaction(Expense expense) {
+    private RecentTransactionResponse toExpenseTransaction(Expense expense, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
+        BigDecimal convertedAmount = exchangeRateService.convert(expense.getAmount(), baseCurrency, displayCurrency);
         return RecentTransactionResponse.builder()
             .id(expense.getId())
             .type(CategoryType.EXPENSE)
             .categoryId(expense.getCategory().getId())
             .categoryName(expense.getCategory().getName())
-            .amount(expense.getAmount())
+            .amount(convertedAmount)
             .transactionDate(expense.getTransactionDate())
             .note(expense.getNote())
             .createdAt(expense.getCreatedAt())
             .build();
     }
 
-    private RecentTransactionResponse toBankTransaction(Transaction transaction) {
+    private RecentTransactionResponse toBankTransaction(Transaction transaction, CurrencyCode displayCurrency) {
+        BigDecimal convertedAmount = exchangeRateService.convert(transaction.getOriginalAmount(), transaction.getOriginalCurrency(), displayCurrency);
         return RecentTransactionResponse.builder()
             .id(transaction.getId())
             .type(transaction.getType())
             .categoryId(transaction.getCategory() != null ? transaction.getCategory().getId() : null)
             .categoryName(transaction.getCategory() != null ? transaction.getCategory().getName() : "Uncategorized")
-            .amount(transaction.getAmount())
+            .amount(convertedAmount)
             .transactionDate(transaction.getTransactionDate())
             .note(transaction.getMerchantName() != null ? transaction.getMerchantName() : transaction.getNote())
             .createdAt(transaction.getCreatedAt())
             .build();
     }
+
 
     private BigDecimal valueOrZero(BigDecimal value) {
         return value == null ? ZERO : value;

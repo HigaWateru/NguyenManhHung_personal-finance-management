@@ -3,6 +3,7 @@ package demo.server.seeder;
 import demo.server.common.enums.CategoryType;
 import demo.server.common.enums.CurrencyCode;
 import demo.server.entity.Category;
+import demo.server.entity.ExchangeRate;
 import demo.server.entity.Expense;
 import demo.server.entity.Income;
 import demo.server.entity.User;
@@ -125,10 +126,16 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
                 ensureExpense(secondaryUser, secFood, new BigDecimal("130000.00"), safeDate(monthDate, 8), "Ăn cơm văn phòng");
                 ensureExpense(secondaryUser, secFood, new BigDecimal("95000.00"), safeDate(monthDate, 18), "Trà sữa");
 
-                ensureExpense(secondaryUser, secTransport, new BigDecimal("150000.00"), safeDate(monthDate, 12), "Đổ xăng");
             }
         }
+
+        // Seed initial exchange rates
+        ensureExchangeRate(CurrencyCode.VND, "Vietnamese Dong", "₫", BigDecimal.ONE);
+        ensureExchangeRate(CurrencyCode.USD, "US Dollar", "$", BigDecimal.valueOf(25450.0));
+        ensureExchangeRate(CurrencyCode.EUR, "Euro", "€", BigDecimal.valueOf(27663.0));
+        ensureExchangeRate(CurrencyCode.JPY, "Japanese Yen", "¥", BigDecimal.valueOf(160.5));
     }
+
 
     private User ensureUser(String fullName, String email, String timezone, CurrencyCode currencyCode, String encodedPassword, String avatarUrl) {
         User existingUser = findUserByEmail(email);
@@ -257,5 +264,25 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         int maxDays = reference.lengthOfMonth();
         int safeDay = Math.min(day, maxDays);
         return reference.withDayOfMonth(safeDay);
+    }
+
+    private void ensureExchangeRate(CurrencyCode currencyCode, String name, String symbol, BigDecimal rateToVnd) {
+        Long count = entityManager.createQuery(
+                "select count(r) from ExchangeRate r where r.currencyCode = :currencyCode",
+                Long.class
+            )
+            .setParameter("currencyCode", currencyCode)
+            .getSingleResult();
+
+        if (count == 0) {
+            ExchangeRate rate = ExchangeRate.builder()
+                .currencyCode(currencyCode)
+                .currencyName(name)
+                .symbol(symbol)
+                .rateToVnd(rateToVnd)
+                .rateChangePercent(BigDecimal.ZERO)
+                .build();
+            entityManager.persist(rate);
+        }
     }
 }

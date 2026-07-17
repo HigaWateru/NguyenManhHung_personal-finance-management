@@ -1,9 +1,11 @@
 package demo.server.service.impl;
 
+import demo.server.common.enums.CurrencyCode;
 import demo.server.entity.Goal;
 import demo.server.entity.User;
 import demo.server.repository.GoalRepository;
 import demo.server.repository.UserRepository;
+import demo.server.service.ExchangeRateService;
 import demo.server.service.GoalService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +20,8 @@ public class GoalServiceImpl implements GoalService {
 
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
+    private final ExchangeRateService exchangeRateService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -31,10 +35,12 @@ public class GoalServiceImpl implements GoalService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
+        BigDecimal targetInBase = exchangeRateService.convert(targetAmount, user.getDisplayCurrency(), user.getCurrencyCode());
+
         Goal goal = Goal.builder()
             .user(user)
             .name(name)
-            .targetAmount(targetAmount)
+            .targetAmount(targetInBase)
             .currentAmount(BigDecimal.ZERO)
             .targetDate(targetDate)
             .status("ACTIVE")
@@ -53,7 +59,10 @@ public class GoalServiceImpl implements GoalService {
             throw new IllegalArgumentException("Unauthorized goal access");
         }
 
-        goal.updateProgress(currentAmount);
+        User user = goal.getUser();
+        BigDecimal currentInBase = exchangeRateService.convert(currentAmount, user.getDisplayCurrency(), user.getCurrencyCode());
+
+        goal.updateProgress(currentInBase);
         
         // Auto-complete status if target reached
         if (goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0) {
@@ -75,9 +84,13 @@ public class GoalServiceImpl implements GoalService {
             throw new IllegalArgumentException("Unauthorized goal access");
         }
 
-        goal.updateDetails(name, targetAmount, targetDate, status);
+        User user = goal.getUser();
+        BigDecimal targetInBase = exchangeRateService.convert(targetAmount, user.getDisplayCurrency(), user.getCurrencyCode());
+
+        goal.updateDetails(name, targetInBase, targetDate, status);
         return goalRepository.save(goal);
     }
+
 
     @Override
     @Transactional

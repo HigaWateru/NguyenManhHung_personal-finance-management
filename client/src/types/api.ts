@@ -9,7 +9,7 @@ export type ApiResponse<T> = {
   path?: string
 }
 
-export type CurrencyCode = "VND" | "USD" | "EUR"
+export type CurrencyCode = "VND" | "USD" | "EUR" | "JPY"
 
 export type UserProfile = {
   id: number
@@ -18,6 +18,7 @@ export type UserProfile = {
   avatarUrl: string | null
   timezone: string | null
   currencyCode: CurrencyCode
+  displayCurrency: CurrencyCode
   active: boolean
   createdAt: string
   updatedAt: string
@@ -161,5 +162,15 @@ export type NotificationResponse = {
   read: boolean
   type: string
   createdAt: string
+}
+
+export type ExchangeRateResponse = {
+  id: number
+  currencyCode: CurrencyCode
+  currencyName: string
+  symbol: string
+  rateToVnd: number
+  rateChangePercent: number | null
+  updatedAt: string
 }
 

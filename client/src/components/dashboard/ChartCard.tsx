@@ -1,3 +1,6 @@
+import type { CurrencyCode } from "../../types/api"
+import { formatCurrency } from "../../utils/format"
+
 type WeekFlowItem = {
   day: string
   income: number
@@ -6,6 +9,7 @@ type WeekFlowItem = {
 
 type ChartCardProps = {
   data?: WeekFlowItem[]
+  currencyCode?: CurrencyCode
 }
 
 const defaultData: WeekFlowItem[] = [
@@ -18,15 +22,10 @@ const defaultData: WeekFlowItem[] = [
   { day: "CN", income: 84, expense: 52 },
 ]
 
-const formatMoney = (value: number) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(value);
-
-export default function ChartCard({ data }: ChartCardProps) {
+export default function ChartCard({ data, currencyCode = "VND" }: ChartCardProps) {
+  const formatMoney = (value: number) => formatCurrency(value, currencyCode)
   const cashFlowByDay = data && data.length > 0 ? data : defaultData
+
   const maxValue = Math.max(1, ...cashFlowByDay.flatMap((item) => [item.income, item.expense]))
 
   const toPercent = (value: number) => (value / maxValue) * 100

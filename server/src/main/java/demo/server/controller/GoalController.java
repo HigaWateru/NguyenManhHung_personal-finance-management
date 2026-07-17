@@ -3,11 +3,15 @@ package demo.server.controller;
 import demo.server.dto.request.GoalProgressRequest;
 import demo.server.dto.request.GoalRequest;
 import demo.server.dto.response.ApiResponse;
+import demo.server.dto.response.GoalResponse;
 import demo.server.dto.response.MessageResponse;
 import demo.server.entity.Goal;
+import demo.server.entity.User;
 import demo.server.security.principal.CurrentUserPrincipal;
+import demo.server.service.ExchangeRateService;
 import demo.server.service.GoalService;
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,42 +31,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GoalController {
     private final GoalService goalService;
+    private final ExchangeRateService exchangeRateService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Goal>>> getGoals(
+    public ResponseEntity<ApiResponse<List<GoalResponse>>> getGoals(
         @AuthenticationPrincipal CurrentUserPrincipal principal
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Goals fetched successfully", goalService.getGoals(principal.getId())));
+        List<GoalResponse> responses = goalService.getGoals(principal.getId()).stream()
+            .map(this::toResponse)
+            .toList();
+        return ResponseEntity.ok(ApiResponse.success("Goals fetched successfully", responses));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Goal>> createGoal(
+    public ResponseEntity<ApiResponse<GoalResponse>> createGoal(
         @AuthenticationPrincipal CurrentUserPrincipal principal,
         @Valid @RequestBody GoalRequest request
     ) {
         Goal goal = goalService.createGoal(principal.getId(), request.getName(), request.getTargetAmount(), request.getTargetDate());
-        return ResponseEntity.ok(ApiResponse.success("Goal created successfully", goal));
+        return ResponseEntity.ok(ApiResponse.success("Goal created successfully", toResponse(goal)));
     }
 
     @PutMapping("/{id}/progress")
-    public ResponseEntity<ApiResponse<Goal>> updateProgress(
+    public ResponseEntity<ApiResponse<GoalResponse>> updateProgress(
         @AuthenticationPrincipal CurrentUserPrincipal principal,
         @PathVariable Long id,
         @Valid @RequestBody GoalProgressRequest request
     ) {
         Goal goal = goalService.updateGoalProgress(principal.getId(), id, request.getCurrentAmount());
-        return ResponseEntity.ok(ApiResponse.success("Goal progress updated successfully", goal));
+        return ResponseEntity.ok(ApiResponse.success("Goal progress updated successfully", toResponse(goal)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Goal>> updateGoal(
+    public ResponseEntity<ApiResponse<GoalResponse>> updateGoal(
         @AuthenticationPrincipal CurrentUserPrincipal principal,
         @PathVariable Long id,
         @Valid @RequestBody GoalRequest request,
         @RequestParam(defaultValue = "ACTIVE") String status
     ) {
         Goal goal = goalService.updateGoalDetails(principal.getId(), id, request.getName(), request.getTargetAmount(), request.getTargetDate(), status);
-        return ResponseEntity.ok(ApiResponse.success("Goal details updated successfully", goal));
+        return ResponseEntity.ok(ApiResponse.success("Goal details updated successfully", toResponse(goal)));
     }
 
     @DeleteMapping("/{id}")
@@ -73,4 +81,19 @@ public class GoalController {
         goalService.deleteGoal(principal.getId(), id);
         return ResponseEntity.ok(ApiResponse.success("Goal deleted successfully", MessageResponse.builder().message("SUCCESS").build()));
     }
+
+    private GoalResponse toResponse(Goal goal) {
+        User user = goal.getUser();
+        BigDecimal targetInDisplay = exchangeRateService.convert(goal.getTargetAmount(), user.getCurrencyCode(), user.getDisplayCurrency());
+        BigDecimal currentInDisplay = exchangeRateService.convert(goal.getCurrentAmount(), user.getCurrencyCode(), user.getDisplayCurrency());
+        return GoalResponse.builder()
+            .id(goal.getId())
+            .name(goal.getName())
+            .targetAmount(targetInDisplay)
+            .currentAmount(currentInDisplay)
+            .targetDate(goal.getTargetDate())
+            .status(goal.getStatus())
+            .build();
+    }
 }
+

@@ -61,6 +61,10 @@ public class User extends BaseEntity {
     @Column(name = "currency_code", nullable = false, length = 10)
     private CurrencyCode currencyCode;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "display_currency", length = 10)
+    private CurrencyCode displayCurrency;
+
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private boolean active = true;
@@ -92,6 +96,15 @@ public class User extends BaseEntity {
         this.fullName = fullName;
         this.timezone = timezone;
         this.currencyCode = currencyCode;
+        this.displayCurrency = currencyCode;
+    }
+
+    public void updateDisplayCurrency(CurrencyCode displayCurrency) {
+        this.displayCurrency = displayCurrency;
+    }
+
+    public CurrencyCode getDisplayCurrency() {
+        return this.currencyCode;
     }
 
     public void updateAvatarUrl(String avatarUrl) {

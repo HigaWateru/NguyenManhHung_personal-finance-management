@@ -1,6 +1,8 @@
 package demo.server.entity;
 
 import demo.server.common.enums.CategoryType;
+import demo.server.common.enums.CurrencyCode;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -52,6 +54,13 @@ public class Transaction extends BaseEntity {
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
+    @Column(name = "original_amount", precision = 19, scale = 2)
+    private BigDecimal originalAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "original_currency", length = 10)
+    private CurrencyCode originalCurrency;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 20)
@@ -76,5 +85,18 @@ public class Transaction extends BaseEntity {
 
     public void updateCategory(Category category) {
         this.category = category;
+    }
+
+    public void updateAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getOriginalAmount() {
+        return this.originalAmount != null ? this.originalAmount : this.amount;
+    }
+
+    public CurrencyCode getOriginalCurrency() {
+        return this.originalCurrency != null ? this.originalCurrency :
+               (this.user != null ? this.user.getCurrencyCode() : CurrencyCode.VND);
     }
 }

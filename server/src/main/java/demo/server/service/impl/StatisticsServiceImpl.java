@@ -1,15 +1,19 @@
 package demo.server.service.impl;
 
 import demo.server.common.enums.CategoryType;
+import demo.server.common.enums.CurrencyCode;
 import demo.server.dto.response.CategoryStatisticsResponse;
 import demo.server.dto.response.MonthlyStatisticsResponse;
 import demo.server.dto.response.StatisticsResponse;
 import demo.server.dto.response.YearlyStatisticsResponse;
+import demo.server.entity.User;
 import demo.server.repository.ExpenseRepository;
 import demo.server.repository.IncomeRepository;
+import demo.server.repository.UserRepository;
 import demo.server.repository.projection.CategoryAmountProjection;
 import demo.server.repository.projection.MonthlyAmountProjection;
 import demo.server.repository.projection.YearlyAmountProjection;
+import demo.server.service.ExchangeRateService;
 import demo.server.service.StatisticsService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,15 +35,24 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository;
+    private final ExchangeRateService exchangeRateService;
+
 
     @Override
     @Transactional(readOnly = true)
     public StatisticsResponse getStatistics(Long userId, Integer year) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
+        CurrencyCode baseCurrency = user.getCurrencyCode();
+        CurrencyCode displayCurrency = user.getDisplayCurrency();
+
         int selectedYear = year == null ? LocalDate.now().getYear() : year;
 
-        List<MonthlyStatisticsResponse> monthlyStatistics = buildMonthlyStatistics(userId, selectedYear);
-        List<YearlyStatisticsResponse> yearlyStatistics = buildYearlyStatistics(userId);
-        List<CategoryStatisticsResponse> categoryStatistics = buildCategoryStatistics(userId, selectedYear);
+        List<MonthlyStatisticsResponse> monthlyStatistics = buildMonthlyStatistics(userId, selectedYear, baseCurrency, displayCurrency);
+        List<YearlyStatisticsResponse> yearlyStatistics = buildYearlyStatistics(userId, baseCurrency, displayCurrency);
+        List<CategoryStatisticsResponse> categoryStatistics = buildCategoryStatistics(userId, selectedYear, baseCurrency, displayCurrency);
 
         return StatisticsResponse.builder()
             .selectedYear(selectedYear)
@@ -49,7 +62,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             .build();
     }
 
-    private List<MonthlyStatisticsResponse> buildMonthlyStatistics(Long userId, int year) {
+    private List<MonthlyStatisticsResponse> buildMonthlyStatistics(Long userId, int year, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
         LocalDate fromDate = LocalDate.of(year, 1, 1);
         LocalDate toDate = LocalDate.of(year, 12, 31);
 
@@ -61,18 +74,21 @@ public class StatisticsServiceImpl implements StatisticsService {
             BigDecimal income = incomeByMonth.getOrDefault(month, ZERO);
             BigDecimal expense = expenseByMonth.getOrDefault(month, ZERO);
 
+            BigDecimal convertedIncome = exchangeRateService.convert(income, baseCurrency, displayCurrency);
+            BigDecimal convertedExpense = exchangeRateService.convert(expense, baseCurrency, displayCurrency);
+
             results.add(MonthlyStatisticsResponse.builder()
                 .month(month)
-                .income(income)
-                .expense(expense)
-                .balance(income.subtract(expense))
+                .income(convertedIncome)
+                .expense(convertedExpense)
+                .balance(convertedIncome.subtract(convertedExpense))
                 .build());
         }
 
         return results;
     }
 
-    private List<YearlyStatisticsResponse> buildYearlyStatistics(Long userId) {
+    private List<YearlyStatisticsResponse> buildYearlyStatistics(Long userId, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
         Map<Integer, BigDecimal> incomeByYear = toYearAmountMap(incomeRepository.sumAmountGroupByYear(userId));
         Map<Integer, BigDecimal> expenseByYear = toYearAmountMap(expenseRepository.sumAmountGroupByYear(userId));
 
@@ -82,17 +98,21 @@ public class StatisticsServiceImpl implements StatisticsService {
             .map(year -> {
                 BigDecimal income = incomeByYear.getOrDefault(year, ZERO);
                 BigDecimal expense = expenseByYear.getOrDefault(year, ZERO);
+
+                BigDecimal convertedIncome = exchangeRateService.convert(income, baseCurrency, displayCurrency);
+                BigDecimal convertedExpense = exchangeRateService.convert(expense, baseCurrency, displayCurrency);
+
                 return YearlyStatisticsResponse.builder()
                     .year(year)
-                    .income(income)
-                    .expense(expense)
-                    .balance(income.subtract(expense))
+                    .income(convertedIncome)
+                    .expense(convertedExpense)
+                    .balance(convertedIncome.subtract(convertedExpense))
                     .build();
             })
             .toList();
     }
 
-    private List<CategoryStatisticsResponse> buildCategoryStatistics(Long userId, int year) {
+    private List<CategoryStatisticsResponse> buildCategoryStatistics(Long userId, int year, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
         List<CategoryStatisticsResponse> results = new ArrayList<>();
 
         LocalDate fromDate = LocalDate.of(year, 1, 1);
@@ -104,8 +124,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         BigDecimal totalIncome = sumCategoryTotals(incomeByCategory);
         BigDecimal totalExpense = sumCategoryTotals(expenseByCategory);
 
-        incomeByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.INCOME, totalIncome)));
-        expenseByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.EXPENSE, totalExpense)));
+        incomeByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.INCOME, totalIncome, baseCurrency, displayCurrency)));
+        expenseByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.EXPENSE, totalExpense, baseCurrency, displayCurrency)));
 
         results.sort(
                 Comparator.comparing(CategoryStatisticsResponse::getTotalAmount, Comparator.reverseOrder())
@@ -116,7 +136,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private CategoryStatisticsResponse toCategoryResponse(CategoryAmountProjection item, CategoryType type,
-            BigDecimal grandTotal) {
+            BigDecimal grandTotal, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
         BigDecimal amount = valueOrZero(item.getTotalAmount());
         BigDecimal percentage = ZERO;
 
@@ -124,14 +144,17 @@ public class StatisticsServiceImpl implements StatisticsService {
             percentage = amount.multiply(ONE_HUNDRED).divide(grandTotal, 2, RoundingMode.HALF_UP);
         }
 
+        BigDecimal convertedAmount = exchangeRateService.convert(amount, baseCurrency, displayCurrency);
+
         return CategoryStatisticsResponse.builder()
             .categoryId(item.getCategoryId())
             .categoryName(item.getCategoryName())
             .type(type)
-            .totalAmount(amount)
+            .totalAmount(convertedAmount)
             .percentage(percentage)
             .build();
     }
+
 
     private BigDecimal sumCategoryTotals(List<CategoryAmountProjection> items) {
         return items.stream()

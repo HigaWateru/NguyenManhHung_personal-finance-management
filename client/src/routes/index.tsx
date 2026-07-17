@@ -11,6 +11,7 @@ import ProfilePage from "../pages/profile/ProfilePage"
 import RegisterPage from "../pages/register/RegisterPage"
 import StatisticsPage from "../pages/statistics/StatisticsPage"
 import ForgotPasswordPage from "../pages/forgot-password/ForgotPasswordPage"
+import ExchangeRatePage from "../pages/exchange-rate/ExchangeRatePage"
 import { PublicOnly, RequireAuth } from "./guards"
 
 const routers = createBrowserRouter([
@@ -26,6 +27,7 @@ const routers = createBrowserRouter([
           { path: "expense", element: <ExpensePage /> },
           { path: "category", element: <CategoryPage /> },
           { path: "statistics", element: <StatisticsPage /> },
+          { path: "exchange-rate", element: <ExchangeRatePage /> },
           { path: "profile", element: <ProfilePage /> },
         ],
       },

@@ -7,6 +7,8 @@ import demo.server.dto.response.MessageResponse;
 import demo.server.entity.Budget;
 import demo.server.security.principal.CurrentUserPrincipal;
 import demo.server.service.BudgetService;
+import demo.server.service.ExchangeRateService;
+import demo.server.entity.User;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BudgetController {
     private final BudgetService budgetService;
+    private final ExchangeRateService exchangeRateService;
+
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<BudgetResponse>>> getBudgets(
@@ -68,14 +72,17 @@ public class BudgetController {
 
     private BudgetResponse toResponse(Budget budget) {
         BigDecimal spent = budgetService.getBudgetSpent(budget.getUser().getId(), budget.getCategory().getId());
+        User user = budget.getUser();
+        BigDecimal limitInDisplay = exchangeRateService.convert(budget.getLimitAmount(), user.getCurrencyCode(), user.getDisplayCurrency());
         return BudgetResponse.builder()
             .id(budget.getId())
             .categoryId(budget.getCategory().getId())
             .categoryName(budget.getCategory().getName())
-            .limitAmount(budget.getLimitAmount())
+            .limitAmount(limitInDisplay)
             .spentAmount(spent)
             .startDate(budget.getStartDate())
             .endDate(budget.getEndDate())
             .build();
     }
 }
+

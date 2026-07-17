@@ -23,13 +23,14 @@ import type {
   DashboardData,
   BankAccountResponse,
   BudgetResponse,
-  GoalResponse,
-  NotificationResponse
+  GoalResponse
 } from "../../types/api"
 import MetricCard from "../../components/dashboard/MetricCard"
 import ChartCard from "../../components/dashboard/ChartCard"
 import CategoryCard from "../../components/dashboard/CategoryCard"
 import TransactionList from "../../components/dashboard/TransactionList"
+import { useAppSelector } from "../../redux/hooks"
+import { formatCurrency as formatCurrencyUtil } from "../../utils/format"
 
 type QuickActionType = "income" | "expense"
 
@@ -54,6 +55,9 @@ type CategorySplit = {
 const icons = { Wallet, ArrowDownRight, ArrowUpRight, PiggyBank, Banknote }
 
 export default function DashboardPage() {
+  const { user } = useAppSelector((state) => state.auth)
+  const currencyCode = user?.currencyCode || "VND"
+
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [dashboardLoading, setDashboardLoading] = useState(true)
   const [dashboardError, setDashboardError] = useState<string | null>(null)
@@ -78,9 +82,6 @@ export default function DashboardPage() {
   const [showGoalModal, setShowGoalModal] = useState(false)
   const [goalForm, setGoalForm] = useState({ name: "", targetAmount: "", targetDate: "" })
   const [goalSaving, setGoalSaving] = useState(false)
-
-  // Notifications
-  const [notifications, setNotifications] = useState<NotificationResponse[]>([])
 
   const [weeklyFlow, setWeeklyFlow] = useState<WeekFlowItem[]>([])
   const [categorySplit, setCategorySplit] = useState<CategorySplit[]>([])
@@ -210,21 +211,19 @@ export default function DashboardPage() {
       const toDate = formatLocalDate(sunday)
       const startOfMonth = formatLocalDate(new Date(now.getFullYear(), now.getMonth(), 1))
 
-      const [data, weeklyIncomes, weeklyExpenses, monthlyExpenses, activeBudgets, activeGoals, unreadNotifications, expenseCats] = await Promise.all([
+      const [data, weeklyIncomes, weeklyExpenses, monthlyExpenses, activeBudgets, activeGoals, expenseCats] = await Promise.all([
         apiService.getDashboard(),
         apiService.getIncomes({ page: 0, size: 100, fromDate, toDate }),
         apiService.getExpenses({ page: 0, size: 100, fromDate, toDate }),
         apiService.getExpenses({ page: 0, size: 100, fromDate: startOfMonth, toDate }),
         apiService.getBudgets(),
         apiService.getGoals(),
-        apiService.getNotifications(true),
         apiService.getCategories("EXPENSE")
       ])
 
       setDashboardData(data)
       setBudgets(activeBudgets)
       setGoals(activeGoals)
-      setNotifications(unreadNotifications)
       setAllCategories(expenseCats)
 
       const dayLabels = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
@@ -270,7 +269,7 @@ export default function DashboardPage() {
   useEffect(() => {
     void fetchPlaidStatus()
     void loadDashboardData()
-  }, [])
+  }, [currencyCode])
 
   const openQuickAction = async (type: QuickActionType) => {
     setQuickActionError(null)
@@ -408,21 +407,21 @@ export default function DashboardPage() {
     window.alert("Hóa đơn đã được đánh dấu là thanh toán thành công!")
   }
 
-  const handleMarkNotificationRead = async (id: number) => {
-    try {
-      await apiService.markNotificationRead(id)
-      await loadDashboardData()
-    } catch (err) {
-      console.error(err)
-    }
-  }
+
 
   const isIncome = quickActionType === "income"
   const modalTitle = isIncome ? "Thêm thu nhập" : "Thêm chi tiêu"
   const amountPlaceholder = isIncome ? "Ví dụ: 2500000" : "Ví dụ: 350000"
 
   const dynamicMetrics = useMemo(() => {
-    if (!dashboardData) return metricsFallback
+    if (!dashboardData) {
+      return [
+        { label: "Tổng số dư", value: formatCurrency(0), change: "0%", icon: "Wallet", positive: true },
+        { label: "Thu nhập tháng", value: formatCurrency(0), change: "0%", icon: "ArrowDownRight", positive: true },
+        { label: "Chi tiêu tháng", value: formatCurrency(0), change: "0%", icon: "ArrowUpRight", positive: false },
+        { label: "Tỷ lệ tiết kiệm", value: "0%", change: "0%", icon: "PiggyBank", positive: true }
+      ]
+    }
 
     const savingRate = dashboardData.totalIncome > 0 ? (dashboardData.totalBalance / dashboardData.totalIncome) * 100 : 0
 
@@ -432,7 +431,7 @@ export default function DashboardPage() {
       { label: "Chi tiêu tháng", value: formatCurrency(dashboardData.monthlyExpense), change: "Live", icon: "ArrowUpRight", positive: false },
       { label: "Tỷ lệ tiết kiệm", value: `${savingRate.toFixed(1)}%`, change: "Live", icon: "PiggyBank", positive: savingRate >= 0 }
     ]
-  }, [dashboardData])
+  }, [dashboardData, currencyCode])
 
   const recentRows = useMemo(() => {
     if (!dashboardData) return undefined
@@ -448,11 +447,7 @@ export default function DashboardPage() {
   }, [dashboardData])
 
   function formatCurrency(value: number) {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-      maximumFractionDigits: 0
-    }).format(value)
+    return formatCurrencyUtil(value, currencyCode)
   }
 
   const primaryBankAccount = bankAccounts.length > 0 ? bankAccounts[0] : null
@@ -659,7 +654,7 @@ export default function DashboardPage() {
 
       {/* Recharts charts row */}
       <section className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-        <ChartCard data={weeklyFlow} />
+        <ChartCard data={weeklyFlow} currencyCode={currencyCode} />
         <CategoryCard categories={categorySplit} spentPercent={expenseRate} />
       </section>
 
@@ -833,34 +828,6 @@ export default function DashboardPage() {
               ))}
             </div>
           </article>
-
-          {/* Notifications feed */}
-          <article className="glass-panel rounded-3xl p-5 border border-white/10">
-            <div>
-              <p className="text-xs uppercase tracking-[0.1em] text-slate-400">Cảnh báo & Hệ thống</p>
-              <h3 className="text-lg font-bold text-white mt-0.5">Thông báo mới</h3>
-            </div>
-
-            <div className="mt-4 space-y-3 max-h-[180px] overflow-y-auto pr-1">
-              {notifications.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-4">Không có thông báo mới.</p>
-              ) : (
-                notifications.map((notif) => (
-                  <div key={notif.id} className="rounded-xl bg-slate-900/40 p-3 border border-white/5 relative">
-                    <button
-                      onClick={() => handleMarkNotificationRead(notif.id)}
-                      className="absolute top-2 right-2 text-slate-500 hover:text-white"
-                      title="Đánh dấu đã đọc"
-                    >
-                      <X size={12} />
-                    </button>
-                    <p className="font-semibold text-white text-xs">{notif.title}</p>
-                    <p className="text-[11px] text-slate-300 mt-1">{notif.message}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </article>
         </div>
       </section>
 
@@ -999,7 +966,7 @@ export default function DashboardPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Hạn mức chi tiêu (VND)</label>
+                <label className="mb-2 block text-sm text-slate-300">Hạn mức chi tiêu ({currencyCode})</label>
                 <input
                   type="number"
                   placeholder="Ví dụ: 5000000"
@@ -1061,7 +1028,7 @@ export default function DashboardPage() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Số tiền cần tích lũy (VND)</label>
+                <label className="mb-2 block text-sm text-slate-300">Số tiền cần tích lũy ({currencyCode})</label>
                 <input
                   type="number"
                   placeholder="Ví dụ: 25000000"
@@ -1154,10 +1121,3 @@ export default function DashboardPage() {
     </div>
   )
 }
-
-const metricsFallback = [
-  { label: "Tổng số dư", value: "0 ₫", change: "0%", icon: "Wallet", positive: true },
-  { label: "Thu nhập tháng", value: "0 ₫", change: "0%", icon: "ArrowDownRight", positive: true },
-  { label: "Chi tiêu tháng", value: "0 ₫", change: "0%", icon: "ArrowUpRight", positive: false },
-  { label: "Tỷ lệ tiết kiệm", value: "0%", change: "0%", icon: "PiggyBank", positive: true }
-]

@@ -14,6 +14,7 @@ public class AuthMapper {
             .avatarUrl(user.getAvatarUrl())
             .timezone(user.getTimezone())
             .currencyCode(user.getCurrencyCode())
+            .displayCurrency(user.getDisplayCurrency())
             .active(user.isActive())
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())

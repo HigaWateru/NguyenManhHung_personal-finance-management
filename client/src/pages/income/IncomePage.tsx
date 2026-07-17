@@ -3,10 +3,13 @@ import { Pencil, Plus, Search, Trash2, X } from "lucide-react"
 import { apiService } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
 import type { CategoryItem } from "../../types/api"
+import { useAppSelector } from "../../redux/hooks"
+import { formatCurrency } from "../../utils/format"
 
 type IncomeRecord = {
   id: number
   date: string
+  createdAt?: string
   categoryId: number
   category: string
   amount: number
@@ -31,13 +34,6 @@ const emptyForm = (): IncomeFormState => ({
   note: "",
 })
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-    maximumFractionDigits: 0,
-  }).format(value)
-
 const validateForm = (form: IncomeFormState): FormErrors => {
   const errors: FormErrors = {}
 
@@ -53,7 +49,11 @@ const validateForm = (form: IncomeFormState): FormErrors => {
 }
 
 export default function IncomePage() {
+  const { user } = useAppSelector((state) => state.auth)
+  const currencyCode = user?.currencyCode || "VND"
+
   const [records, setRecords] = useState<IncomeRecord[]>([])
+
   const [categories, setCategories] = useState<CategoryItem[]>([])
   const [query, setQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
@@ -87,6 +87,7 @@ export default function IncomePage() {
         incomePage.content.map((item) => ({
           id: item.id,
           date: item.transactionDate,
+          createdAt: item.createdAt,
           categoryId: item.categoryId,
           category: item.categoryName,
           amount: Number(item.amount),
@@ -101,7 +102,7 @@ export default function IncomePage() {
     } finally {
       setLoading(false)
     }
-  }, [page, query, selectedCategory])
+  }, [page, query, selectedCategory, currencyCode])
 
   useEffect(() => {
     const timerId = window.setTimeout(() => {
@@ -247,9 +248,16 @@ export default function IncomePage() {
               {records.length > 0 ? (
                 records.map((row) => (
                   <tr key={row.id} className="hover:bg-white/5">
-                    <td className="px-4 py-3">{row.date}</td>
+                    <td className="px-4 py-3 text-left">
+                      <div className="font-medium text-slate-200">{row.date}</div>
+                      {row.createdAt && (
+                        <div className="text-[10px] text-slate-400 mt-0.5">
+                          {new Date(row.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
+                        </div>
+                      )}
+                    </td>
                     <td className="px-4 py-3">{row.category}</td>
-                    <td className="px-4 py-3 text-right font-medium text-cyan-100">{formatCurrency(row.amount)}</td>
+                    <td className="px-4 py-3 text-right font-medium text-cyan-100">{formatCurrency(row.amount, currencyCode)}</td>
                     <td className="px-4 py-3 text-slate-300">{row.note || "-"}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">

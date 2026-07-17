@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { apiService, type LoginInput, type ProfileUpdateInput, type RegisterInput } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
-import type { UserProfile } from "../../types/api"
+import type { UserProfile, CurrencyCode } from "../../types/api"
 import { clearAuthTokens, getAccessToken, getRefreshToken, saveAuthTokens } from "../../utils/auth"
 
 type AuthState = {
@@ -88,6 +88,17 @@ export const uploadAvatar = createAsyncThunk<UserProfile, File, { rejectValue: s
       return await apiService.uploadAvatar(file)
     } catch (error) {
       return thunkApi.rejectWithValue(extractApiError(error, "Không thể tải lên ảnh đại diện."))
+    }
+  },
+)
+
+export const changeDisplayCurrency = createAsyncThunk<UserProfile, CurrencyCode, { rejectValue: string }>(
+  "auth/changeDisplayCurrency",
+  async (displayCurrency, thunkApi) => {
+    try {
+      return await apiService.updateDisplayCurrency(displayCurrency)
+    } catch (error) {
+      return thunkApi.rejectWithValue(extractApiError(error, "Không thể cập nhật đơn vị tiền hiển thị."))
     }
   },
 )
@@ -213,6 +224,19 @@ const authSlide = createSlice({
         state.isAuthenticated = false
         state.user = null
         state.error = action.payload ?? "Đăng xuất thất bại."
+      })
+      .addCase(changeDisplayCurrency.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(changeDisplayCurrency.fulfilled, (state, action) => {
+        state.loading = false
+        state.user = action.payload
+        state.error = null
+      })
+      .addCase(changeDisplayCurrency.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload ?? "Không thể cập nhật đơn vị tiền hiển thị."
       })
   },
 })

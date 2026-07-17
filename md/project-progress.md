@@ -18,6 +18,7 @@ Hệ thống đã xây dựng hoàn chỉnh và kiểm thử thành công các n
 | **Thông báo (Notifications)** | Cảnh báo hệ thống | `Completed` | Hệ thống thông báo tự động (cảnh báo vượt hạn mức ngân sách, cảnh báo bảo mật) và giao diện xem thông báo, đánh dấu đã đọc. |
 | **Tổng quan (Dashboard)** | Giao diện tổng hợp | `Completed` | Hiển thị thẻ kết nối Plaid ở trên cùng, các thẻ số dư tích lũy, các widget tiến độ ngân sách, mục tiêu tích lũy, hóa đơn định kỳ sắp tới, thông báo mới, biểu đồ phân tích tuần/danh mục và bảng giao dịch gần đây. |
 | **Thống kê (Statistics)** | Trực quan hóa số liệu | `Completed` | Tích hợp biểu đồ thống kê xu hướng thu chi theo tuần hiện tại (tính chuẩn từ Thứ Hai đến Chủ Nhật), so sánh các tháng trong năm và biểu đồ tỷ trọng giao dịch. |
+| **Ty gia thi truong (Exchange Rates)** | Quan ly ti gia & da tien te | `Completed` | Ho tro theo doi ti gia ngoai te truc tuyen hang ngay qua API open.er-api.com. Quy doi dong bo so tien trong database khi nguoi dung cap nhat don vi tien te goc trong Ho so. Tu dong dinh dang cac số lieu tai chinh tren Dashboard, Giao dich va Thong ke theo tien te ho so cua nguoi dung. |
 
 ---
 

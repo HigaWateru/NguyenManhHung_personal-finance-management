@@ -1,6 +1,6 @@
 import { http } from "./http"
 import type {ApiResponse, AuthPayload, CategoryItem, CategoryType, CurrencyCode, DashboardData, ExpenseItem, IncomeItem,
-  PageResponse, StatisticsData, UserProfile, BankAccountResponse, BudgetResponse, GoalResponse, NotificationResponse } from "../types/api"
+  PageResponse, StatisticsData, UserProfile, BankAccountResponse, BudgetResponse, GoalResponse, NotificationResponse, ExchangeRateResponse } from "../types/api"
 
 export type LoginInput = {
   email: string
@@ -295,6 +295,26 @@ export const apiService = {
 
   markAllNotificationsRead: async () => {
     const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/notifications/mark-all-read")
+    return response.data.data
+  },
+
+  getExchangeRates: async () => {
+    const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate")
+    return response.data.data
+  },
+
+  getLatestExchangeRates: async () => {
+    const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate/latest")
+    return response.data.data
+  },
+
+  getExchangeRate: async (currency: string) => {
+    const response = await http.get<ApiResponse<ExchangeRateResponse>>(`/api/exchange-rate/${currency}`)
+    return response.data.data
+  },
+
+  updateDisplayCurrency: async (displayCurrency: CurrencyCode) => {
+    const response = await http.put<ApiResponse<UserProfile>>("/api/users/display-currency", { displayCurrency })
     return response.data.data
   }
 }

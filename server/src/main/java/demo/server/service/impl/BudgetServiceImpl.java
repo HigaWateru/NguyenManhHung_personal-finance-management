@@ -10,12 +10,14 @@ import demo.server.repository.ExpenseRepository;
 import demo.server.repository.TransactionRepository;
 import demo.server.repository.UserRepository;
 import demo.server.service.BudgetService;
+import demo.server.service.ExchangeRateService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,8 @@ public class BudgetServiceImpl implements BudgetService {
     private final ExpenseRepository expenseRepository;
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final ExchangeRateService exchangeRateService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -45,6 +49,9 @@ public class BudgetServiceImpl implements BudgetService {
             throw new IllegalArgumentException("Unauthorized category");
         }
 
+        // Limit amount is received in display currency, convert to user base currency for storage
+        BigDecimal limitInBase = exchangeRateService.convert(limitAmount, user.getDisplayCurrency(), user.getCurrencyCode());
+
         LocalDate now = LocalDate.now();
         LocalDate start = now.withDayOfMonth(1);
         LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
@@ -52,14 +59,14 @@ public class BudgetServiceImpl implements BudgetService {
         // Check if budget already exists for this month
         return budgetRepository.findByUserIdAndCategoryIdAndStartDateAndEndDate(userId, categoryId, start, end)
             .map(existing -> {
-                existing.updateLimit(limitAmount);
+                existing.updateLimit(limitInBase);
                 return budgetRepository.save(existing);
             })
             .orElseGet(() -> {
                 Budget budget = Budget.builder()
                     .user(user)
                     .category(category)
-                    .limitAmount(limitAmount)
+                    .limitAmount(limitInBase)
                     .startDate(start)
                     .endDate(end)
                     .period("MONTHLY")
@@ -78,7 +85,10 @@ public class BudgetServiceImpl implements BudgetService {
             throw new IllegalArgumentException("Unauthorized budget access");
         }
 
-        budget.updateLimit(limitAmount);
+        User user = budget.getUser();
+        BigDecimal limitInBase = exchangeRateService.convert(limitAmount, user.getDisplayCurrency(), user.getCurrencyCode());
+
+        budget.updateLimit(limitInBase);
         return budgetRepository.save(budget);
     }
 
@@ -98,6 +108,9 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     @Transactional(readOnly = true)
     public BigDecimal getBudgetSpent(Long userId, Long categoryId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+
         LocalDate now = LocalDate.now();
         LocalDate start = now.withDayOfMonth(1);
         LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
@@ -114,6 +127,8 @@ public class BudgetServiceImpl implements BudgetService {
             bankSpent = BigDecimal.ZERO;
         }
 
-        return manualSpent.add(bankSpent);
+        BigDecimal totalSpentInBase = manualSpent.add(bankSpent);
+        return exchangeRateService.convert(totalSpentInBase, user.getCurrencyCode(), user.getDisplayCurrency());
     }
+
 }

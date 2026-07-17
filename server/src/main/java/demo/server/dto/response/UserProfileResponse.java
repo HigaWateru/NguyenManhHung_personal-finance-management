@@ -20,6 +20,7 @@ public class UserProfileResponse {
         private String avatarUrl;
         private String timezone;
         private CurrencyCode currencyCode;
+        private CurrencyCode displayCurrency;
         private boolean active;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;

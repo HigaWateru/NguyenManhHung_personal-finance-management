@@ -26,6 +26,8 @@ public interface AuthService {
 
     UserProfileResponse updateProfile(Long userId, ProfileUpdateRequest request);
 
+    UserProfileResponse updateDisplayCurrency(Long userId, demo.server.common.enums.CurrencyCode displayCurrency);
+
     UserProfileResponse updateAvatar(Long userId, MultipartFile file);
 
     void requestForgotPassword(ForgotPasswordRequest request);

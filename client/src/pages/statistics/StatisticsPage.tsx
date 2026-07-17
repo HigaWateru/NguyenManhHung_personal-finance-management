@@ -4,6 +4,8 @@ import {Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieCha
 import { apiService } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
 import type { StatisticsData } from "../../types/api"
+import { useAppSelector } from "../../redux/hooks"
+import { formatCurrency as formatCurrencyUtil } from "../../utils/format"
 
 const monthlyFinance = [
   { month: "T1", income: 18.5, expense: 11.2, net: 7.3 },
@@ -21,11 +23,11 @@ const monthlyFinance = [
 ]
 
 const expenseByCategory = [
-  { name: "Ăn uống", value: 34, amount: 5.9 },
-  { name: "Di chuyển", value: 18, amount: 3.1 },
-  { name: "Tiện ích", value: 22, amount: 3.8 },
-  { name: "Mua sắm", value: 14, amount: 2.4 },
-  { name: "Sức khỏe", value: 12, amount: 2.1 },
+  { name: "Ăn uống", value: 34, amount: 5900000 },
+  { name: "Di chuyển", value: 18, amount: 3100000 },
+  { name: "Tiện ích", value: 22, amount: 3800000 },
+  { name: "Mua sắm", value: 14, amount: 2400000 },
+  { name: "Sức khỏe", value: 12, amount: 2100000 },
 ]
 
 const pieColors = [
@@ -51,13 +53,31 @@ const pieColors = [
   "#fb7185", // Soft Rose
 ]
 
-const formatMoney = (value: number) => `${value.toFixed(1)}M`
-const formatTooltipMoney = (value: unknown) => formatMoney(Number(value ?? 0))
-
 export default function StatisticsPage() {
+  const { user } = useAppSelector((state) => state.auth)
+  const currencyCode = user?.currencyCode || "VND"
+
+  const formatMoney = (value: number) => {
+    if (currencyCode === "VND") {
+      return `${(value / 1_000_000).toFixed(1)}M`
+    } else if (currencyCode === "JPY") {
+      if (value >= 1000) return `${(value / 1000).toFixed(0)}K ¥`
+      return `${value} ¥`
+    } else {
+      const sym = currencyCode === "USD" ? "$" : "€"
+      if (value >= 1000) return `${sym}${(value / 1000).toFixed(1)}K`
+      return `${sym}${value.toFixed(0)}`
+    }
+  }
+
+  const formatTooltipMoney = (value: unknown) => {
+    return formatCurrencyUtil(Number(value ?? 0), currencyCode)
+  }
+
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
   const [stats, setStats] = useState<StatisticsData | null>(null)
   const [loading, setLoading] = useState(true)
+
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -76,10 +96,18 @@ export default function StatisticsPage() {
     }
 
     void fetchStatistics()
-  }, [selectedYear])
+  }, [selectedYear, currencyCode])
 
   const monthlyChartData = useMemo(() => {
-    if (!stats?.monthlyStatistics?.length) return monthlyFinance
+    if (!stats?.monthlyStatistics?.length) {
+      const scale = currencyCode === "VND" ? 1_000_000 : 100;
+      return monthlyFinance.map((item) => ({
+        month: item.month,
+        income: item.income * scale,
+        expense: item.expense * scale,
+        net: item.net * scale,
+      }))
+    }
 
     return stats.monthlyStatistics.map((item) => ({
       month: `T${item.month}`,
@@ -87,22 +115,28 @@ export default function StatisticsPage() {
       expense: Number(item.expense),
       net: Number(item.balance),
     }))
-  }, [stats])
+  }, [stats, currencyCode])
 
   const categoryChartData = useMemo(() => {
-    if (!stats?.categoryStatistics?.length) return expenseByCategory
+    if (!stats?.categoryStatistics?.length) {
+      const scale = currencyCode === "VND" ? 1 : (currencyCode === "JPY" ? 0.006 : 0.00004);
+      return expenseByCategory.map(item => ({
+        ...item,
+        amount: item.amount * scale
+      }))
+    }
 
     const expenseCategories = stats.categoryStatistics.filter((item) => item.type === "EXPENSE")
-    if (!expenseCategories.length) return expenseByCategory
+    if (!expenseCategories.length) return []
 
     return expenseCategories.map((item) => {
       return {
         name: item.categoryName,
         value: Number(Number(item.percentage || 0).toFixed(2)),
-        amount: Number(item.totalAmount) / 1_000_000,
+        amount: Number(item.totalAmount),
       }
     })
-  }, [stats])
+  }, [stats, currencyCode])
 
   const availableYears = useMemo(() => {
     if (!stats?.yearlyStatistics?.length) return [selectedYear, selectedYear - 1, selectedYear - 2]
@@ -158,9 +192,9 @@ export default function StatisticsPage() {
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Tổng thu năm", formatMoney(yearlyIncome)],
-          ["Tổng chi năm", formatMoney(yearlyExpense)],
-          ["Số dư ròng", formatMoney(yearlyNet)],
+          ["Tổng thu năm", formatCurrencyUtil(yearlyIncome, currencyCode)],
+          ["Tổng chi năm", formatCurrencyUtil(yearlyExpense, currencyCode)],
+          ["Số dư ròng", formatCurrencyUtil(yearlyNet, currencyCode)],
           ["Tỷ lệ tiết kiệm", `${savingRate.toFixed(1)}%`],
         ].map(([label, value]) => (
           <article key={label} className="glass-panel rounded-3xl p-5">
@@ -220,7 +254,7 @@ export default function StatisticsPage() {
                   formatter={(value, _name, props) => {
                     const percentage = Number(value ?? 0);
                     const amount = Number((props as { payload?: { amount?: number } }).payload?.amount ?? 0);
-                    return [`${percentage}% | ${formatMoney(amount)}`, "Tỷ trọng"];
+                    return [`${percentage}% | ${formatCurrencyUtil(amount, currencyCode)}`, "Tỷ trọng"];
                   }}
                 />
                 <Legend verticalAlign="bottom" height={24} />
@@ -270,7 +304,7 @@ export default function StatisticsPage() {
             <div className="mb-3 h-1.5 rounded-full" style={{ backgroundColor: pieColors[index % pieColors.length] }} />
             <p className="text-sm text-slate-300">{item.name}</p>
             <p className="mt-2 text-xl font-semibold text-white">{item.value}%</p>
-            <p className="mt-1 text-xs text-slate-400">{formatMoney(item.amount)} / năm</p>
+            <p className="mt-1 text-xs text-slate-400">{formatCurrencyUtil(item.amount, currencyCode)} / năm</p>
           </article>
         ))}
       </section>

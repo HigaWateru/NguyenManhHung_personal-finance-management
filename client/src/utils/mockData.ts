@@ -6,6 +6,7 @@ export const navigationItems: NavItem[] = [
   { label: "Chi tiêu", path: "/expense", icon: "ArrowUpRight", group: "Transactions" },
   { label: "Danh mục", path: "/category", icon: "Tags", group: "Transactions" },
   { label: "Thống kê", path: "/statistics", icon: "BarChart3", group: "Insights" },
+  { label: "Tỷ giá thị trường", path: "/exchange-rate", icon: "TrendingUp", group: "Insights" },
   { label: "Hồ sơ", path: "/profile", icon: "UserRound", group: "Account" },
 ]
 
