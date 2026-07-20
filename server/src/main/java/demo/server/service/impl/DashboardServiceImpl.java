@@ -2,6 +2,7 @@ package demo.server.service.impl;
 
 import demo.server.common.enums.CategoryType;
 import demo.server.common.enums.CurrencyCode;
+import demo.server.dto.response.CategoryDistributionResponse;
 import demo.server.dto.response.DashboardResponse;
 import demo.server.dto.response.RecentTransactionResponse;
 import demo.server.entity.Expense;
@@ -17,7 +18,9 @@ import demo.server.service.ExchangeRateService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +81,7 @@ public class DashboardServiceImpl implements DashboardService {
         BigDecimal totalBalance = totalIncome.subtract(totalExpense);
 
         List<RecentTransactionResponse> recentTransactions = buildRecentTransactions(userId, baseCurrency, displayCurrency);
+        List<CategoryDistributionResponse> categoryDistribution = buildCategoryDistribution(userId, monthStart, monthEnd, baseCurrency, displayCurrency);
 
         return DashboardResponse.builder()
             .totalIncome(totalIncome)
@@ -86,7 +90,49 @@ public class DashboardServiceImpl implements DashboardService {
             .monthlyIncome(monthlyIncome)
             .monthlyExpense(monthlyExpense)
             .recentTransactions(recentTransactions)
+            .categoryDistribution(categoryDistribution)
             .build();
+    }
+
+    private List<CategoryDistributionResponse> buildCategoryDistribution(Long userId, LocalDate monthStart, LocalDate monthEnd, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
+        Map<String, BigDecimal> categoryAmountMap = new HashMap<>();
+
+        // 1. Manual expenses
+        List<Expense> manualExpenses = expenseRepository.findByUserIdAndTransactionDateBetween(userId, monthStart, monthEnd);
+        for (Expense exp : manualExpenses) {
+            String catName = exp.getCategory() != null ? exp.getCategory().getName() : "Others";
+            BigDecimal converted = exchangeRateService.convert(exp.getAmount(), baseCurrency, displayCurrency);
+            categoryAmountMap.put(catName, categoryAmountMap.getOrDefault(catName, ZERO).add(converted));
+        }
+
+        // 2. Plaid bank expenses
+        List<Transaction> bankExpenses = transactionRepository.findByUserIdAndTransactionDateBetween(userId, monthStart, monthEnd);
+        for (Transaction tx : bankExpenses) {
+            if (tx.getType() == CategoryType.EXPENSE) {
+                String catName = tx.getCategory() != null ? tx.getCategory().getName() : "Others";
+                BigDecimal converted = exchangeRateService.convert(tx.getOriginalAmount(), tx.getOriginalCurrency(), displayCurrency);
+                categoryAmountMap.put(catName, categoryAmountMap.getOrDefault(catName, ZERO).add(converted));
+            }
+        }
+
+        BigDecimal totalSum = categoryAmountMap.values().stream().reduce(ZERO, BigDecimal::add);
+        if (totalSum.compareTo(ZERO) <= 0) {
+            return List.of();
+        }
+
+        List<CategoryDistributionResponse> list = new java.util.ArrayList<>();
+        for (Map.Entry<String, BigDecimal> entry : categoryAmountMap.entrySet()) {
+            BigDecimal amt = entry.getValue();
+            BigDecimal pct = amt.multiply(new BigDecimal("100")).divide(totalSum, 1, java.math.RoundingMode.HALF_UP);
+            list.add(CategoryDistributionResponse.builder()
+                .categoryName(entry.getKey())
+                .amount(amt)
+                .percentage(pct)
+                .build());
+        }
+
+        list.sort(Comparator.comparing(CategoryDistributionResponse::getAmount, Comparator.reverseOrder()));
+        return list;
     }
 
 

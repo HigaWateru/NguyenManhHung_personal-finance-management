@@ -26,6 +26,17 @@ export const fetchExchangeRates = createAsyncThunk<ExchangeRateResponse[], void,
   }
 )
 
+export const syncExchangeRates = createAsyncThunk<ExchangeRateResponse[], void, { rejectValue: string }>(
+  "exchangeRate/sync",
+  async (_, thunkApi) => {
+    try {
+      return await apiService.syncExchangeRates()
+    } catch (error) {
+      return thunkApi.rejectWithValue(extractApiError(error, "Không thể đồng bộ tỷ giá thị trường."))
+    }
+  }
+)
+
 const exchangeRateSlide = createSlice({
   name: "exchangeRate",
   initialState,
@@ -48,6 +59,19 @@ const exchangeRateSlide = createSlice({
       .addCase(fetchExchangeRates.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload ?? "Không thể tải tỷ giá thị trường."
+      })
+      .addCase(syncExchangeRates.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(syncExchangeRates.fulfilled, (state, action) => {
+        state.loading = false
+        state.rates = action.payload
+        state.error = null
+      })
+      .addCase(syncExchangeRates.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.payload ?? "Không thể đồng bộ tỷ giá thị trường."
       })
   }
 })

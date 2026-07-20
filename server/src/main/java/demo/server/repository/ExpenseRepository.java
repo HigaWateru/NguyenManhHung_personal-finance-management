@@ -17,6 +17,7 @@ import org.springframework.data.repository.query.Param;
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     Page<Expense> findByUserId(Long userId, Pageable pageable);
     List<Expense> findAllByUserId(Long userId);
+    List<Expense> findByUserIdAndTransactionDateBetween(Long userId, LocalDate fromDate, LocalDate toDate);
 
     Page<Expense> findByUserIdAndCategoryId(Long userId, Long categoryId, Pageable pageable);
 

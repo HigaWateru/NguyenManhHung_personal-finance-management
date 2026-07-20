@@ -303,6 +303,11 @@ export const apiService = {
     return response.data.data
   },
 
+  syncExchangeRates: async () => {
+    const response = await http.post<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate/sync")
+    return response.data.data
+  },
+
   getLatestExchangeRates: async () => {
     const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate/latest")
     return response.data.data

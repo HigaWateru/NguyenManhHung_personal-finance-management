@@ -31,6 +31,7 @@ import CategoryCard from "../../components/dashboard/CategoryCard"
 import TransactionList from "../../components/dashboard/TransactionList"
 import { useAppSelector } from "../../redux/hooks"
 import { formatCurrency as formatCurrencyUtil } from "../../utils/format"
+import { notifyHeader, triggerNotificationRefresh } from "../../utils/notification"
 
 type QuickActionType = "income" | "expense"
 
@@ -161,7 +162,7 @@ export default function DashboardPage() {
       const res = await apiService.syncPlaidTransactions()
       await loadDashboardData()
       await fetchPlaidStatus()
-      window.alert(`${res.syncedCount} transactions synchronized successfully.`)
+      triggerNotificationRefresh()
     } catch (err) {
       setPlaidError(extractApiError(err, "Đồng bộ giao dịch Plaid thất bại."))
     } finally {
@@ -243,20 +244,12 @@ export default function DashboardPage() {
 
       setWeeklyFlow(weekTemplate)
 
-      const totalMonthlyExpense = monthlyExpenses.content.reduce((sum, item) => sum + Number(item.amount), 0)
-      const expenseByCategory = monthlyExpenses.content.reduce<Record<string, number>>((acc, item) => {
-        const key = item.categoryName
-        acc[key] = (acc[key] ?? 0) + Number(item.amount)
-        return acc
-      }, {})
-
-      const split = Object.entries(expenseByCategory)
-        .map(([label, amount]) => ({
-          label,
-          value: totalMonthlyExpense > 0 ? Number(((amount / totalMonthlyExpense) * 100).toFixed(1)) : 0
+      const split = (data.categoryDistribution ?? [])
+        .map((item) => ({
+          label: item.categoryName,
+          value: item.percentage
         }))
         .sort((a, b) => b.value - a.value)
-        .slice(0, 3)
 
       setCategorySplit(split)
     } catch (error) {

@@ -123,11 +123,12 @@ public class AiCategorizerServiceImpl implements AiCategorizerService {
         Map<String, String[]> keywordMap = new HashMap<>();
         keywordMap.put("salary", new String[]{"salary", "payroll", "paycheck", "lương", "thu nhập"});
         keywordMap.put("bonus", new String[]{"bonus", "thưởng"});
-        keywordMap.put("food", new String[]{"starbucks", "mcdonald", "restaurant", "food", "dining", "uber eats", "grabfood", "cà phê", "an uong", "ăn trưa", "cafe"});
+        keywordMap.put("interest", new String[]{"interest", "dividend", "yield", "lãi", "tiền lãi", "cổ tức", "tiết kiệm", "hoàn tiền", "refund"});
+        keywordMap.put("food", new String[]{"starbucks", "mcdonald", "kfc", "restaurant", "pizza", "food", "dining", "uber eats", "grabfood", "cà phê", "an uong", "ăn trưa", "cafe", "sweetgreen", "royal farms", "smart & final"});
         keywordMap.put("transport", new String[]{"uber", "lyft", "grab", "taxi", "gas", "fuel", "petrol", "xăng", "xe"});
-        keywordMap.put("shopping", new String[]{"amazon", "walmart", "target", "ebay", "nike", "shopee", "tiki", "lazada", "mua sắm", "quần áo"});
-        keywordMap.put("entertainment", new String[]{"netflix", "spotify", "hulu", "steam", "cinema", "movie", "game", "phim"});
-        keywordMap.put("utilities", new String[]{"electric", "power", "water", "internet", "phone", "điện nước", "cước"});
+        keywordMap.put("shopping", new String[]{"amazon", "walmart", "target", "ebay", "nike", "shopee", "tiki", "lazada", "mua sắm", "quần áo", "apple", "adidas", "zara", "uniqlo"});
+        keywordMap.put("entertainment", new String[]{"netflix", "spotify", "hulu", "steam", "cinema", "movie", "game", "phim", "disney", "youtube", "nintendo"});
+        keywordMap.put("utilities", new String[]{"electric", "power", "water", "internet", "phone", "điện nước", "cước", "openai", "chatgpt", "software", "aws", "cloud", "google", "microsoft", "icloud"});
         keywordMap.put("health", new String[]{"pharmacy", "medical", "hospital", "doctor", "y tế", "thuốc"});
 
         for (Map.Entry<String, String[]> entry : keywordMap.entrySet()) {
@@ -144,10 +145,9 @@ public class AiCategorizerServiceImpl implements AiCategorizerService {
             }
         }
 
-        // 3. Fallback: match by type
-        // If amount is negative/expense or default, prefer EXPENSE categories
+        // 3. Fallback: match category named "Others" or "Uncategorized" or "Khác"
         for (Category category : categories) {
-            if (category.getName().equalsIgnoreCase("Food") || category.getName().equalsIgnoreCase("Others") || category.getName().equalsIgnoreCase("Uncategorized")) {
+            if (category.getName().equalsIgnoreCase("Others") || category.getName().equalsIgnoreCase("Uncategorized") || category.getName().equalsIgnoreCase("Khác")) {
                 return category;
             }
         }

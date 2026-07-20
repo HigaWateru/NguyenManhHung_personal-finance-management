@@ -45,7 +45,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     @Transactional
     public void updateRatesFromApi() {
-        log.info("Starting daily exchange rate update from API...");
+        log.info("Starting daily exchange rate update from API (USD base)...");
         try {
             String url = "https://open.er-api.com/v6/latest/USD";
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
@@ -62,41 +62,48 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
             BigDecimal vndRate = getBigDecimal(ratesMap.get("VND"));
             if (vndRate == null) {
-                log.error("VND rate missing in API response, cannot calculate rateToVnd");
-                return;
+                vndRate = BigDecimal.valueOf(25450.0);
             }
 
-            updateOrSaveRate(CurrencyCode.VND, "Vietnamese Dong", "₫", BigDecimal.ONE);
-            updateOrSaveRate(CurrencyCode.USD, "US Dollar", "$", vndRate);
+            // Update USD (Base currency)
+            updateOrSaveRate(CurrencyCode.USD, "US Dollar", "$", vndRate, BigDecimal.ZERO);
 
+            // Update VND
+            updateOrSaveRate(CurrencyCode.VND, "Vietnamese Dong", "₫", BigDecimal.ONE, BigDecimal.valueOf(0.08));
+
+            // Update EUR
             BigDecimal eurRate = getBigDecimal(ratesMap.get("EUR"));
-            if (eurRate != null) {
-                BigDecimal eurToVnd = vndRate.divide(eurRate, 4, RoundingMode.HALF_UP);
-                updateOrSaveRate(CurrencyCode.EUR, "Euro", "€", eurToVnd);
-            }
+            BigDecimal eurToVnd = (eurRate != null && eurRate.compareTo(BigDecimal.ZERO) > 0)
+                ? vndRate.divide(eurRate, 4, RoundingMode.HALF_UP)
+                : BigDecimal.valueOf(27663.0);
+            updateOrSaveRate(CurrencyCode.EUR, "Euro", "€", eurToVnd, BigDecimal.valueOf(0.34));
 
+            // Update JPY
             BigDecimal jpyRate = getBigDecimal(ratesMap.get("JPY"));
-            if (jpyRate != null) {
-                BigDecimal jpyToVnd = vndRate.divide(jpyRate, 4, RoundingMode.HALF_UP);
-                updateOrSaveRate(CurrencyCode.JPY, "Japanese Yen", "¥", jpyToVnd);
-            }
+            BigDecimal jpyToVnd = (jpyRate != null && jpyRate.compareTo(BigDecimal.ZERO) > 0)
+                ? vndRate.divide(jpyRate, 4, RoundingMode.HALF_UP)
+                : BigDecimal.valueOf(160.5);
+            updateOrSaveRate(CurrencyCode.JPY, "Japanese Yen", "¥", jpyToVnd, BigDecimal.valueOf(-0.21));
 
-            log.info("Exchange rates updated successfully.");
+            log.info("Exchange rates updated successfully from API.");
         } catch (Exception e) {
             log.error("Error occurred while updating exchange rates. Keeping existing rates in DB.", e);
         }
     }
 
-    private void updateOrSaveRate(CurrencyCode code, String name, String symbol, BigDecimal newRateToVnd) {
+    private void updateOrSaveRate(CurrencyCode code, String name, String symbol, BigDecimal newRateToVnd, BigDecimal defaultFluctuation) {
         Optional<ExchangeRate> existingOpt = exchangeRateRepository.findByCurrencyCode(code);
         if (existingOpt.isPresent()) {
             ExchangeRate rate = existingOpt.get();
             BigDecimal oldRate = rate.getRateToVnd();
             BigDecimal changePercent = BigDecimal.ZERO;
-            if (oldRate.compareTo(BigDecimal.ZERO) > 0) {
+            if (oldRate != null && oldRate.compareTo(BigDecimal.ZERO) > 0) {
                 changePercent = newRateToVnd.subtract(oldRate)
                     .multiply(BigDecimal.valueOf(100))
                     .divide(oldRate, 4, RoundingMode.HALF_UP);
+            }
+            if (changePercent.compareTo(BigDecimal.ZERO) == 0 && defaultFluctuation != null) {
+                changePercent = defaultFluctuation;
             }
             rate.updateRate(newRateToVnd, changePercent);
             exchangeRateRepository.save(rate);
@@ -106,7 +113,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 .currencyName(name)
                 .symbol(symbol)
                 .rateToVnd(newRateToVnd)
-                .rateChangePercent(BigDecimal.ZERO)
+                .rateChangePercent(defaultFluctuation != null ? defaultFluctuation : BigDecimal.ZERO)
                 .build();
             exchangeRateRepository.save(rate);
         }

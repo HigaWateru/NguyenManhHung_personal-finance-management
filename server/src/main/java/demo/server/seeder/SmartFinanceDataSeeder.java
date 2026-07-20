@@ -58,82 +58,24 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         ensureCategory(secondaryUser, "Food", CategoryType.EXPENSE, "Bua an hang ngay");
         ensureCategory(secondaryUser, "Transport", CategoryType.EXPENSE, "Chi phi di lai");
 
-        // Generate historical data for primaryUser (past 12 months)
-        for (int i = 0; i < 12; i++) {
-            LocalDate monthDate = LocalDate.now().minusMonths(i);
-            
-            // Monthly Salary (e.g. 25th of each month)
-            LocalDate salaryDate = safeDate(monthDate, 25);
-            if (!salaryDate.isAfter(LocalDate.now())) {
-                ensureIncome(primaryUser, salary, new BigDecimal("25000000.00"), salaryDate, "Lương tháng " + salaryDate.getMonthValue());
-            }
-            
-            // Monthly Utilities (e.g. 5th of each month)
-            LocalDate utilityDate = safeDate(monthDate, 5);
-            if (!utilityDate.isAfter(LocalDate.now())) {
-                ensureExpense(primaryUser, utilities, new BigDecimal("800000.00").add(new BigDecimal(10000 * (i % 5))), utilityDate, "Tiền điện nước internet tháng " + utilityDate.getMonthValue());
-            }
-
-            // Food & Drink
-            ensureExpense(primaryUser, food, new BigDecimal("50000.00"), safeDate(monthDate, 3), "Cà phê sáng");
-            ensureExpense(primaryUser, food, new BigDecimal("150000.00"), safeDate(monthDate, 10), "Ăn trưa đồng nghiệp");
-            ensureExpense(primaryUser, food, new BigDecimal("450000.00"), safeDate(monthDate, 20), "Liên hoan gia đình");
-
-            // Transport
-            ensureExpense(primaryUser, transport, new BigDecimal("200000.00"), safeDate(monthDate, 7), "Đổ xăng xe");
-            ensureExpense(primaryUser, transport, new BigDecimal("200000.00"), safeDate(monthDate, 21), "Đổ xăng xe");
-
-            // Entertainment
-            ensureExpense(primaryUser, entertainment, new BigDecimal("180000.00"), safeDate(monthDate, 15), "Netflix Premium");
-            if (i % 2 == 0) {
-                ensureExpense(primaryUser, entertainment, new BigDecimal("350000.00"), safeDate(monthDate, 28), "Xem phim rạp");
-            }
-
-            // Shopping (every 2 months)
-            if (i % 2 == 1) {
-                ensureExpense(primaryUser, shopping, new BigDecimal("1200000.00"), safeDate(monthDate, 18), "Mua sắm quần áo");
-            }
-
-            // Freelance project (every 3 months)
-            if (i % 3 == 0) {
-                LocalDate freelanceDate = safeDate(monthDate, 12);
-                ensureIncome(primaryUser, freelance, new BigDecimal("5000000.00"), freelanceDate, "Dự án ngoài tháng " + freelanceDate.getMonthValue());
-            }
-
-            // Bonus (every 4 months)
-            if (i % 4 == 0) {
-                LocalDate bonusDate = safeDate(monthDate, 30);
-                if (!bonusDate.isAfter(LocalDate.now())) {
-                    ensureIncome(primaryUser, bonus, new BigDecimal("4000000.00"), bonusDate, "Thưởng hiệu suất tháng " + bonusDate.getMonthValue());
-                }
-            }
-        }
-
-        // Generate historical data for secondaryUser (past 6 months)
-        Category secSalary = findCategory(secondaryUser, "Salary", CategoryType.INCOME);
-        Category secFood = findCategory(secondaryUser, "Food", CategoryType.EXPENSE);
-        Category secTransport = findCategory(secondaryUser, "Transport", CategoryType.EXPENSE);
-
-        if (secSalary != null && secFood != null && secTransport != null) {
-            for (int i = 0; i < 6; i++) {
-                LocalDate monthDate = LocalDate.now().minusMonths(i);
-
-                LocalDate salDate = safeDate(monthDate, 25);
-                if (!salDate.isAfter(LocalDate.now())) {
-                    ensureIncome(secondaryUser, secSalary, new BigDecimal("18000000.00"), salDate, "Lương fixed tháng " + salDate.getMonthValue());
-                }
-
-                ensureExpense(secondaryUser, secFood, new BigDecimal("130000.00"), safeDate(monthDate, 8), "Ăn cơm văn phòng");
-                ensureExpense(secondaryUser, secFood, new BigDecimal("95000.00"), safeDate(monthDate, 18), "Trà sữa");
-
-            }
-        }
+        // Clean out sample historical incomes, expenses, and transactions to ensure clean state
+        entityManager.createQuery("DELETE FROM Expense").executeUpdate();
+        entityManager.createQuery("DELETE FROM Income").executeUpdate();
+        entityManager.createQuery("DELETE FROM Transaction").executeUpdate();
 
         // Seed initial exchange rates
-        ensureExchangeRate(CurrencyCode.VND, "Vietnamese Dong", "₫", BigDecimal.ONE);
-        ensureExchangeRate(CurrencyCode.USD, "US Dollar", "$", BigDecimal.valueOf(25450.0));
-        ensureExchangeRate(CurrencyCode.EUR, "Euro", "€", BigDecimal.valueOf(27663.0));
-        ensureExchangeRate(CurrencyCode.JPY, "Japanese Yen", "¥", BigDecimal.valueOf(160.5));
+        ensureExchangeRate(CurrencyCode.USD, "US Dollar", "$", BigDecimal.valueOf(25450.0), BigDecimal.ZERO);
+        ensureExchangeRate(CurrencyCode.EUR, "Euro", "€", BigDecimal.valueOf(27663.0), BigDecimal.valueOf(0.34));
+        ensureExchangeRate(CurrencyCode.JPY, "Japanese Yen", "¥", BigDecimal.valueOf(160.5), BigDecimal.valueOf(-0.21));
+        ensureExchangeRate(CurrencyCode.VND, "Vietnamese Dong", "₫", BigDecimal.ONE, BigDecimal.valueOf(0.08));
+
+        // Seed initial notifications for demo user
+        User dynamicUser = findUserByEmail("user_transactions_dynamic");
+        if (dynamicUser != null) {
+            ensureNotification(dynamicUser, "Đồng bộ Giao dịch Plaid", "Đã kết nối tài khoản First Platypus Bank và tự động đồng bộ 15 giao dịch.", "PLAID");
+            ensureNotification(dynamicUser, "Cảnh báo Ngân sách Ăn uống", "Chi tiêu cho danh mục Ăn uống đã đạt 85% hạn mức ngân sách.", "BUDGET_WARNING");
+            ensureNotification(dynamicUser, "Cập nhật Tỷ giá Ngoại tệ", "Tỷ giá thị trường đã được đồng bộ trực tuyến chuẩn USD ($1.0000 USD).", "EXCHANGE_RATE");
+        }
     }
 
 
@@ -266,7 +208,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         return reference.withDayOfMonth(safeDay);
     }
 
-    private void ensureExchangeRate(CurrencyCode currencyCode, String name, String symbol, BigDecimal rateToVnd) {
+    private void ensureExchangeRate(CurrencyCode currencyCode, String name, String symbol, BigDecimal rateToVnd, BigDecimal changePercent) {
         Long count = entityManager.createQuery(
                 "select count(r) from ExchangeRate r where r.currencyCode = :currencyCode",
                 Long.class
@@ -280,9 +222,30 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
                 .currencyName(name)
                 .symbol(symbol)
                 .rateToVnd(rateToVnd)
-                .rateChangePercent(BigDecimal.ZERO)
+                .rateChangePercent(changePercent)
                 .build();
             entityManager.persist(rate);
+        }
+    }
+
+    private void ensureNotification(User user, String title, String message, String type) {
+        Long count = entityManager.createQuery(
+                "select count(n) from Notification n where n.user = :user and n.title = :title",
+                Long.class
+            )
+            .setParameter("user", user)
+            .setParameter("title", title)
+            .getSingleResult();
+
+        if (count == 0) {
+            demo.server.entity.Notification notification = demo.server.entity.Notification.builder()
+                .user(user)
+                .title(title)
+                .message(message)
+                .type(type)
+                .read(false)
+                .build();
+            entityManager.persist(notification);
         }
     }
 }

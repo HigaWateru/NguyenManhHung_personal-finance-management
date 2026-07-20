@@ -20,4 +20,5 @@ public class DashboardResponse {
         private BigDecimal monthlyIncome;
         private BigDecimal monthlyExpense;
         private List<RecentTransactionResponse> recentTransactions;
+        private List<CategoryDistributionResponse> categoryDistribution;
 }

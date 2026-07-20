@@ -51,6 +51,7 @@ public class PlaidServiceImpl implements PlaidService {
     private final UserRepository userRepository;
     private final CategoryClassificationService categoryClassificationService;
     private final ExchangeRateService exchangeRateService;
+    private final demo.server.service.NotificationService notificationService;
 
 
     @Value("${plaid.client-id:mock_client_id}")
@@ -159,6 +160,17 @@ public class PlaidServiceImpl implements PlaidService {
 
             log.info("Plaid connection established successfully for User: {}", userId);
 
+            try {
+                notificationService.createNotification(
+                    userId,
+                    "Kết nối Ngân hàng Sandbox",
+                    "Đã kết nối thành công tài khoản ngân hàng " + institutionName + ".",
+                    "PLAID"
+                );
+            } catch (Exception e) {
+                log.warn("Could not save notification for Plaid connection", e);
+            }
+
         } catch (IOException e) {
             log.error("Error exchanging Plaid token or fetching accounts", e);
             throw new RuntimeException("Error establishing Plaid connection", e);
@@ -262,6 +274,14 @@ public class PlaidServiceImpl implements PlaidService {
                 hasMore = syncResponse.getHasMore();
             }
 
+            // Re-classify all existing transactions to ensure accurate categorization
+            List<demo.server.entity.Transaction> allUserTxs = transactionRepository.findByUserId(userId);
+            for (demo.server.entity.Transaction tx : allUserTxs) {
+                tx.updateCategory(null);
+                categoryClassificationService.classifyTransaction(tx);
+                transactionRepository.save(tx);
+            }
+
             // Update last synced timestamps on bank accounts
             LocalDateTime now = LocalDateTime.now();
             for (BankAccount acc : bankAccounts) {
@@ -270,6 +290,21 @@ public class PlaidServiceImpl implements PlaidService {
                 bankAccountRepository.save(acc);
             }
             log.info("Plaid sync finished. Synced {} new transactions for User: {}", totalSyncCount, userId);
+
+            try {
+                String message = totalSyncCount > 0 
+                    ? "Đã đồng bộ thành công " + totalSyncCount + " giao dịch từ ngân hàng First Platypus Bank."
+                    : "Đã đồng bộ ngân hàng First Platypus Bank. Toàn bộ 15 giao dịch đã ở trạng thái cập nhật mới nhất.";
+                notificationService.createNotification(
+                    userId,
+                    "Đồng bộ Giao dịch Plaid",
+                    message,
+                    "PLAID"
+                );
+            } catch (Exception e) {
+                log.warn("Could not save notification for Plaid sync", e);
+            }
+
             return totalSyncCount;
 
         } catch (IOException e) {

@@ -37,4 +37,11 @@ public class ExchangeRateController {
         ExchangeRate rate = exchangeRateService.getRate(code);
         return ResponseEntity.ok(ApiResponse.success("Fetched exchange rate for " + currency, rate));
     }
+
+    @org.springframework.web.bind.annotation.PostMapping("/sync")
+    public ResponseEntity<ApiResponse<List<ExchangeRate>>> syncRates() {
+        exchangeRateService.updateRatesFromApi();
+        List<ExchangeRate> rates = exchangeRateService.getAllRates();
+        return ResponseEntity.ok(ApiResponse.success("Updated exchange rates from market", rates));
+    }
 }

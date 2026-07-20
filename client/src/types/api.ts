@@ -87,6 +87,12 @@ export type RecentTransaction = {
   createdAt: string
 }
 
+export type CategoryDistribution = {
+  categoryName: string
+  amount: number
+  percentage: number
+}
+
 export type DashboardData = {
   totalIncome: number
   totalExpense: number
@@ -94,6 +100,7 @@ export type DashboardData = {
   monthlyIncome: number
   monthlyExpense: number
   recentTransactions: RecentTransaction[]
+  categoryDistribution?: CategoryDistribution[]
 }
 
 export type MonthlyStatistics = {

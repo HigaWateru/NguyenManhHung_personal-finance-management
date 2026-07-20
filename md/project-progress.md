@@ -1,55 +1,46 @@
-# Báo cáo Cập nhật Tiến độ Dự án - Smart Finance
+# Báo cáo Tiến độ Dự án & Hiện thực hóa Chức năng - Smart Finance
 
-Tài liệu này tổng hợp tiến độ triển khai thực tế của dự án **Smart Finance**, chi tiết hóa các chức năng cơ bản đã hoàn thành, các tính năng nâng cao bảo mật và các phân hệ tích hợp vừa được triển khai ở Giai đoạn 2.
-
----
-
-## 1. Các Chức Năng Cơ Bản & Tích Hợp (Core & Integration Features)
-
-Hệ thống đã xây dựng hoàn chỉnh và kiểm thử thành công các nghiệp vụ cốt lõi của một ứng dụng quản lý tài chính cá nhân thông minh:
-
-| Phân hệ | Chức năng | Trạng thái | Chi tiết triển khai |
-| :--- | :--- | :---: | :--- |
-| **Xác thực (Authentication)** | Đăng ký & Đăng nhập | `Completed` | Đăng ký tài khoản mới, mã hóa mật khẩu bằng BCrypt. Đăng nhập không trạng thái (Stateless) sử dụng cặp JWT Access Token và Refresh Token để duy trì phiên làm việc an toàn. Hỗ trợ Social Login Google & GitHub. |
-| **Tích hợp Plaid Sandbox** | Kết nối & Đồng bộ ngân hàng | `Completed` | Hỗ trợ luồng liên kết tài khoản ngân hàng Sandbox qua Plaid Link. Thực hiện trao đổi public_token lấy access_token, đồng bộ giao dịch tự động/thủ công, hiển thị chi tiết số dư tài khoản trực quan. |
-| **Phân loại Giao dịch** | Pipeline phân loại tự động | `Completed` | Kết hợp Redis Caching (30 ngày), quy tắc phân loại dựa trên tên Merchant (Merchant Mapping & Rule Engine), và tích hợp mô hình AI (Gemini NLP API/Heuristics) để tự động hóa gán danh mục cho giao dịch ngân hàng. |
-| **Ngân sách (Budgets)** | Quản lý hạn mức chi tiêu | `Completed` | Cho phép người dùng thiết lập hạn mức chi tiêu theo danh mục, tính toán chi tiêu thực tế, hiển thị tiến độ trực quan dưới dạng thanh tiến trình (progress bar) đổi màu cảnh báo khi chi tiêu vượt quá 80%. |
-| **Mục tiêu (Saving Goals)** | Kế hoạch tích lũy tài sản | `Completed` | Cho phép tạo mục tiêu tích lũy (tên, số tiền đích, hạn chót), cập nhật tiến trình tích lũy và theo dõi phần trăm hoàn thành. |
-| **Thông báo (Notifications)** | Cảnh báo hệ thống | `Completed` | Hệ thống thông báo tự động (cảnh báo vượt hạn mức ngân sách, cảnh báo bảo mật) và giao diện xem thông báo, đánh dấu đã đọc. |
-| **Tổng quan (Dashboard)** | Giao diện tổng hợp | `Completed` | Hiển thị thẻ kết nối Plaid ở trên cùng, các thẻ số dư tích lũy, các widget tiến độ ngân sách, mục tiêu tích lũy, hóa đơn định kỳ sắp tới, thông báo mới, biểu đồ phân tích tuần/danh mục và bảng giao dịch gần đây. |
-| **Thống kê (Statistics)** | Trực quan hóa số liệu | `Completed` | Tích hợp biểu đồ thống kê xu hướng thu chi theo tuần hiện tại (tính chuẩn từ Thứ Hai đến Chủ Nhật), so sánh các tháng trong năm và biểu đồ tỷ trọng giao dịch. |
-| **Ty gia thi truong (Exchange Rates)** | Quan ly ti gia & da tien te | `Completed` | Ho tro theo doi ti gia ngoai te truc tuyen hang ngay qua API open.er-api.com. Quy doi dong bo so tien trong database khi nguoi dung cap nhat don vi tien te goc trong Ho so. Tu dong dinh dang cac số lieu tai chinh tren Dashboard, Giao dich va Thong ke theo tien te ho so cua nguoi dung. |
+Tài liệu này tổng hợp tiến độ triển khai thực tế 100% của dự án **Smart Finance**, chi tiết hóa các phân hệ chức năng, kiến trúc đồng bộ ngân hàng Plaid Sandbox với ngân hàng **First Platypus Bank**, cơ chế phân loại thương hiệu bằng AI/Rules, chiến lược khởi tạo dữ liệu sạch (DataSeeder) và khả năng mở rộng hệ thống.
 
 ---
 
-## 2. Các Chức Năng Nâng Cao (Advanced Features)
+## 1. Bảng Tổng hợp Tiến độ Triển khai (100% Completed)
 
-Các giải pháp nâng cao về bảo mật hệ thống và tối ưu hóa trải nghiệm đã được tích hợp chặt chẽ:
-
-### A. Chức năng Quên mật khẩu (Forgot Password Flow)
-- **Xác thực OTP Email**: Sử dụng `JavaMailSender` tích hợp SMTP để gửi trực tiếp email chứa mã xác thực 6 chữ số ngẫu nhiên qua template HTML Dark Cyber sang trọng.
-- **Lưu trữ bảo mật**: Mã OTP được băm bằng thuật toán BCrypt trước khi lưu tạm vào **Redis** với thời gian sống (TTL) 5 phút để tránh rò rỉ dữ liệu cache.
-- **Chống Brute-Force**: Giới hạn tối đa 5 lần nhập sai mã OTP. Hệ thống sẽ tự động hủy OTP trong Redis ở lần nhập sai thứ 5.
-- **Rate Limiting**: Ngăn chặn spam bằng cách áp dụng bộ lọc giới hạn gửi OTP tối đa 1 lần/phút và 5 lần/giờ cho mỗi tài khoản email.
-
-### B. Vô hiệu hóa JWT & Đăng xuất An toàn (Redis Blacklist)
-- **Vô hiệu hóa JWT tức thời**: Khi người dùng logout hoặc reset password thành công, Access Token hiện tại sẽ bị đưa vào blacklist của Redis ngay lập tức.
-- **Tự động giải phóng (TTL)**: Sử dụng Redis TTL để tự động xóa token khi hết thời gian sống còn lại của JWT. Không cần Cron Job hay các tiến trình quét định kỳ.
-- **Ngăn chặn triệt để**: Bộ lọc `JwtAuthenticationFilter` gọi `JwtBlacklistService.isBlacklisted(token)` trước khi tạo authentication context. Nếu token nằm trong blacklist, trả về ngay lập tức mã lỗi HTTP 401 với thông báo `"Token has been revoked."`.
-
-### C. Quản lý Ảnh đại diện (Cloudinary Integration)
-- Tải ảnh đại diện cá nhân trực tiếp lên dịch vụ Cloudinary giúp tối ưu tài nguyên lưu trữ của máy chủ ứng dụng.
+| Phân hệ / Chức năng | Trạng thái | Mức độ hoàn thành | Chi tiết hiện thực & Xác minh |
+| :--- | :---: | :---: | :--- |
+| **Xác thực & Phân quyền (Auth & Security)** | `Completed` | **100%** | Đăng ký tài khoản mới (BCrypt), Đăng nhập JWT Stateless (Access Token & Refresh Token), Google OAuth2 Login, Đăng xuất an toàn thu hồi token qua **Redis Blacklist**. |
+| **Quên mật khẩu & OTP Email** | `Completed` | **100%** | Xác thực OTP 6 số gửi qua Email HTML Dark Cyber, băm BCrypt lưu Redis 5 phút (TTL), chống Brute-force (tối đa 5 lần sai), Rate-limit (1 lần/phút, 5 lần/giờ). |
+| **Tích hợp Plaid Sandbox** | `Completed` | **100%** | Liên kết ngân hàng thử nghiệm **First Platypus Bank** qua Plaid Link modal (`user_good` / `pass_good`), trao đổi `public_token` lấy `access_token`, đồng bộ 15 giao dịch ngân hàng Sandbox tự động/thủ công. |
+| **Pipeline Phân loại Thương hiệu** | `Completed` | **100%** | Tự động phân loại thương hiệu theo 5 tầng: Redis Cache (30 ngày) $\rightarrow$ Merchant Mapping $\rightarrow$ Smart Rule Engine (`OpenAI` $\rightarrow$ Utilities, `Apple` $\rightarrow$ Shopping, `Interest payment` $\rightarrow$ Interest Income, `Spotify`/`Netflix` $\rightarrow$ Entertainment) $\rightarrow$ AI Gemini 2.5 Flash API / Local Heuristics $\rightarrow$ Fallback "Others". |
+| **Phân bổ chi tiêu & Top Category Highlight** | `Completed` | **100%** | Tổng hợp chi tiêu từ **cả giao dịch thủ công lẫn giao dịch ngân hàng Plaid**, tự động tính phần trăm theo danh mục, hiển thị biểu đồ Donut, danh sách % và **làm nổi bật Danh mục chi nhiều nhất (Top Category Highlight)**. |
+| **Ngân sách & Mục tiêu Tiết kiệm** | `Completed` | **100%** | Thiết lập ngân sách chi tiêu theo danh mục (thanh progress bar đổi màu cảnh báo khi vượt 80%), tạo mục tiêu tích lũy tài sản và theo dõi phần trăm hoàn thành. |
+| **Đa tiền tệ & Tỉ giá Tự động** | `Completed` | **100%** | `ExchangeRateScheduler` tự động quét và cập nhật tỉ giá định kỳ (VND, USD, EUR, JPY), hỗ trợ người dùng chuyển đổi Tiền tệ hiển thị (Display Currency) linh hoạt. |
+| **DataSeeder Policy (Dữ liệu Sạch)** | `Completed` | **100%** | Khởi tạo server tự động làm sạch giao dịch lịch sử cũ, gán sẵn bộ danh mục chuẩn (Salary, Bonus, Food, Transport, Shopping, Utilities, v.v.) cho tài khoản mới mà KHÔNG chèn rác giao dịch thu/chi. |
 
 ---
 
-## 3. Khả Năng Phát Triển của Dự Án (Future Scalability)
+## 2. Chi tiết các Phân hệ Kỹ thuật Nâng cao
 
-Kiến trúc hiện tại của dự án đã được thiết kế sẵn sàng để mở rộng dễ dàng sang các giai đoạn tiếp theo:
+### A. Quy trình Kết nối & Đồng bộ Ngân hàng Plaid Sandbox (First Platypus Bank)
+1. **Kết nối**: Bấm **[Connect Bank]** $\rightarrow$ Chọn ngân hàng **First Platypus Bank** $\rightarrow$ Đăng nhập với `user_good` / `pass_good` $\rightarrow$ Trao đổi `public_token` lấy `access_token`.
+2. **Đồng bộ**: Bấm **[Đồng bộ giao dịch]** $\rightarrow$ Tải 15 giao dịch Sandbox sống động $\rightarrow$ Chạy qua Pipeline phân loại thương hiệu $\rightarrow$ **Cập nhật ngay Dashboard mà không cần reload trang**.
 
-### A. Tính năng nghiệp vụ mở rộng (Business Enhancements)
-- **Giao dịch định kỳ (Recurring Transactions)**: Tự động hóa việc ghi nhận các khoản thu/chi cố định hàng tháng như tiền nhà, tiền lương, tiền mạng dựa trên phân tích dòng tiền Plaid.
-- **Dự báo chi tiêu thông minh**: Sử dụng AI / Machine Learning phân tích hành vi chi tiêu lịch sử để dự báo số tiền chi tiêu trong tháng tiếp theo.
+### B. Bộ quy tắc Phân loại Thương hiệu (Merchant Classification Rules)
+- `OpenAI`, `ChatGPT`, `Google`, `Microsoft`, `AWS` $\rightarrow$ Danh mục **Utilities** (Dịch vụ / Công nghệ).
+- `Apple`, `Amazon`, `Shopee`, `Nike`, `Adidas` $\rightarrow$ Danh mục **Shopping** (Mua sắm).
+- `Interest payment`, `dividend`, `lãi tiết kiệm` $\rightarrow$ Danh mục **Interest / Income** (Thu nhập / Tiền lãi).
+- `Spotify`, `Netflix`, `Steam`, `Disney` $\rightarrow$ Danh mục **Entertainment** (Giải trí).
+- `Royal Farms`, `Sweetgreen`, `Smart & Final`, `Starbucks` $\rightarrow$ Danh mục **Food** (Ăn uống).
 
-### B. Khả năng mở rộng kỹ thuật (Technical Scalability)
-- **Microservices Architecture**: Phân tách phân hệ Thống kê (Statistics) và tính toán báo cáo chuyên sâu (Report) thành một microservice độc lập do các tác vụ này thường chiếm dụng nhiều tài nguyên CPU/RAM.
-- **Database Sharding & Replication**: Thiết lập mô hình MySQL Master-Slave (Read/Write Splitting) và đánh chỉ mục sâu vào các bảng `incomes`, `expenses`, `transactions` để tối ưu hóa truy vấn khi cơ sở dữ liệu lên đến hàng triệu bản ghi.
+### C. Giao diện Phân bổ Chi tiêu (Expense Distribution Card)
+- Hiển thị tổng phần trăm đã chi trong tháng trên biểu đồ Donut.
+- Tự động tìm và làm nổi bật danh mục chiếm tỷ trọng cao nhất: `Chi nhiều nhất: Utilities (38.5%)`.
+- Danh sách từng danh mục có thanh tiến trình phân màu sinh động.
+
+---
+
+## 3. Khả năng Mở rộng trong Tương lai (Future Scalability)
+
+- **Giao dịch định kỳ tự động (Auto Recurring Bills)**: Tự động nhận diện các khoản thanh toán cố định hàng tháng qua ngân hàng Plaid.
+- **Phân tích Dự báo AI**: Sử dụng mô hình Machine Learning dự báo xu hướng dòng tiền các tháng tiếp theo.
+- **Microservices Deployment**: Tách riêng Service Thống kê & Phân loại AI thành dịch vụ độc lập khi quy mô người dùng tăng trưởng.
