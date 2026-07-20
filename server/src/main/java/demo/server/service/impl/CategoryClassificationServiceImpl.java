@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CategoryClassificationServiceImpl implements CategoryClassificationService {
-
     private final StringRedisTemplate redisTemplate;
     private final MerchantMappingRepository merchantMappingRepository;
     private final CategoryRepository categoryRepository;
@@ -35,9 +34,7 @@ public class CategoryClassificationServiceImpl implements CategoryClassification
     @Override
     @Transactional
     public void classifyTransaction(Transaction transaction) {
-        if (transaction.getCategory() != null) {
-            return;
-        }
+        if (transaction.getCategory() != null) return;
 
         Long userId = transaction.getUser().getId();
         String merchant = transaction.getMerchantName();
@@ -148,21 +145,16 @@ public class CategoryClassificationServiceImpl implements CategoryClassification
         }
 
         for (Map.Entry<String, String[]> rule : rules.entrySet()) {
-            for (String keyword : rule.getValue()) {
-                if (cleanText.contains(keyword)) {
-                    return findOrCreateMatchingCategory(transaction.getUser(), rule.getKey(), type);
-                }
+            for (String keyword : rule.getValue()) if (cleanText.contains(keyword)) {
+                return findOrCreateMatchingCategory(transaction.getUser(), rule.getKey(), type);
             }
         }
-
         return null;
     }
 
     private Category findOrCreateMatchingCategory(User user, String name, CategoryType type) {
         Optional<Category> existing = categoryRepository.findByUserIdAndNameAndType(user.getId(), name, type);
-        if (existing.isPresent()) {
-            return existing.get();
-        }
+        if (existing.isPresent()) return existing.get();
 
         // Create new category if not exists
         Category newCat = Category.builder()

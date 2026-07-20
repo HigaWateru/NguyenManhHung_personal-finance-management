@@ -4,7 +4,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 
 public class ApiException extends RuntimeException {
-
     private final HttpStatus status;
     private final Map<String, Object> errors;
 

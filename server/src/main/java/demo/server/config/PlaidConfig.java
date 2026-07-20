@@ -27,13 +27,9 @@ public class PlaidConfig {
         
         ApiClient apiClient = new ApiClient(apiKeys);
         
-        if ("sandbox".equalsIgnoreCase(environment)) {
-            apiClient.setPlaidAdapter("https://sandbox.plaid.com");
-        } else if ("development".equalsIgnoreCase(environment)) {
-            apiClient.setPlaidAdapter("https://development.plaid.com");
-        } else {
-            apiClient.setPlaidAdapter("https://production.plaid.com");
-        }
+        if ("sandbox".equalsIgnoreCase(environment)) apiClient.setPlaidAdapter("https://sandbox.plaid.com");
+        else if ("development".equalsIgnoreCase(environment)) apiClient.setPlaidAdapter("https://development.plaid.com");
+        else apiClient.setPlaidAdapter("https://production.plaid.com");
         
         return apiClient.createService(PlaidApi.class);
     }

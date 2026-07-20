@@ -69,8 +69,6 @@ public class RedisServiceImpl implements RedisService {
     public void incrementRateLimitHour(String email) {
         String key = RATE_LIMIT_HOUR_PREFIX + email;
         Long count = redisTemplate.opsForValue().increment(key);
-        if (count != null && count == 1) {
-            redisTemplate.expire(key, 3600, TimeUnit.SECONDS);
-        }
+        if (count != null && count == 1) redisTemplate.expire(key, 3600, TimeUnit.SECONDS);
     }
 }

@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class IncomeServiceImpl implements IncomeService {
-
     private final IncomeRepository incomeRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -170,17 +169,17 @@ public class IncomeServiceImpl implements IncomeService {
 
     private Income findOwnedIncome(Long userId, Long incomeId) {
         return incomeRepository.findByIdAndUserId(incomeId, userId)
-                .orElseThrow(() -> ApiException.notFound("Income not found"));
+            .orElseThrow(() -> ApiException.notFound("Income not found"));
     }
 
     private User findActiveUser(Long userId) {
         return userRepository.findByIdAndActiveTrue(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
     }
 
     private Category findCategory(Long userId, Long categoryId, CategoryType expectedType) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
-                .orElseThrow(() -> ApiException.notFound("Category not found"));
+            .orElseThrow(() -> ApiException.notFound("Category not found"));
 
         if (category.getType() != expectedType) throw ApiException.badRequest("Selected category type is invalid");
 

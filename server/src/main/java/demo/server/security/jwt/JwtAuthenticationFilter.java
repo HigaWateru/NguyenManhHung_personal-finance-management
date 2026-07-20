@@ -74,16 +74,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         CurrentUserPrincipal principal = CurrentUserPrincipal.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .active(user.isActive())
-                .build();
+            .id(user.getId())
+            .email(user.getEmail())
+            .fullName(user.getFullName())
+            .active(user.isActive())
+            .build();
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                principal,
-                null,
-                Collections.emptyList());
+            principal,
+            null,
+            Collections.emptyList());
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 

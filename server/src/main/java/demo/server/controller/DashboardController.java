@@ -20,10 +20,10 @@ public class DashboardController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<DashboardResponse>> getDashboard(
-            @AuthenticationPrincipal CurrentUserPrincipal principal
+        @AuthenticationPrincipal CurrentUserPrincipal principal
     ) {
         return ResponseEntity.ok(
-                ApiResponse.success("Dashboard fetched successfully", dashboardService.getDashboard(principal.getId()))
+            ApiResponse.success("Dashboard fetched successfully", dashboardService.getDashboard(principal.getId()))
         );
     }
 }

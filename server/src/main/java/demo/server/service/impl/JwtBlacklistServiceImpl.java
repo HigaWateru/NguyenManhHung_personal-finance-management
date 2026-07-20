@@ -46,16 +46,12 @@ public class JwtBlacklistServiceImpl implements JwtBlacklistService {
 
     @Override
     public boolean isBlacklisted(String token) {
-        if (token == null || token.isBlank()) {
-            return false;
-        }
+        if (token == null || token.isBlank()) return false;
         try {
             String key = BLACKLIST_KEY_PREFIX + token;
             Boolean hasKey = redisTemplate.hasKey(key);
             boolean blacklisted = Boolean.TRUE.equals(hasKey);
-            if (blacklisted) {
-                log.warn("Blacklisted token check returned true for key: {}", key);
-            }
+            if (blacklisted) log.warn("Blacklisted token check returned true for key: {}", key);
             return blacklisted;
         } catch (Exception e) {
             log.error("Redis connection failure when checking blacklist: {}", e.getMessage());

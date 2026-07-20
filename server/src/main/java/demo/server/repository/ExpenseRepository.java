@@ -18,11 +18,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     Page<Expense> findByUserId(Long userId, Pageable pageable);
     List<Expense> findAllByUserId(Long userId);
     List<Expense> findByUserIdAndTransactionDateBetween(Long userId, LocalDate fromDate, LocalDate toDate);
-
     Page<Expense> findByUserIdAndCategoryId(Long userId, Long categoryId, Pageable pageable);
-
     Optional<Expense> findByIdAndUserId(Long id, Long userId);
-
     List<Expense> findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(Long userId);
 
     @Query("select coalesce(sum(e.amount), 0) from Expense e where e.user.id = :userId")

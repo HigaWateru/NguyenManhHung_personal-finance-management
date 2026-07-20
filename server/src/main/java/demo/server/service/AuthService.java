@@ -15,26 +15,15 @@ import demo.server.dto.request.ResetPasswordRequest;
 
 public interface AuthService {
     UserProfileResponse register(RegisterRequest request);
-
     AuthResponse login(LoginRequest request);
-
     AuthResponse refreshToken(RefreshTokenRequest request);
-
     MessageResponse logout(String accessToken, String refreshToken);
-
     UserProfileResponse getCurrentUserProfile(Long userId);
-
     UserProfileResponse updateProfile(Long userId, ProfileUpdateRequest request);
-
     UserProfileResponse updateDisplayCurrency(Long userId, demo.server.common.enums.CurrencyCode displayCurrency);
-
     UserProfileResponse updateAvatar(Long userId, MultipartFile file);
-
     void requestForgotPassword(ForgotPasswordRequest request);
-
     void verifyOtp(VerifyOtpRequest request);
-
     void resetPassword(String accessToken, ResetPasswordRequest request);
-
     AuthResponse loginOAuth2(String email, String fullName, String avatarUrl);
 }

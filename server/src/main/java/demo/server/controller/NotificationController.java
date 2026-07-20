@@ -28,11 +28,8 @@ public class NotificationController {
         @RequestParam(required = false, defaultValue = "false") boolean unreadOnly
     ) {
         List<Notification> notifications;
-        if (unreadOnly) {
-            notifications = notificationService.getUnreadNotifications(principal.getId());
-        } else {
-            notifications = notificationService.getNotifications(principal.getId());
-        }
+        if (unreadOnly) notifications = notificationService.getUnreadNotifications(principal.getId());
+        else notifications = notificationService.getNotifications(principal.getId());
         return ResponseEntity.ok(ApiResponse.success("Notifications fetched successfully", notifications));
     }
 

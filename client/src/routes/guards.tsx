@@ -28,10 +28,7 @@ export function PublicOnly() {
     if (!initialized) void dispatch(initializeAuth())
   }, [dispatch, initialized])
 
-  if (!initialized || loading) {
-    return <div className="grid min-h-screen place-items-center text-sm text-slate-300">Đang tải...</div>
-  }
+  if (!initialized || loading) return <div className="grid min-h-screen place-items-center text-sm text-slate-300">Đang tải...</div>
   if (isAuthenticated) return <Navigate to="/" replace />
-
   return <Outlet />
 }

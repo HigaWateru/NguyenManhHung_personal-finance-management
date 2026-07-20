@@ -23,9 +23,7 @@ export default function OAuth2RedirectHandler() {
         .catch(() => {
           navigate("/login", { replace: true })
         })
-    } else {
-      navigate("/login", { replace: true })
-    }
+    } else navigate("/login", { replace: true })
   }, [searchParams, dispatch, navigate])
 
   return (

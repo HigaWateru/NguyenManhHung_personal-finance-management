@@ -80,12 +80,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     private Category findOwnedCategory(Long userId, Long categoryId) {
         return categoryRepository.findByIdAndUserId(categoryId, userId)
-                .orElseThrow(() -> ApiException.notFound("Category not found"));
+            .orElseThrow(() -> ApiException.notFound("Category not found"));
     }
 
     private User findActiveUser(Long userId) {
         return userRepository.findByIdAndActiveTrue(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
     }
 
     private void validateDuplicateCategory(Long userId, String name, CategoryType type, Long excludedCategoryId) {

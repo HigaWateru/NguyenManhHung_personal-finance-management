@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { 
-  Menu, Search, Bell, X, CheckCheck, Landmark, Globe, ShieldCheck, Check, BellOff, Sparkles, AlertTriangle
+  Menu, Search, Bell, X, CheckCheck, Landmark, Globe, ShieldCheck, Check, BellOff, Sparkles, AlertTriangle, ChevronDown
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
@@ -10,19 +10,29 @@ import type { NotificationResponse } from "../../types/api"
 import { 
   subscribeNotificationRefresh 
 } from "../../utils/notification"
+import { useLanguage } from "../../context/LanguageContext"
+import type { Language } from "../../i18n/translations"
 
 type HeaderProps = {
   title: string
   onMenuClick: () => void
 }
 
+const languageOptions: { code: Language; label: string; flag: string }[] = [
+  { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "ja", label: "日本語", flag: "🇯🇵" },
+]
+
 export default function Header({ title, onMenuClick }: HeaderProps) {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
+  const { language, setLanguage, t } = useLanguage()
 
   const [allNotifications, setAllNotifications] = useState<NotificationResponse[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
+  const [showLangDropdown, setShowLangDropdown] = useState(false)
   const [filterTab, setFilterTab] = useState<"unread" | "all">("unread")
   const [isFlashing, setIsFlashing] = useState(false)
 
@@ -86,34 +96,34 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
     const upper = (type || "").toUpperCase()
     if (upper.includes("PLAID") || upper.includes("BANK")) {
       return {
-        badge: "Ngân hàng Plaid",
+        badge: t("notif_cat_plaid"),
         icon: <Landmark size={14} className="text-cyan-400" />,
         bg: "bg-cyan-500/15 border-cyan-500/30 text-cyan-300"
       }
     }
     if (upper.includes("EXCHANGE") || upper.includes("RATE")) {
       return {
-        badge: "Tỷ giá Ngoại tệ",
+        badge: t("notif_cat_rate"),
         icon: <Globe size={14} className="text-blue-400" />,
         bg: "bg-blue-500/15 border-blue-500/30 text-blue-300"
       }
     }
     if (upper.includes("BUDGET") || upper.includes("WARNING")) {
       return {
-        badge: "Cảnh báo Ngân sách",
+        badge: t("notif_cat_budget"),
         icon: <AlertTriangle size={14} className="text-amber-400" />,
         bg: "bg-amber-500/15 border-amber-500/30 text-amber-300"
       }
     }
     if (upper.includes("SECURITY") || upper.includes("AUTH")) {
       return {
-        badge: "Bảo mật Tài khoản",
+        badge: t("notif_cat_security"),
         icon: <ShieldCheck size={14} className="text-emerald-400" />,
         bg: "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
       }
     }
     return {
-      badge: "Hệ thống",
+      badge: t("notif_cat_system"),
       icon: <Sparkles size={14} className="text-purple-400" />,
       bg: "bg-purple-500/15 border-purple-500/30 text-purple-300"
     }
@@ -123,36 +133,75 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
   const unreadCount = unreadNotifications.length
   const displayedNotifications = filterTab === "unread" ? unreadNotifications : allNotifications
 
+  const currentLangObj = languageOptions.find((l) => l.code === language) || languageOptions[0]
+
   return (
     <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl">
       <div className="flex justify-between items-center gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
         <button type="button" onClick={onMenuClick}
-          className="rounded-2xl border border-white/10 bg-white/5 p-2 text-slate-100 md:hidden"
+          className="rounded-2xl border border-white/10 bg-white/5 p-2 text-slate-100 md:hidden cursor-pointer"
           aria-label="Mở thanh bên"
         >
           <Menu size={18} />
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300/70 font-semibold">Smart Finance · Quản Lý Tài Chính Cá Nhân</p>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300/70 font-semibold">{t("header_subtitle")}</p>
           <h2 className="truncate text-lg font-bold text-white sm:text-xl">{title}</h2>
         </div>
 
         <label className="hidden flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-slate-300 lg:flex lg:max-w-xl">
           <Search size={18} className="shrink-0 text-cyan-300/70" />
-          <input type="text" placeholder="Tìm giao dịch, danh mục, thống kê..."
+          <input type="text" placeholder={t("header_search_placeholder")}
             className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"/>
         </label>
 
+        {/* Language Selector Dropdown */}
+        <div className="relative">
+          <button type="button" onClick={() => {
+              setShowLangDropdown(!showLangDropdown)
+              setShowDropdown(false)
+            }}
+            className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10 hover:border-cyan-400/40 transition cursor-pointer shadow-sm"
+            aria-label="Đổi ngôn ngữ"
+          >
+            <span className="text-base leading-none">{currentLangObj.flag}</span>
+            <span className="font-semibold text-white">{currentLangObj.label}</span>
+            <ChevronDown size={14} className="text-slate-400" />
+          </button>
+
+          {showLangDropdown && (
+            <div className="absolute right-0 mt-2 w-44 rounded-2xl border border-white/15 bg-slate-900/95 p-2 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl z-50 space-y-1">
+              {languageOptions.map((option) => (
+                <button key={option.code} type="button" onClick={() => {
+                    setLanguage(option.code)
+                    setShowLangDropdown(false)
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl font-semibold transition cursor-pointer ${
+                    language === option.code 
+                      ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30" 
+                      : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{option.flag}</span>
+                    <span>{option.label}</span>
+                  </div>
+                  {language === option.code && <Check size={14} className="text-cyan-400" />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Bell Notification Icon & Modal Dropdown */}
         <div className="relative">
-          <button 
-            type="button" 
-            onClick={() => {
+          <button type="button"  onClick={() => {
               setShowDropdown(!showDropdown)
+              setShowLangDropdown(false)
               if (!showDropdown) fetchNotifications(false)
             }}
-            className={`rounded-2xl border p-2.5 relative transition-all duration-300 ${
+            className={`rounded-2xl border p-2.5 relative transition-all duration-300 cursor-pointer ${
               isFlashing 
                 ? "border-cyan-400 bg-cyan-500/30 text-cyan-200 ring-4 ring-cyan-500/40 shadow-lg shadow-cyan-500/30 scale-105"
                 : showDropdown 
@@ -181,29 +230,25 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                     <Bell size={16} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white">Thông Báo & Cảnh Báo</h4>
+                    <h4 className="text-sm font-bold text-white">{t("notif_title")}</h4>
                     <p className="text-[11px] text-slate-400 font-medium">
-                      {unreadCount > 0 ? `${unreadCount} thông báo mới chưa đọc` : "Tất cả thông báo đã xem"}
+                      {unreadCount > 0 ? `${unreadCount} ${t("notif_unread_count")}` : t("notif_no_unread")}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   {unreadCount > 0 && (
-                    <button 
-                      type="button" 
-                      onClick={handleMarkAllRead}
-                      className="inline-flex items-center gap-1 rounded-xl border border-cyan-500/40 bg-cyan-500/15 px-2.5 py-1 text-[11px] font-semibold text-cyan-300 hover:bg-cyan-500/25 transition shadow-sm"
-                      title="Đánh dấu tất cả đã đọc"
+                    <button type="button" onClick={handleMarkAllRead}
+                      className="inline-flex items-center gap-1 rounded-xl border border-cyan-500/40 bg-cyan-500/15 px-2.5 py-1 text-[11px] font-semibold text-cyan-300 hover:bg-cyan-500/25 transition shadow-sm cursor-pointer"
+                      title={t("notif_mark_all_read")}
                     >
                       <CheckCheck size={12} />
-                      <span>Đã đọc hết</span>
+                      <span>{t("notif_mark_all_read")}</span>
                     </button>
                   )}
-                  <button 
-                    type="button" 
-                    onClick={() => setShowDropdown(false)} 
-                    className="rounded-xl p-1 text-slate-400 hover:text-white hover:bg-white/10 transition"
+                  <button type="button" onClick={() => setShowDropdown(false)} 
+                    className="rounded-xl p-1 text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
                     aria-label="Đóng bảng thông báo"
                   >
                     <X size={16} />
@@ -213,27 +258,23 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
 
               {/* Filter Tabs */}
               <div className="grid grid-cols-2 gap-1.5 rounded-2xl bg-slate-950/70 p-1 border border-white/10 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setFilterTab("unread")}
-                  className={`rounded-xl py-1.5 font-bold transition-all ${
+                <button type="button" onClick={() => setFilterTab("unread")}
+                  className={`rounded-xl py-1.5 font-bold transition-all cursor-pointer ${
                     filterTab === "unread" 
                       ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-200 border border-cyan-500/40 shadow-sm" 
                       : "text-slate-400 hover:text-white"
                   }`}
                 >
-                  Chưa đọc ({unreadCount})
+                  {t("notif_tab_unread")} ({unreadCount})
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setFilterTab("all")}
-                  className={`rounded-xl py-1.5 font-bold transition-all ${
+                <button type="button" onClick={() => setFilterTab("all")}
+                  className={`rounded-xl py-1.5 font-bold transition-all cursor-pointer ${
                     filterTab === "all" 
                       ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-200 border border-cyan-500/40 shadow-sm" 
                       : "text-slate-400 hover:text-white"
                   }`}
                 >
-                  Tất cả ({allNotifications.length})
+                  {t("notif_tab_all")} ({allNotifications.length})
                 </button>
               </div>
 
@@ -245,15 +286,14 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                       <BellOff size={22} />
                     </div>
                     <p className="text-xs text-slate-400 font-medium">
-                      {filterTab === "unread" ? "Không có thông báo chưa đọc nào." : "Không có thông báo nào."}
+                      {t("notif_empty")}
                     </p>
                   </div>
                 ) : (
                   displayedNotifications.map((notif) => {
                     const cat = getNotificationCategory(notif.type)
                     return (
-                      <div 
-                        key={notif.id} 
+                      <div key={notif.id} 
                         className={`relative rounded-2xl p-3.5 border transition-all duration-200 space-y-2 ${
                           notif.read 
                             ? "bg-slate-950/40 border-white/5 opacity-65 hover:opacity-100" 
@@ -269,20 +309,18 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
 
                             {!notif.read && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse">
-                                ✨ Mới
+                                {t("notif_badge_new")}
                               </span>
                             )}
                           </div>
 
                           {!notif.read && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
+                            <button type="button" onClick={(e) => {
                                 e.stopPropagation();
                                 handleMarkRead(notif.id);
                               }}
-                              className="rounded-lg bg-white/5 p-1 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/15 transition"
-                              title="Đánh dấu đã đọc"
+                              className="rounded-lg bg-white/5 p-1 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/15 transition cursor-pointer"
+                              title={t("notif_mark_all_read")}
                             >
                               <Check size={13} />
                             </button>
@@ -293,7 +331,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                         <p className="text-slate-300 text-[11px] leading-relaxed font-normal">{notif.message}</p>
                         
                         <div className="text-[10px] text-cyan-400/80 text-right font-semibold">
-                          {new Date(notif.createdAt).toLocaleString("vi-VN", {
+                          {new Date(notif.createdAt).toLocaleString(language === "vi" ? "vi-VN" : language === "ja" ? "ja-JP" : "en-US", {
                             hour: "2-digit",
                             minute: "2-digit",
                             day: "2-digit",
@@ -311,8 +349,8 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
         </div>
 
         <button type="button" onClick={handleLogout}
-          className="hidden rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10 sm:block">
-          Đăng xuất
+          className="hidden rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10 sm:block cursor-pointer">
+          {t("header_logout")}
         </button>
 
         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2">

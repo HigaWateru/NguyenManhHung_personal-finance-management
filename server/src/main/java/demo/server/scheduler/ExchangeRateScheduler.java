@@ -10,12 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ExchangeRateScheduler {
-
     private final ExchangeRateService exchangeRateService;
 
-    /**
-     * Update exchange rates daily at 1:00 AM.
-     */
     @Scheduled(cron = "0 0 1 * * ?")
     public void scheduleDailyUpdate() {
         log.info("Triggering scheduled exchange rate update...");

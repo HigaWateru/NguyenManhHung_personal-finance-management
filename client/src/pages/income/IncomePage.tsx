@@ -5,6 +5,7 @@ import { extractApiError } from "../../apis/http"
 import type { CategoryItem } from "../../types/api"
 import { useAppSelector } from "../../redux/hooks"
 import { formatCurrency } from "../../utils/format"
+import { useLanguage } from "../../context/LanguageContext"
 
 type IncomeRecord = {
   id: number
@@ -50,6 +51,7 @@ const validateForm = (form: IncomeFormState): FormErrors => {
 
 export default function IncomePage() {
   const { user } = useAppSelector((state) => state.auth)
+  const { t } = useLanguage()
   const currencyCode = user?.currencyCode || "VND"
 
   const [records, setRecords] = useState<IncomeRecord[]>([])
@@ -185,10 +187,10 @@ export default function IncomePage() {
   return (
     <section className="space-y-6">
       <header className="glass-panel rounded-[2rem] p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Giao dịch</p>
-        <h3 className="mt-3 text-3xl font-semibold text-white">Quản lý thu nhập</h3>
+        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">{t("inc_page_tag")}</p>
+        <h3 className="mt-3 text-3xl font-semibold text-white">{t("inc_page_title")}</h3>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          Dữ liệu thu nhập đã kết nối backend: CRUD, tìm kiếm và phân trang theo API thật.
+          {t("inc_page_desc")}
         </p>
       </header>
 
@@ -203,7 +205,7 @@ export default function IncomePage() {
               <input type="text" value={query} onChange={(event) => {
                   setQuery(event.target.value)
                   setPage(1)
-                }} placeholder="Tìm ghi chú hoặc danh mục..."
+                }} placeholder={t("search")}
                 className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
               />
             </label>
@@ -214,9 +216,9 @@ export default function IncomePage() {
                 setSelectedCategory(event.target.value)
                 setPage(1)
               }}
-              className="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-2 text-sm text-slate-300 outline-none focus:border-cyan-300/40 sm:w-[200px]"
+              className="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-2 text-sm text-slate-300 outline-none focus:border-cyan-300/40 sm:w-[200px] cursor-pointer"
             >
-              <option value="" className="bg-slate-900">Tất cả danh mục</option>
+              <option value="" className="bg-slate-900">{t("all_categories_filter")}</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id} className="bg-slate-900">
                   {category.name}
@@ -226,9 +228,9 @@ export default function IncomePage() {
           </div>
 
           <button type="button" onClick={openCreateModal}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25 cursor-pointer"
           >
-            <Plus size={16} /> Thêm thu nhập
+            <Plus size={16} /> {t("dash_add_income")}
           </button>
         </div>
 
@@ -236,11 +238,11 @@ export default function IncomePage() {
           <table className="w-full min-w-[880px] border-collapse text-sm">
             <thead className="bg-slate-900/80 text-slate-300">
               <tr>
-                <th className="px-4 py-3 text-left">Ngày</th>
-                <th className="px-4 py-3 text-left">Danh mục</th>
-                <th className="px-4 py-3 text-right">Số tiền</th>
-                <th className="px-4 py-3 text-left">Ghi chú</th>
-                <th className="px-4 py-3 text-right">Hành động</th>
+                <th className="px-4 py-3 text-left">{t("col_date")}</th>
+                <th className="px-4 py-3 text-left">{t("col_category")}</th>
+                <th className="px-4 py-3 text-right">{t("col_amount")}</th>
+                <th className="px-4 py-3 text-left">{t("col_note")}</th>
+                <th className="px-4 py-3 text-right">{t("col_actions")}</th>
               </tr>
             </thead>
 
@@ -262,15 +264,15 @@ export default function IncomePage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-2">
                         <button type="button" onClick={() => openEditModal(row)}
-                          className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-slate-200 transition hover:bg-white/10"
+                          className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs text-slate-200 transition hover:bg-white/10 cursor-pointer"
                         >
-                          <Pencil size={14} /> Sửa
+                          <Pencil size={14} /> {t("edit")}
                         </button>
 
                         <button type="button" onClick={() => handleDelete(row.id)}
-                          className="inline-flex items-center gap-1 rounded-xl border border-rose-300/30 bg-rose-400/10 px-2.5 py-1.5 text-xs text-rose-100 transition hover:bg-rose-400/20"
+                          className="inline-flex items-center gap-1 rounded-xl border border-rose-300/30 bg-rose-400/10 px-2.5 py-1.5 text-xs text-rose-100 transition hover:bg-rose-400/20 cursor-pointer"
                         >
-                          <Trash2 size={14} /> Xóa
+                          <Trash2 size={14} /> {t("delete")}
                         </button>
                       </div>
                     </td>
@@ -279,7 +281,7 @@ export default function IncomePage() {
               ) : (
                 <tr>
                   <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
-                    Không có dữ liệu phù hợp.
+                    {t("no_data")}
                   </td>
                 </tr>
               )}
@@ -288,23 +290,23 @@ export default function IncomePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-400">
-          <p>Hiển thị {resultStart}-{resultEnd} trong tổng số {totalElements} bản ghi</p>
+          <p>{resultStart}-{resultEnd} / {totalElements}</p>
 
           <div className="flex items-center gap-2">
             <button type="button" onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               disabled={page === 1}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
             >
-              Trước
+              {t("page_previous")}
             </button>
 
             <span className="rounded-xl border border-cyan-300/40 bg-cyan-400/10 px-3 py-1.5 text-cyan-100">{page} / {totalPages}</span>
 
             <button type="button" onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={page === totalPages}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+              className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-slate-300 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
             >
-              Sau
+              {t("page_next")}
             </button>
           </div>
         </div>
@@ -315,12 +317,12 @@ export default function IncomePage() {
           <div className="glass-panel-strong w-full max-w-2xl rounded-3xl p-5 sm:p-6">
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/70">Income Form</p>
-                <h4 className="mt-2 text-xl font-semibold text-white">{editingId === null ? "Thêm thu nhập" : "Cập nhật thu nhập"}</h4>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/70">{t("inc_page_title")}</p>
+                <h4 className="mt-2 text-xl font-semibold text-white">{editingId === null ? t("dash_add_income") : t("edit")}</h4>
               </div>
 
               <button type="button" onClick={closeModal}
-                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
+                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 cursor-pointer"
                 aria-label="Đóng"
               >
                 <X size={16} />
@@ -330,7 +332,7 @@ export default function IncomePage() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="income-date" className="mb-2 block text-sm text-slate-300">Ngày</label>
+                  <label htmlFor="income-date" className="mb-2 block text-sm text-slate-300">{t("col_date")}</label>
                   <input id="income-date" type="date" value={form.date}
                     onChange={(event) => setForm((prev) => ({ ...prev, date: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
@@ -339,36 +341,36 @@ export default function IncomePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="income-amount" className="mb-2 block text-sm text-slate-300">Số tiền</label>
+                  <label htmlFor="income-amount" className="mb-2 block text-sm text-slate-300">{t("col_amount")}</label>
                   <input id="income-amount" type="number" min="0" value={form.amount}
                     onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
-                    placeholder="Ví dụ: 2500000"
+                    placeholder="2500000"
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
                   {errors.amount && <p className="mt-1 text-xs text-rose-300">{errors.amount}</p>}
                 </div>
 
                 <div className="md:col-span-2">
-                  <label htmlFor="income-category" className="mb-2 block text-sm text-slate-300">Danh mục</label>
+                  <label htmlFor="income-category" className="mb-2 block text-sm text-slate-300">{t("col_category")}</label>
                   <select id="income-category" value={form.categoryId}
                     onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
-                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45 cursor-pointer"
                   >
-                    <option value="">Chọn danh mục thu nhập</option>
+                    <option value="">{t("all_categories_filter")}</option>
                     {categories.map((category) => (
                       <option key={category.id} value={category.id} className="bg-slate-900">{category.name}</option>
                     ))}
                   </select>
                   {errors.categoryId && <p className="mt-1 text-xs text-rose-300">{errors.categoryId}</p>}
-                  {selectedCategoryName && <p className="mt-1 text-xs text-slate-400">Đang chọn: {selectedCategoryName}</p>}
+                  {selectedCategoryName && <p className="mt-1 text-xs text-slate-400">Selected: {selectedCategoryName}</p>}
                 </div>
               </div>
 
               <div>
-                <label htmlFor="income-note" className="mb-2 block text-sm text-slate-300">Ghi chú</label>
+                <label htmlFor="income-note" className="mb-2 block text-sm text-slate-300">{t("col_note")}</label>
                 <textarea id="income-note" rows={3} value={form.note}
                   onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
-                  placeholder="Mô tả ngắn cho giao dịch"
+                  placeholder="..."
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                 />
                 {errors.note && <p className="mt-1 text-xs text-rose-300">{errors.note}</p>}
@@ -376,15 +378,15 @@ export default function IncomePage() {
 
               <div className="flex flex-wrap justify-end gap-2 pt-2">
                 <button type="button" onClick={closeModal}
-                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
+                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10 cursor-pointer"
                 >
-                  Hủy
+                  {t("cancel")}
                 </button>
 
                 <button type="submit" 
-                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
+                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25 cursor-pointer"
                 >
-                  {editingId === null ? "Lưu giao dịch" : "Cập nhật"}
+                  {t("save")}
                 </button>
               </div>
             </form>

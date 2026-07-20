@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class ExchangeRateServiceImpl implements ExchangeRateService {
-
     private final ExchangeRateRepository exchangeRateRepository;
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -61,9 +60,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             }
 
             BigDecimal vndRate = getBigDecimal(ratesMap.get("VND"));
-            if (vndRate == null) {
-                vndRate = BigDecimal.valueOf(25450.0);
-            }
+            if (vndRate == null) vndRate = BigDecimal.valueOf(25450.0);
 
             // Update USD (Base currency)
             updateOrSaveRate(CurrencyCode.USD, "US Dollar", "$", vndRate, BigDecimal.ZERO);
@@ -121,17 +118,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public BigDecimal convert(BigDecimal amount, CurrencyCode fromCode, CurrencyCode toCode) {
-        if (amount == null) {
-            return BigDecimal.ZERO;
-        }
-        if (fromCode == toCode) {
-            return amount;
-        }
+        if (amount == null) return BigDecimal.ZERO;
+        if (fromCode == toCode) return amount;
 
-        ExchangeRate fromRateEntity = exchangeRateRepository.findByCurrencyCode(fromCode)
-            .orElse(null);
-        ExchangeRate toRateEntity = exchangeRateRepository.findByCurrencyCode(toCode)
-            .orElse(null);
+        ExchangeRate fromRateEntity = exchangeRateRepository.findByCurrencyCode(fromCode).orElse(null);
+        ExchangeRate toRateEntity = exchangeRateRepository.findByCurrencyCode(toCode).orElse(null);
 
         // Fallbacks if not seeded
         BigDecimal fromRate = fromRateEntity != null ? fromRateEntity.getRateToVnd() : getFallbackRate(fromCode);
@@ -148,16 +139,13 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             case EUR: return BigDecimal.valueOf(27663.0);
             case JPY: return BigDecimal.valueOf(160.5);
             case VND:
-            default:
-                return BigDecimal.ONE;
+            default: return BigDecimal.ONE;
         }
     }
 
     private BigDecimal getBigDecimal(Object obj) {
         if (obj == null) return null;
-        if (obj instanceof Number) {
-            return BigDecimal.valueOf(((Number) obj).doubleValue());
-        }
+        if (obj instanceof Number) return BigDecimal.valueOf(((Number) obj).doubleValue());
         return new BigDecimal(obj.toString());
     }
 }

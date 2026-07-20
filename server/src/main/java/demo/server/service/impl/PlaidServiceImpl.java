@@ -47,7 +47,6 @@ import retrofit2.Response;
 @Service
 @RequiredArgsConstructor
 public class PlaidServiceImpl implements PlaidService {
-
     private final PlaidApi plaidApi;
     private final BankAccountRepository bankAccountRepository;
     private final TransactionRepository transactionRepository;
@@ -84,9 +83,8 @@ public class PlaidServiceImpl implements PlaidService {
 
         try {
             Response<LinkTokenCreateResponse> response = plaidApi.linkTokenCreate(request).execute();
-            if (response.isSuccessful() && response.body() != null) {
-                return response.body().getLinkToken();
-            } else {
+            if (response.isSuccessful() && response.body() != null) return response.body().getLinkToken();
+            else {
                 String errorMsg = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
                 log.error("Failed to create Plaid Link Token: {}", errorMsg);
                 throw new RuntimeException("Failed to create Plaid Link Token: " + errorMsg);
@@ -219,13 +217,10 @@ public class PlaidServiceImpl implements PlaidService {
                 
                 for (com.plaid.client.model.Transaction plaidTx : addedTransactions) {
                     // Check if already exists to prevent duplicate entries
-                    if (transactionRepository.existsByPlaidTransactionId(plaidTx.getTransactionId())) {
-                        continue;
-                    }
+                    if (transactionRepository.existsByPlaidTransactionId(plaidTx.getTransactionId())) continue;
 
                     // Find matching BankAccount
-                    BankAccount dbAccount = bankAccountRepository.findByPlaidAccountId(plaidTx.getAccountId())
-                        .orElse(null);
+                    BankAccount dbAccount = bankAccountRepository.findByPlaidAccountId(plaidTx.getAccountId()).orElse(null);
                     User userObj = dbAccount != null ? dbAccount.getUser() : userRepository.findById(userId).orElse(null);
 
                     // Convert Plaid transaction into our DB Transaction entity
@@ -374,8 +369,8 @@ public class PlaidServiceImpl implements PlaidService {
                 // Check if Income record already exists for this note/date/user
                 List<Income> existing = incomeRepository.findAllByUserId(userId).stream()
                     .filter(i -> i.getTransactionDate().equals(tx.getTransactionDate()) 
-                              && i.getAmount().compareTo(tx.getAmount()) == 0
-                              && ((i.getNote() == null && noteText == null) || (i.getNote() != null && i.getNote().equalsIgnoreCase(noteText))))
+                            && i.getAmount().compareTo(tx.getAmount()) == 0
+                            && ((i.getNote() == null && noteText == null) || (i.getNote() != null && i.getNote().equalsIgnoreCase(noteText))))
                     .toList();
 
                 if (existing.isEmpty()) {
@@ -387,18 +382,16 @@ public class PlaidServiceImpl implements PlaidService {
                         .note(noteText)
                         .build();
                     incomeRepository.save(income);
-                } else {
-                    for (Income inc : existing) {
-                        inc.updateDetails(tx.getCategory(), tx.getAmount(), tx.getTransactionDate(), noteText);
-                        incomeRepository.save(inc);
-                    }
+                } else for (Income inc : existing) {
+                    inc.updateDetails(tx.getCategory(), tx.getAmount(), tx.getTransactionDate(), noteText);
+                    incomeRepository.save(inc);
                 }
             } else if (tx.getType() == CategoryType.EXPENSE) {
                 // Check if Expense record already exists for this note/date/user
                 List<Expense> existing = expenseRepository.findAllByUserId(userId).stream()
                     .filter(e -> e.getTransactionDate().equals(tx.getTransactionDate()) 
-                              && e.getAmount().compareTo(tx.getAmount()) == 0
-                              && ((e.getNote() == null && noteText == null) || (e.getNote() != null && e.getNote().equalsIgnoreCase(noteText))))
+                            && e.getAmount().compareTo(tx.getAmount()) == 0
+                            && ((e.getNote() == null && noteText == null) || (e.getNote() != null && e.getNote().equalsIgnoreCase(noteText))))
                     .toList();
 
                 if (existing.isEmpty()) {

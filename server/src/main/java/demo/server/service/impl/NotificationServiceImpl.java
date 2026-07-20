@@ -52,9 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository.findById(notificationId)
             .orElseThrow(() -> new IllegalArgumentException("Notification not found: " + notificationId));
 
-        if (!notification.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Unauthorized notification access");
-        }
+        if (!notification.getUser().getId().equals(userId)) throw new IllegalArgumentException("Unauthorized notification access");
 
         notification.markAsRead();
         notificationRepository.save(notification);

@@ -33,9 +33,7 @@ export const clearHeaderNotification = () => {
 export const subscribeHeaderNotification = (listener: Listener) => {
   listeners.add(listener)
   listener(currentNotification)
-  return () => {
-    listeners.delete(listener)
-  }
+  return () => listeners.delete(listener)
 }
 
 export const triggerNotificationRefresh = () => {
@@ -44,7 +42,5 @@ export const triggerNotificationRefresh = () => {
 
 export const subscribeNotificationRefresh = (listener: RefreshListener) => {
   refreshListeners.add(listener)
-  return () => {
-    refreshListeners.delete(listener)
-  }
+  return () => refreshListeners.delete(listener)
 }

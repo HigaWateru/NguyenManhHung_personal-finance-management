@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/api/users", "/api/v1/users"})
 @RequiredArgsConstructor
 public class UserController {
-
     private final AuthService authService;
 
     @PutMapping("/display-currency")

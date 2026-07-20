@@ -43,7 +43,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public StatisticsResponse getStatistics(Long userId, Integer year) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
         CurrencyCode baseCurrency = user.getCurrencyCode();
         CurrencyCode displayCurrency = user.getDisplayCurrency();
@@ -108,8 +108,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     .expense(convertedExpense)
                     .balance(convertedIncome.subtract(convertedExpense))
                     .build();
-            })
-            .toList();
+            }).toList();
     }
 
     private List<CategoryStatisticsResponse> buildCategoryStatistics(Long userId, int year, CurrencyCode baseCurrency, CurrencyCode displayCurrency) {
@@ -128,8 +127,8 @@ public class StatisticsServiceImpl implements StatisticsService {
         expenseByCategory.forEach(item -> results.add(toCategoryResponse(item, CategoryType.EXPENSE, totalExpense, baseCurrency, displayCurrency)));
 
         results.sort(
-                Comparator.comparing(CategoryStatisticsResponse::getTotalAmount, Comparator.reverseOrder())
-                        .thenComparing(CategoryStatisticsResponse::getCategoryName)
+            Comparator.comparing(CategoryStatisticsResponse::getTotalAmount, Comparator.reverseOrder())
+                .thenComparing(CategoryStatisticsResponse::getCategoryName)
         );
 
         return results;

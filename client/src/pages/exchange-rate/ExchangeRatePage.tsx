@@ -3,12 +3,14 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { fetchExchangeRates, syncExchangeRates } from "../../redux/slides/exchangeRateSlide"
 import { formatCurrency } from "../../utils/format"
 import { triggerNotificationRefresh } from "../../utils/notification"
+import { useLanguage } from "../../context/LanguageContext"
 import type { CurrencyCode } from "../../types/api"
 import { TrendingUp, TrendingDown, Coins, RefreshCw, Calculator, Calendar, AlertTriangle, ArrowRightLeft,
   DollarSign, Globe } from "lucide-react"
 
 export default function ExchangeRatePage() {
   const dispatch = useAppDispatch()
+  const { t } = useLanguage()
   
   // Redux state
   const { rates, loading, error } = useAppSelector((state) => state.exchangeRate)
@@ -64,9 +66,7 @@ export default function ExchangeRatePage() {
   }
 
   const getRateFluctuationBadge = (change: number | null) => {
-    if (change === null || change === undefined) {
-      return <span className="text-slate-400 font-normal">-</span>
-    }
+    if (change === null || change === undefined) return <span className="text-slate-400 font-normal">-</span>
     
     const isPositive = change >= 0
     return (
@@ -83,9 +83,7 @@ export default function ExchangeRatePage() {
 
   const handleSyncRates = async () => {
     const resultAction = await dispatch(syncExchangeRates())
-    if (syncExchangeRates.fulfilled.match(resultAction)) {
-      triggerNotificationRefresh()
-    }
+    if (syncExchangeRates.fulfilled.match(resultAction)) triggerNotificationRefresh()
   }
 
   return (
@@ -99,21 +97,21 @@ export default function ExchangeRatePage() {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300 font-medium">
               <Globe size={14} className="animate-pulse text-cyan-400" />
-              <span>Thị trường ngoại hối (Base: USD $)</span>
+              <span>{t("rate_hero_tag")}</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">Tỷ Giá Thị Trường Thực</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">{t("rate_hero_title")}</h2>
             <p className="text-slate-400 max-w-3xl text-sm leading-6">
-              Bảng tỷ giá ngoại tệ trực tuyến chuẩn quốc tế lấy **Đô la Mỹ (USD - $)** làm đơn vị gốc. Tự động theo dõi biến động thị trường trong 24 giờ và hỗ trợ bộ quy đổi tiền tệ tức thì.
+              {t("rate_hero_desc")}
             </p>
           </div>
 
           <button 
             onClick={handleSyncRates} 
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:text-white disabled:opacity-50 transition-all duration-200 shadow-lg shadow-cyan-500/10 shrink-0"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-500/50 hover:text-white disabled:opacity-50 transition-all duration-200 shadow-lg shadow-cyan-500/10 shrink-0 cursor-pointer"
           >
             <RefreshCw size={16} className={loading ? "animate-spin text-cyan-400" : "text-cyan-400"} />
-            <span>{loading ? "Đang cập nhật..." : "Cập nhật thị trường 24h"}</span>
+            <span>{loading ? t("rate_updating") : t("rate_update_btn")}</span>
           </button>
         </div>
       </div>
@@ -135,8 +133,8 @@ export default function ExchangeRatePage() {
                 <DollarSign size={20} />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Bảng Tỷ Giá Ngoại Tệ Trực Tuyến</h3>
-                <p className="text-xs text-slate-400">Đơn vị gốc chuẩn: **Đô la Mỹ (USD - $)**</p>
+                <h3 className="font-semibold text-white">{t("rate_table_title")}</h3>
+                <p className="text-xs text-slate-400">{t("rate_table_sub")}</p>
               </div>
             </div>
 
@@ -150,11 +148,11 @@ export default function ExchangeRatePage() {
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-white/10 text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  <th className="pb-3 pl-4">Đồng tiền</th>
-                  <th className="pb-3 text-right">Tỷ giá (Gốc USD $)</th>
-                  <th className="pb-3 text-right">Tỷ giá (VND)</th>
-                  <th className="pb-3 text-center">Biến động (24h)</th>
-                  <th className="pb-3 pr-4 text-right">Cập nhật</th>
+                  <th className="pb-3 pl-4">{t("rate_col_currency")}</th>
+                  <th className="pb-3 text-right">{t("rate_col_usd_base")}</th>
+                  <th className="pb-3 text-right">{t("rate_col_vnd_equiv")}</th>
+                  <th className="pb-3 text-center">{t("rate_col_24h_change")}</th>
+                  <th className="pb-3 pr-4 text-right">{t("rate_col_updated")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -195,7 +193,7 @@ export default function ExchangeRatePage() {
                 {rates.length === 0 && !loading && (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-slate-500">
-                      Không tìm thấy dữ liệu tỷ giá nào.
+                      {t("no_data")}
                     </td>
                   </tr>
                 )}
@@ -211,29 +209,29 @@ export default function ExchangeRatePage() {
               <Calculator size={20} />
             </div>
             <div>
-              <h3 className="font-semibold text-white">Bộ Quy Đổi Tiền Tệ</h3>
-              <p className="text-xs text-slate-400">Quy đổi tỷ giá nhanh theo thời gian thực</p>
+              <h3 className="font-semibold text-white">{t("rate_converter_title")}</h3>
+              <p className="text-xs text-slate-400">{t("rate_converter_sub")}</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="convert-amount" className="block text-xs font-medium text-slate-400 mb-2">Số tiền cần quy đổi</label>
+              <label htmlFor="convert-amount" className="block text-xs font-medium text-slate-400 mb-2">{t("rate_converter_amount")}</label>
               <div className="relative">
                 <input id="convert-amount" type="number" min="0.01" step="any" value={convertAmount}
                   onChange={(e) => setConvertAmount(e.target.value)}
                   className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-4 py-3 text-white font-semibold text-lg focus:border-cyan-500 focus:outline-none transition-colors"
-                  placeholder="Nhập số tiền..."
+                  placeholder="100"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center">
               <div>
-                <label htmlFor="from-currency" className="block text-xs font-medium text-slate-400 mb-2">Từ</label>
+                <label htmlFor="from-currency" className="block text-xs font-medium text-slate-400 mb-2">{t("rate_converter_from")}</label>
                 <select id="from-currency" value={fromCurrency} 
                   onChange={(e) => setFromCurrency(e.target.value as CurrencyCode)}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-3 text-white font-semibold focus:border-cyan-500 focus:outline-none"
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-3 text-white font-semibold focus:border-cyan-500 focus:outline-none cursor-pointer"
                 >
                   <option value="USD">USD ($)</option>
                   <option value="EUR">EUR (€)</option>
@@ -244,7 +242,7 @@ export default function ExchangeRatePage() {
 
               <div className="flex justify-center pt-6">
                 <button type="button" onClick={handleSwapCurrencies}
-                  className="rounded-full border border-white/10 bg-white/5 p-3 text-slate-300 hover:bg-cyan-500 hover:text-white transition-all duration-200 shadow-md"
+                  className="rounded-full border border-white/10 bg-white/5 p-3 text-slate-300 hover:bg-cyan-500 hover:text-white transition-all duration-200 shadow-md cursor-pointer"
                   aria-label="Đổi chiều quy đổi"
                 >
                   <ArrowRightLeft size={16} />
@@ -252,10 +250,10 @@ export default function ExchangeRatePage() {
               </div>
 
               <div>
-                <label htmlFor="to-currency" className="block text-xs font-medium text-slate-400 mb-2">Sang</label>
+                <label htmlFor="to-currency" className="block text-xs font-medium text-slate-400 mb-2">{t("rate_converter_to")}</label>
                 <select id="to-currency" value={toCurrency}
                   onChange={(e) => setToCurrency(e.target.value as CurrencyCode)}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-3 text-white font-semibold focus:border-cyan-500 focus:outline-none"
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/80 px-3 py-3 text-white font-semibold focus:border-cyan-500 focus:outline-none cursor-pointer"
                 >
                   <option value="VND">VND (₫)</option>
                   <option value="USD">USD ($)</option>
@@ -267,7 +265,7 @@ export default function ExchangeRatePage() {
           </div>
 
           <div className="rounded-2xl bg-cyan-950/40 border border-cyan-800/30 p-5 space-y-2">
-            <span className="text-xs uppercase tracking-wider text-cyan-400/90 font-semibold">Kết quả quy đổi</span>
+            <span className="text-xs uppercase tracking-wider text-cyan-400/90 font-semibold">{t("rate_converter_result")}</span>
             <div className="text-3xl font-bold text-white tracking-tight">
               {convertedResult !== null ? formatCurrency(convertedResult, toCurrency) : "---"}
             </div>

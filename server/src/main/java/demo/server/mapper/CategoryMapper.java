@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CategoryMapper {
-
     public Category toEntity(User user, String name, CategoryType type, String description) {
         return Category.builder()
             .user(user)

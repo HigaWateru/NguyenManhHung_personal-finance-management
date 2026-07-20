@@ -1,6 +1,6 @@
 # Báo cáo Tiến độ Dự án & Hiện thực hóa Chức năng - Smart Finance
 
-Tài liệu này tổng hợp tiến độ triển khai thực tế 100% của dự án **Smart Finance**, chi tiết hóa các phân hệ chức năng, kiến trúc đồng bộ ngân hàng Plaid Sandbox với ngân hàng **First Platypus Bank**, cơ chế phân loại thương hiệu bằng AI/Rules, chiến lược khởi tạo dữ liệu sạch (DataSeeder) và khả năng mở rộng hệ thống.
+Tài liệu này tổng hợp tiến độ triển khai thực tế 100% của dự án **Smart Finance**, chi tiết hóa các phân hệ chức năng, kiến trúc đồng bộ ngân hàng Plaid Sandbox với ngân hàng **First Platypus Bank**, cơ chế phân loại thương hiệu bằng AI/Rules, hỗ trợ **Đa ngôn ngữ i18n 100% Toàn hệ thống (Tiếng Việt 🇻🇳, English 🇬🇧, 日本語 🇯🇵)**, chiến lược khởi tạo dữ liệu sạch (DataSeeder) và khả năng mở rộng hệ thống.
 
 ---
 
@@ -12,10 +12,11 @@ Tài liệu này tổng hợp tiến độ triển khai thực tế 100% của d
 | **Quên mật khẩu & OTP Email** | `Completed` | **100%** | Xác thực OTP 6 số gửi qua Email HTML Dark Cyber, băm BCrypt lưu Redis 5 phút (TTL), chống Brute-force (tối đa 5 lần sai), Rate-limit (1 lần/phút, 5 lần/giờ). |
 | **Tích hợp Plaid Sandbox** | `Completed` | **100%** | Liên kết ngân hàng thử nghiệm **First Platypus Bank** qua Plaid Link modal (`user_good` / `pass_good`), trao đổi `public_token` lấy `access_token`, đồng bộ 15 giao dịch ngân hàng Sandbox tự động/thủ công. |
 | **Pipeline Phân loại Thương hiệu** | `Completed` | **100%** | Tự động phân loại thương hiệu theo 5 tầng: Redis Cache (30 ngày) $\rightarrow$ Merchant Mapping $\rightarrow$ Smart Rule Engine (`OpenAI` $\rightarrow$ Utilities, `Apple` $\rightarrow$ Shopping, `Interest payment` $\rightarrow$ Interest Income, `Spotify`/`Netflix` $\rightarrow$ Entertainment) $\rightarrow$ AI Gemini 2.5 Flash API / Local Heuristics $\rightarrow$ Fallback "Others". |
+| **Multi-Language System (Đa Ngôn Ngữ i18n)** | `Completed` | **100%** | Bộ chọn ngôn ngữ Header tích hợp **Icon Lá cờ Quốc gia (🇻🇳, 🇬🇧, 🇯🇵)** & tên ngôn ngữ. **Phủ kín 100% giao diện** (Cards, Charts, Tables, Modals, Navigation) hỗ trợ 3 ngôn ngữ: **Tiếng Việt (`vi`)**, **English (`en`)**, **日本語 (`ja`)**, lưu tự động vào `localStorage`. |
 | **Phân bổ chi tiêu & Top Category Highlight** | `Completed` | **100%** | Tổng hợp chi tiêu từ **cả giao dịch thủ công lẫn giao dịch ngân hàng Plaid**, tự động tính phần trăm theo danh mục, hiển thị biểu đồ Donut, danh sách % và **làm nổi bật Danh mục chi nhiều nhất (Top Category Highlight)**. |
 | **Ngân sách & Mục tiêu Tiết kiệm** | `Completed` | **100%** | Thiết lập ngân sách chi tiêu theo danh mục (thanh progress bar đổi màu cảnh báo khi vượt 80%), tạo mục tiêu tích lũy tài sản và theo dõi phần trăm hoàn thành. |
-| **Đa tiền tệ & Tỉ giá Tự động** | `Completed` | **100%** | `ExchangeRateScheduler` tự động quét và cập nhật tỉ giá định kỳ (VND, USD, EUR, JPY), hỗ trợ người dùng chuyển đổi Tiền tệ hiển thị (Display Currency) linh hoạt. |
-| **DataSeeder Policy (Dữ liệu Sạch)** | `Completed` | **100%** | Khởi tạo server tự động làm sạch giao dịch lịch sử cũ, gán sẵn bộ danh mục chuẩn (Salary, Bonus, Food, Transport, Shopping, Utilities, v.v.) cho tài khoản mới mà KHÔNG chèn rác giao dịch thu/chi. |
+| **Đa tiền tệ & Tỉ giá Tự động (Base: USD $)** | `Completed` | **100%** | Bảng tỉ giá ngoại tệ trực tuyến lấy Đô la Mỹ (USD - $) làm đơn vị gốc chuẩn, tự động theo dõi biến động 24h (`TrendingUp`/`TrendingDown`), hỗ trợ bộ quy đổi tiền tệ tức thời và quét lịch `ExchangeRateScheduler`. |
+| **DataSeeder Policy & UI/UX Standards** | `Completed` | **100%** | Khởi tạo server tự động làm sạch giao dịch lịch sử cũ, gán sẵn bộ danh mục chuẩn (Salary, Bonus, Food, Transport, Shopping, Utilities, v.v.) với 0 giao dịch rác. Chuẩn hóa `cursor: pointer` và ngôn từ thân thiện trên toàn bộ các tương tác UI. |
 
 ---
 
@@ -36,6 +37,15 @@ Tài liệu này tổng hợp tiến độ triển khai thực tế 100% của d
 - Hiển thị tổng phần trăm đã chi trong tháng trên biểu đồ Donut.
 - Tự động tìm và làm nổi bật danh mục chiếm tỷ trọng cao nhất: `Chi nhiều nhất: Utilities (38.5%)`.
 - Danh sách từng danh mục có thanh tiến trình phân màu sinh động.
+
+### D. Hệ thống Đa Ngôn ngữ Hệ thống (Systemwide i18n)
+- **Hỗ trợ 3 Quốc gia / Ngôn ngữ**:
+  - 🇻🇳 **Tiếng Việt (`vi`)**: Ngôn ngữ giao diện mặc định.
+  - 🇬🇧 **English (`en`)**: Ngôn ngữ tiếng Anh thương mại chuẩn quốc tế.
+  - 🇯🇵 **日本語 (`ja`)**: Ngôn ngữ tiếng Nhật chuẩn cho người dùng Đông Bắc Á.
+- **Bộ chọn Ngôn ngữ Header**: Nút Dropdown hiển thị cờ quốc gia (🇻🇳 / 🇬🇧 / 🇯🇵) và tên ngôn ngữ trên Header, cho phép chuyển ngôn ngữ tức thì không làm reload trang.
+- **Phủ kín 100% Giao diện**: Dịch tự động 4 Card Lối tắt Module, 4 Thẻ Card Chỉ số, Biểu đồ Tuần/Phân bổ, Bảng Giao dịch gần đây, Widget Ngân sách/Mục tiêu/Hóa đơn định kỳ, Modal Tác vụ nhanh/Ngân sách/Mục tiêu/Ngân hàng, Bảng Thu nhập/Chi tiêu/Danh mục/Thống kê/Tỷ giá/Profile.
+- **Lưu trữ Cài đặt**: Lưu giá trị vào `localStorage` (`sf_language`) và khôi phục chính xác mỗi khi người dùng truy cập lại.
 
 ---
 

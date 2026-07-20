@@ -32,18 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/expenses")
 @RequiredArgsConstructor
 public class ExpenseController {
-
     private final ExpenseService expenseService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<ExpenseResponse>>> getExpenses(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be greater than or equal to 0") int page,
-            @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") @Max(value = 100, message = "Size must not exceed 100") int size
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @RequestParam(required = false) Long categoryId,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be greater than or equal to 0") int page,
+        @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") @Max(value = 100, message = "Size must not exceed 100") int size
     ) {
         return ResponseEntity.ok(ApiResponse.success(
                 "Expenses fetched successfully",
@@ -53,16 +52,16 @@ public class ExpenseController {
 
     @GetMapping("/{expenseId}")
     public ResponseEntity<ApiResponse<ExpenseResponse>> getExpense(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @PathVariable Long expenseId
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @PathVariable Long expenseId
     ) {
         return ResponseEntity.ok(ApiResponse.success("Expense fetched successfully", expenseService.getExpense(principal.getId(), expenseId)));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<ExpenseResponse>> createExpense(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @Valid @RequestBody ExpenseRequest request
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @Valid @RequestBody ExpenseRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Expense created successfully", expenseService.createExpense(principal.getId(), request)));
@@ -70,17 +69,17 @@ public class ExpenseController {
 
     @PutMapping("/{expenseId}")
     public ResponseEntity<ApiResponse<ExpenseResponse>> updateExpense(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @PathVariable Long expenseId,
-            @Valid @RequestBody ExpenseRequest request
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @PathVariable Long expenseId,
+        @Valid @RequestBody ExpenseRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success("Expense updated successfully", expenseService.updateExpense(principal.getId(), expenseId, request)));
     }
 
     @DeleteMapping("/{expenseId}")
     public ResponseEntity<ApiResponse<MessageResponse>> deleteExpense(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @PathVariable Long expenseId
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @PathVariable Long expenseId
     ) {
         return ResponseEntity.ok(ApiResponse.success("Expense deleted successfully", expenseService.deleteExpense(principal.getId(), expenseId)));
     }

@@ -89,47 +89,41 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
 
     private User ensureUser(String fullName, String email, String timezone, CurrencyCode currencyCode, String encodedPassword, String avatarUrl) {
         User existingUser = findUserByEmail(email);
-        if (existingUser != null) {
-            return existingUser;
-        }
+        if (existingUser != null) return existingUser;
 
         User user = User.builder()
-                .fullName(fullName)
-                .email(email)
-                .passwordHash(encodedPassword)
-                .timezone(timezone)
-                .currencyCode(currencyCode)
-                .avatarUrl(avatarUrl)
-                .active(true)
-                .build();
+            .fullName(fullName)
+            .email(email)
+            .passwordHash(encodedPassword)
+            .timezone(timezone)
+            .currencyCode(currencyCode)
+            .avatarUrl(avatarUrl)
+            .active(true)
+            .build();
         entityManager.persist(user);
         return user;
     }
 
     private Category ensureCategory(User user, String name, CategoryType type, String description) {
         Category existingCategory = findCategory(user, name, type);
-        if (existingCategory != null) {
-            return existingCategory;
-        }
+        if (existingCategory != null) return existingCategory;
 
         Category category = Category.builder()
-                .user(user)
-                .name(name)
-                .type(type)
-                .description(description)
-                .build();
+            .user(user)
+            .name(name)
+            .type(type)
+            .description(description)
+            .build();
         entityManager.persist(category);
         return category;
     }
 
     private void ensureIncome(User user, Category category, BigDecimal amount, LocalDate transactionDate, String note) {
-        if (transactionDate.isAfter(LocalDate.now())) {
-            return;
-        }
+        if (transactionDate.isAfter(LocalDate.now())) return;
 
         Long count = entityManager.createQuery(
             "select count(i) from Income i where i.user = :user and i.category = :category and i.amount = :amount and i.transactionDate = :transactionDate and i.note = :note",
-                        Long.class
+                Long.class
             )
             .setParameter("user", user)
             .setParameter("category", category)
@@ -138,39 +132,33 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
             .setParameter("note", note)
             .getSingleResult();
 
-        if (count > 0) {
-            return;
-        }
+        if (count > 0) return;
 
         Income income = Income.builder()
-                .user(user)
-                .category(category)
-                .amount(amount)
-                .transactionDate(transactionDate)
-                .note(note)
-                .build();
+            .user(user)
+            .category(category)
+            .amount(amount)
+            .transactionDate(transactionDate)
+            .note(note)
+            .build();
         entityManager.persist(income);
     }
 
     private void ensureExpense(User user, Category category, BigDecimal amount, LocalDate transactionDate, String note) {
-        if (transactionDate.isAfter(LocalDate.now())) {
-            return;
-        }
+        if (transactionDate.isAfter(LocalDate.now())) return;
 
         Long count = entityManager.createQuery(
-                        "select count(e) from Expense e where e.user = :user and e.category = :category and e.amount = :amount and e.transactionDate = :transactionDate and e.note = :note",
-                        Long.class
-                )
-                .setParameter("user", user)
-                .setParameter("category", category)
-                .setParameter("amount", amount)
-                .setParameter("transactionDate", transactionDate)
-                .setParameter("note", note)
-                .getSingleResult();
+            "select count(e) from Expense e where e.user = :user and e.category = :category and e.amount = :amount and e.transactionDate = :transactionDate and e.note = :note",
+                Long.class
+            )
+            .setParameter("user", user)
+            .setParameter("category", category)
+            .setParameter("amount", amount)
+            .setParameter("transactionDate", transactionDate)
+            .setParameter("note", note)
+            .getSingleResult();
 
-        if (count > 0) {
-            return;
-        }
+        if (count > 0) return;
 
         Expense expense = Expense.builder()
             .user(user)
@@ -185,11 +173,11 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     private User findUserByEmail(String email) {
         try {
             return entityManager.createQuery(
-                            "select u from User u where u.email = :email",
-                            User.class
-                    )
-                    .setParameter("email", email)
-                    .getSingleResult();
+                    "select u from User u where u.email = :email",
+                    User.class
+            )
+            .setParameter("email", email)
+            .getSingleResult();
         } catch (NoResultException exception) {
             return null;
         }
@@ -198,13 +186,13 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     private Category findCategory(User user, String name, CategoryType type) {
         try {
             return entityManager.createQuery(
-                            "select c from Category c where c.user = :user and c.name = :name and c.type = :type",
-                            Category.class
-                    )
-                    .setParameter("user", user)
-                    .setParameter("name", name)
-                    .setParameter("type", type)
-                    .getSingleResult();
+                "select c from Category c where c.user = :user and c.name = :name and c.type = :type",
+                Category.class
+            )
+            .setParameter("user", user)
+            .setParameter("name", name)
+            .setParameter("type", type)
+            .getSingleResult();
         } catch (NoResultException exception) {
             return null;
         }
@@ -218,11 +206,11 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
 
     private void ensureExchangeRate(CurrencyCode currencyCode, String name, String symbol, BigDecimal rateToVnd, BigDecimal changePercent) {
         Long count = entityManager.createQuery(
-                "select count(r) from ExchangeRate r where r.currencyCode = :currencyCode",
-                Long.class
-            )
-            .setParameter("currencyCode", currencyCode)
-            .getSingleResult();
+            "select count(r) from ExchangeRate r where r.currencyCode = :currencyCode",
+            Long.class
+        )
+        .setParameter("currencyCode", currencyCode)
+        .getSingleResult();
 
         if (count == 0) {
             ExchangeRate rate = ExchangeRate.builder()

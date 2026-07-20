@@ -104,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(normalizeEmail(request.getEmail()))
-                .orElseThrow(() -> ApiException.unauthorized("Invalid email or password"));
+            .orElseThrow(() -> ApiException.unauthorized("Invalid email or password"));
 
         if (!user.isActive() || !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw ApiException.unauthorized("Invalid email or password");
@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
-                .orElseThrow(() -> ApiException.unauthorized("Refresh token is invalid"));
+            .orElseThrow(() -> ApiException.unauthorized("Refresh token is invalid"));
 
         validateRefreshToken(refreshToken);
         revokeRefreshToken(refreshToken);
@@ -147,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     public UserProfileResponse getCurrentUserProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
         return authMapper.toUserProfileResponse(user);
     }
 
@@ -155,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserProfileResponse updateProfile(Long userId, ProfileUpdateRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
 
         CurrencyCode oldCurrency = user.getCurrencyCode();
         CurrencyCode newCurrency = request.getCurrencyCode();
@@ -216,7 +216,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserProfileResponse updateDisplayCurrency(Long userId, CurrencyCode displayCurrency) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
 
         user.updateDisplayCurrency(displayCurrency);
         User savedUser = userRepository.save(user);
@@ -228,7 +228,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserProfileResponse updateAvatar(Long userId, MultipartFile file) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
 
         if (file == null || file.isEmpty()) throw ApiException.badRequest("File must not be empty");
 
@@ -262,18 +262,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateRefreshToken(RefreshToken refreshToken) {
-        if (refreshToken.isRevoked()) {
-            throw ApiException.unauthorized("Refresh token has been revoked");
-        }
+        if (refreshToken.isRevoked()) throw ApiException.unauthorized("Refresh token has been revoked");
 
         if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             revokeRefreshToken(refreshToken);
             throw ApiException.unauthorized("Refresh token has expired");
         }
 
-        if (!refreshToken.getUser().isActive()) {
-            throw ApiException.unauthorized("User account is inactive");
-        }
+        if (!refreshToken.getUser().isActive()) throw ApiException.unauthorized("User account is inactive");
     }
 
     private void revokeRefreshToken(RefreshToken refreshToken) {
@@ -318,16 +314,14 @@ public class AuthServiceImpl implements AuthService {
             String hashedOtp = passwordEncoder.encode(otp);
 
             OtpVerificationData data = OtpVerificationData.builder()
-                    .hashedOtp(hashedOtp)
-                    .attempts(0)
-                    .verified(false)
-                    .build();
+                .hashedOtp(hashedOtp)
+                .attempts(0)
+                .verified(false)
+                .build();
             redisService.saveOtp(email, data, 300);
 
             emailService.sendOtpEmail(email, otp, 5);
-        } else {
-            log.warn("Forgot password request for non-existent or inactive email: {}", email);
-        }
+        } else log.warn("Forgot password request for non-existent or inactive email: {}", email);
     }
 
     @Override
@@ -338,13 +332,8 @@ public class AuthServiceImpl implements AuthService {
         log.info("OTP verification attempt for email: {}", email);
 
         OtpVerificationData data = redisService.getOtp(email);
-        if (data == null) {
-            throw ApiException.badRequest("Mã OTP đã hết hạn hoặc không tồn tại.");
-        }
-
-        if (data.isVerified()) {
-            throw ApiException.badRequest("Mã OTP đã được sử dụng.");
-        }
+        if (data == null) throw ApiException.badRequest("Mã OTP đã hết hạn hoặc không tồn tại.");
+        if (data.isVerified()) throw ApiException.badRequest("Mã OTP đã được sử dụng.");
 
         if (!passwordEncoder.matches(otp, data.getHashedOtp())) {
             int attempts = data.getAttempts() + 1;
@@ -381,11 +370,9 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> ApiException.notFound("Tài khoản không tồn tại."));
+            .orElseThrow(() -> ApiException.notFound("Tài khoản không tồn tại."));
 
-        if (!user.isActive()) {
-            throw ApiException.badRequest("Tài khoản đang bị khóa.");
-        }
+        if (!user.isActive()) throw ApiException.badRequest("Tài khoản đang bị khóa.");
 
         user.updatePassword(passwordEncoder.encode(request.getPassword()));
         user.updateCredentialsUpdatedAt(LocalDateTime.now());
@@ -397,9 +384,7 @@ public class AuthServiceImpl implements AuthService {
         }
         refreshTokenRepository.saveAll(activeTokens);
 
-        if (accessToken != null) {
-            jwtBlacklistService.blacklistToken(accessToken);
-        }
+        if (accessToken != null) jwtBlacklistService.blacklistToken(accessToken);
 
         redisService.deleteOtp(email);
         log.info("Password reset successful and all sessions revoked for email: {}", email);
@@ -414,24 +399,22 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse loginOAuth2(String email, String fullName, String avatarUrl) {
         String finalEmail = normalizeEmail(email);
         User user = userRepository.findByEmail(finalEmail)
-                .orElseGet(() -> {
-                    User newUser = User.builder()
-                            .email(finalEmail)
-                            .fullName(fullName != null ? fullName.trim() : "OAuth2 User")
-                            .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
-                            .avatarUrl(avatarUrl)
-                            .timezone(DEFAULT_TIMEZONE)
-                            .currencyCode(CurrencyCode.VND)
-                            .active(true)
-                            .build();
-                    User savedNewUser = userRepository.save(newUser);
-                    seedDemoData(savedNewUser);
-                    return savedNewUser;
-                });
+            .orElseGet(() -> {
+                User newUser = User.builder()
+                    .email(finalEmail)
+                    .fullName(fullName != null ? fullName.trim() : "OAuth2 User")
+                    .passwordHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                    .avatarUrl(avatarUrl)
+                    .timezone(DEFAULT_TIMEZONE)
+                    .currencyCode(CurrencyCode.VND)
+                    .active(true)
+                    .build();
+                User savedNewUser = userRepository.save(newUser);
+                seedDemoData(savedNewUser);
+                return savedNewUser;
+            });
 
-        if (!user.isActive()) {
-            throw ApiException.unauthorized("Tài khoản đang bị khóa.");
-        }
+        if (!user.isActive()) throw ApiException.unauthorized("Tài khoản đang bị khóa.");
 
         RefreshToken refreshToken = createRefreshToken(user);
         return buildAuthResponse(user, refreshToken.getToken());

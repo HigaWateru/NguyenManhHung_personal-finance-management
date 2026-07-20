@@ -17,11 +17,8 @@ import org.springframework.data.repository.query.Param;
 public interface IncomeRepository extends JpaRepository<Income, Long> {
     Page<Income> findByUserId(Long userId, Pageable pageable);
     List<Income> findAllByUserId(Long userId);
-
     Page<Income> findByUserIdAndCategoryId(Long userId, Long categoryId, Pageable pageable);
-
     Optional<Income> findByIdAndUserId(Long id, Long userId);
-
     List<Income> findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(Long userId);
 
     @Query("select coalesce(sum(i.amount), 0) from Income i where i.user.id = :userId")

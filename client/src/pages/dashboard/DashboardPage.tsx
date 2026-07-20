@@ -1,30 +1,13 @@
 import { useEffect, useMemo, useState } from "react"
 import type { FormEvent } from "react"
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Banknote,
-  PiggyBank,
-  Wallet,
-  X,
-  RefreshCw,
-  AlertCircle,
-  Trash2,
-  Plus,
-  Activity,
-  LogOut
+import { ArrowDownRight, ArrowUpRight, Banknote, PiggyBank, Wallet, X, RefreshCw, AlertCircle, Trash2,
+  Plus, Activity, LogOut
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { usePlaidLink } from "react-plaid-link"
 import { apiService } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
-import type {
-  CategoryItem,
-  DashboardData,
-  BankAccountResponse,
-  BudgetResponse,
-  GoalResponse
-} from "../../types/api"
+import type { CategoryItem, DashboardData, BankAccountResponse, BudgetResponse, GoalResponse } from "../../types/api"
 import MetricCard from "../../components/dashboard/MetricCard"
 import ChartCard from "../../components/dashboard/ChartCard"
 import CategoryCard from "../../components/dashboard/CategoryCard"
@@ -32,6 +15,7 @@ import TransactionList from "../../components/dashboard/TransactionList"
 import { useAppSelector } from "../../redux/hooks"
 import { formatCurrency as formatCurrencyUtil } from "../../utils/format"
 import { notifyHeader, triggerNotificationRefresh } from "../../utils/notification"
+import { useLanguage } from "../../context/LanguageContext"
 
 type QuickActionType = "income" | "expense"
 
@@ -57,6 +41,7 @@ const icons = { Wallet, ArrowDownRight, ArrowUpRight, PiggyBank, Banknote }
 
 export default function DashboardPage() {
   const { user } = useAppSelector((state) => state.auth)
+  const { t, language } = useLanguage()
   const currencyCode = user?.currencyCode || "VND"
 
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
@@ -99,19 +84,36 @@ export default function DashboardPage() {
     note: ""
   })
 
-  // Dummy upcoming bills
-  const [upcomingBills, setUpcomingBills] = useState([
-    { id: 1, title: "Tiền điện nước sinh hoạt", amount: 850000, dueDate: "Sau 3 ngày", paid: false },
-    { id: 2, title: "Gói cước Internet FPT", amount: 350000, dueDate: "Sau 7 ngày", paid: false },
-    { id: 3, title: "Thuê nhà chung cư tháng 7", amount: 12000000, dueDate: "Sau 12 ngày", paid: false }
-  ])
+  // Dummy upcoming bills translated according to current language
+  const [paidBillIds, setPaidBillIds] = useState<number[]>([])
 
-  const moduleCards = [
-    { name: "Thu nhập", route: "/income", desc: "Thêm, tìm kiếm và quản lý tất cả giao dịch thu vào." },
-    { name: "Chi tiêu", route: "/expense", desc: "Theo dõi hành vi chi và dòng tiền ra theo danh mục." },
-    { name: "Danh mục", route: "/category", desc: "Quản lý nhóm phân loại cho giao dịch thu và chi." },
-    { name: "Thống kê", route: "/statistics", desc: "Phân tích tài chính theo tháng, năm và danh mục." }
-  ]
+  const upcomingBills = useMemo(() => {
+    const rawBills = language === "en" ? [
+      { id: 1, title: "Utilities & Electricity", amount: 850000, dueDate: "In 3 days" },
+      { id: 2, title: "FPT Internet Subscription", amount: 350000, dueDate: "In 7 days" },
+      { id: 3, title: "Apartment Rent - July", amount: 12000000, dueDate: "In 12 days" }
+    ] : language === "ja" ? [
+      { id: 1, title: "光熱費・水道代", amount: 850000, dueDate: "3日後" },
+      { id: 2, title: "FPT インターネット回線料", amount: 350000, dueDate: "7日後" },
+      { id: 3, title: "マンション家賃 (7月分)", amount: 12000000, dueDate: "12日後" }
+    ] : [
+      { id: 1, title: "Tiền điện nước sinh hoạt", amount: 850000, dueDate: "Sau 3 ngày" },
+      { id: 2, title: "Gói cước Internet FPT", amount: 350000, dueDate: "Sau 7 ngày" },
+      { id: 3, title: "Thuê nhà chung cư tháng 7", amount: 12000000, dueDate: "Sau 12 ngày" }
+    ]
+
+    return rawBills.map(b => ({
+      ...b,
+      paid: paidBillIds.includes(b.id)
+    }))
+  }, [language, paidBillIds])
+
+  const moduleCards = useMemo(() => [
+    { name: t("nav_income"), route: "/income", desc: t("dash_mod_income_desc") },
+    { name: t("nav_expense"), route: "/expense", desc: t("dash_mod_expense_desc") },
+    { name: t("nav_categories"), route: "/category", desc: t("dash_mod_category_desc") },
+    { name: t("nav_statistics"), route: "/statistics", desc: t("dash_mod_statistics_desc") }
+  ], [t])
 
   // Setup Plaid Link Hook
   const { open, ready } = usePlaidLink({
@@ -244,12 +246,10 @@ export default function DashboardPage() {
 
       setWeeklyFlow(weekTemplate)
 
-      const split = (data.categoryDistribution ?? [])
-        .map((item) => ({
-          label: item.categoryName,
-          value: item.percentage
-        }))
-        .sort((a, b) => b.value - a.value)
+      const split = (data.categoryDistribution ?? []).map((item) => ({
+        label: item.categoryName,
+        value: item.percentage
+      })).sort((a, b) => b.value - a.value)
 
       setCategorySplit(split)
     } catch (error) {
@@ -396,35 +396,52 @@ export default function DashboardPage() {
   }
 
   const handlePayBill = (id: number) => {
-    setUpcomingBills((prev) => prev.map((bill) => (bill.id === id ? { ...bill, paid: true } : bill)))
-    window.alert("Hóa đơn đã được đánh dấu là thanh toán thành công!")
+    setPaidBillIds((prev) => [...prev, id])
   }
 
-
-
-  const isIncome = quickActionType === "income"
-  const modalTitle = isIncome ? "Thêm thu nhập" : "Thêm chi tiêu"
-  const amountPlaceholder = isIncome ? "Ví dụ: 2500000" : "Ví dụ: 350000"
-
-  const dynamicMetrics = useMemo(() => {
+  const metrics = useMemo(() => {
     if (!dashboardData) {
       return [
-        { label: "Tổng số dư", value: formatCurrency(0), change: "0%", icon: "Wallet", positive: true },
-        { label: "Thu nhập tháng", value: formatCurrency(0), change: "0%", icon: "ArrowDownRight", positive: true },
-        { label: "Chi tiêu tháng", value: formatCurrency(0), change: "0%", icon: "ArrowUpRight", positive: false },
-        { label: "Tỷ lệ tiết kiệm", value: "0%", change: "0%", icon: "PiggyBank", positive: true }
+        { label: t("dash_total_balance"), value: formatCurrency(0), change: "0%", icon: "Wallet", positive: true },
+        { label: t("dash_monthly_income"), value: formatCurrency(0), change: "0%", icon: "ArrowDownRight", positive: true },
+        { label: t("dash_monthly_expense"), value: formatCurrency(0), change: "0%", icon: "ArrowUpRight", positive: false },
+        { label: t("dash_saving_rate"), value: "0%", change: "0%", icon: "PiggyBank", positive: true }
       ]
     }
 
     const savingRate = dashboardData.totalIncome > 0 ? (dashboardData.totalBalance / dashboardData.totalIncome) * 100 : 0
 
     return [
-      { label: "Tổng số dư", value: formatCurrency(dashboardData.totalBalance), change: "Live", icon: "Wallet", positive: true },
-      { label: "Thu nhập tháng", value: formatCurrency(dashboardData.monthlyIncome), change: "Live", icon: "ArrowDownRight", positive: true },
-      { label: "Chi tiêu tháng", value: formatCurrency(dashboardData.monthlyExpense), change: "Live", icon: "ArrowUpRight", positive: false },
-      { label: "Tỷ lệ tiết kiệm", value: `${savingRate.toFixed(1)}%`, change: "Live", icon: "PiggyBank", positive: savingRate >= 0 }
+      { label: t("dash_total_balance"), value: formatCurrency(dashboardData.totalBalance), change: "Live", icon: "Wallet", positive: true },
+      { label: t("dash_monthly_income"), value: formatCurrency(dashboardData.monthlyIncome), change: "Live", icon: "ArrowDownRight", positive: true },
+      { label: t("dash_monthly_expense"), value: formatCurrency(dashboardData.monthlyExpense), change: "Live", icon: "ArrowUpRight", positive: false },
+      { label: t("dash_saving_rate"), value: `${savingRate.toFixed(1)}%`, change: "Live", icon: "PiggyBank", positive: savingRate >= 0 }
     ]
-  }, [dashboardData, currencyCode])
+  }, [dashboardData, currencyCode, t])
+
+  const isIncome = quickActionType === "income"
+  const modalTitle = isIncome ? t("dash_add_income") : t("dash_add_expense")
+  const amountPlaceholder = isIncome ? "2500000" : "350000"
+
+  const dynamicMetrics = useMemo(() => {
+    if (!dashboardData) {
+      return [
+        { label: t("dash_total_balance"), value: formatCurrency(0), change: "0%", icon: "Wallet", positive: true },
+        { label: t("dash_monthly_income"), value: formatCurrency(0), change: "0%", icon: "ArrowDownRight", positive: true },
+        { label: t("dash_monthly_expense"), value: formatCurrency(0), change: "0%", icon: "ArrowUpRight", positive: false },
+        { label: t("dash_saving_rate"), value: "0%", change: "0%", icon: "PiggyBank", positive: true }
+      ]
+    }
+
+    const savingRate = dashboardData.totalIncome > 0 ? (dashboardData.totalBalance / dashboardData.totalIncome) * 100 : 0
+
+    return [
+      { label: t("dash_total_balance"), value: formatCurrency(dashboardData.totalBalance), change: "Live", icon: "Wallet", positive: true },
+      { label: t("dash_monthly_income"), value: formatCurrency(dashboardData.monthlyIncome), change: "Live", icon: "ArrowDownRight", positive: true },
+      { label: t("dash_monthly_expense"), value: formatCurrency(dashboardData.monthlyExpense), change: "Live", icon: "ArrowUpRight", positive: false },
+      { label: t("dash_saving_rate"), value: `${savingRate.toFixed(1)}%`, change: "Live", icon: "PiggyBank", positive: savingRate >= 0 }
+    ]
+  }, [dashboardData, currencyCode, t])
 
   const recentRows = useMemo(() => {
     if (!dashboardData) return undefined
@@ -459,10 +476,10 @@ export default function DashboardPage() {
               <Banknote size={24} />
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-semibold">Kết nối Ngân hàng</p>
-              <h3 className="mt-1 text-2xl font-bold text-white">Kết nối ngân hàng tự động</h3>
+              <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-semibold">{t("bank_title")}</p>
+              <h3 className="mt-1 text-2xl font-bold text-white">{t("bank_subtitle")}</h3>
               <p className="mt-2 text-sm text-slate-400">
-                Đồng bộ hóa tất cả các giao dịch từ tài khoản ngân hàng của bạn một cách nhanh chóng và bảo mật.
+                {t("bank_desc")}
               </p>
             </div>
           </div>
@@ -470,42 +487,31 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center gap-3">
             {plaidConnected && primaryBankAccount ? (
               <>
-                <button
-                  type="button"
-                  onClick={handleSyncTransactions}
-                  disabled={plaidSyncing}
-                  className="inline-flex items-center gap-2 justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25 disabled:opacity-50"
+                <button type="button" onClick={handleSyncTransactions} disabled={plaidSyncing}
+                  className="inline-flex items-center gap-2 justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25 disabled:opacity-50 cursor-pointer"
                 >
                   <RefreshCw size={16} className={plaidSyncing ? "animate-spin" : ""} />
-                  {plaidSyncing ? "Đang đồng bộ..." : "Đồng bộ giao dịch"}
+                  {plaidSyncing ? t("bank_syncing") : t("bank_sync_btn")}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAccountsModal(true)}
-                  className="inline-flex items-center gap-2 justify-center rounded-2xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10"
+                <button type="button" onClick={() => setShowAccountsModal(true)}
+                  className="inline-flex items-center gap-2 justify-center rounded-2xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10 cursor-pointer"
                 >
                   <Activity size={16} />
-                  Xem tài khoản ({bankAccounts.length})
+                  {t("bank_view_accounts")} ({bankAccounts.length})
                 </button>
-                <button
-                  type="button"
-                  onClick={handleDisconnectPlaid}
-                  disabled={plaidSyncing}
-                  className="inline-flex items-center gap-2 justify-center rounded-2xl border border-rose-300/40 bg-rose-400/10 px-5 py-2.5 text-sm font-medium text-rose-100 transition hover:bg-rose-400/20 disabled:opacity-50"
+                <button type="button" onClick={handleDisconnectPlaid} disabled={plaidSyncing}
+                  className="inline-flex items-center gap-2 justify-center rounded-2xl border border-rose-300/40 bg-rose-400/10 px-5 py-2.5 text-sm font-medium text-rose-100 transition hover:bg-rose-400/20 disabled:opacity-50 cursor-pointer"
                 >
                   <LogOut size={16} />
-                  Hủy kết nối
+                  {t("bank_disconnect")}
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={() => open()}
-                disabled={!ready || plaidSyncing}
-                className="inline-flex items-center gap-2 justify-center rounded-2xl border border-cyan-400/60 bg-cyan-400/20 px-6 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/30 disabled:opacity-50"
+              <button type="button" onClick={() => open()} disabled={!ready || plaidSyncing}
+                className="inline-flex items-center gap-2 justify-center rounded-2xl border border-cyan-400/60 bg-cyan-400/20 px-6 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/30 disabled:opacity-50 cursor-pointer"
               >
                 <RefreshCw size={16} className={plaidSyncing ? "animate-spin" : ""} />
-                Connect Bank
+                {t("bank_connect_btn")}
               </button>
             )}
           </div>
@@ -521,29 +527,29 @@ export default function DashboardPage() {
         {plaidConnected && primaryBankAccount && (
           <div className="mt-6 grid gap-4 grid-cols-2 md:grid-cols-6 border-t border-white/10 pt-6">
             <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400">Ngân hàng</p>
+              <p className="text-xs uppercase tracking-wider text-slate-400">{t("bank_label_institution")}</p>
               <p className="mt-1 text-sm font-semibold text-white">{primaryBankAccount.institutionName}</p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400">Tài khoản chính</p>
+              <p className="text-xs uppercase tracking-wider text-slate-400">{t("bank_label_account")}</p>
               <p className="mt-1 text-sm font-semibold text-white">{primaryBankAccount.accountName}</p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400">Loại tài khoản</p>
+              <p className="text-xs uppercase tracking-wider text-slate-400">{t("bank_label_type")}</p>
               <p className="mt-1 text-sm font-semibold text-white">{primaryBankAccount.accountType}</p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400">Số dư hiện tại</p>
+              <p className="text-xs uppercase tracking-wider text-slate-400">{t("bank_label_balance")}</p>
               <p className="mt-1 text-sm font-bold text-cyan-300">{formatCurrency(primaryBankAccount.currentBalance)}</p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400">Đồng bộ cuối</p>
+              <p className="text-xs uppercase tracking-wider text-slate-400">{t("bank_label_last_synced")}</p>
               <p className="mt-1 text-sm text-slate-300">
-                {primaryBankAccount.lastSyncedAt ? new Date(primaryBankAccount.lastSyncedAt).toLocaleString("vi-VN") : "Chưa có"}
+                {primaryBankAccount.lastSyncedAt ? new Date(primaryBankAccount.lastSyncedAt).toLocaleString("vi-VN") : "---"}
               </p>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400">Trạng thái kết nối</p>
+              <p className="text-xs uppercase tracking-wider text-slate-400">{t("bank_label_status")}</p>
               <span className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 {primaryBankAccount.connectionStatus}
@@ -558,43 +564,41 @@ export default function DashboardPage() {
         <div className="grid gap-6 xl:grid-cols-[1.7fr_1fr] xl:items-stretch">
           <div className="flex flex-col justify-between gap-6">
             <div className="max-w-2xl">
-              <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-semibold">Tổng quan</p>
+              <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-semibold">{t("nav_dashboard")}</p>
               <h3 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">
-                Trung tâm điều phối dòng tiền tài chính cá nhân.
+                {t("dash_center_title")}
               </h3>
               <p className="mt-4 max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
-                Theo dõi số dư tức thời, quản lý thu chi, ngân sách, mục tiêu tích lũy và dòng giao dịch tự động.
+                {t("dash_center_desc")}
               </p>
 
               <div className="mt-5 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => void openQuickAction("income")}
-                  className="inline-flex items-center justify-center rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
+                <button type="button" onClick={() => void openQuickAction("income")}
+                  className="inline-flex items-center justify-center rounded-2xl gap-2 border border-cyan-300/40 bg-cyan-400/15 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25 cursor-pointer"
                 >
-                  + Thêm thu nhập
+                  <Plus size={16} />
+                  {t("dash_add_income")}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => void openQuickAction("expense")}
-                  className="inline-flex items-center justify-center rounded-2xl border border-rose-300/40 bg-rose-400/10 px-5 py-2.5 text-sm font-medium text-rose-100 transition hover:bg-rose-400/20"
+                <button type="button" onClick={() => void openQuickAction("expense")}
+                  className="inline-flex items-center justify-center rounded-2xl gap-2 border border-rose-300/40 bg-rose-400/10 px-5 py-2.5 text-sm font-medium text-rose-100 transition hover:bg-rose-400/20 cursor-pointer"
                 >
-                  + Thêm chi tiêu
+                  <Plus size={16} />
+                  {t("dash_add_expense")}
                 </button>
-                <Link
-                  to="/category"
-                  className="inline-flex items-center justify-center rounded-2xl border border-emerald-300/40 bg-emerald-400/10 px-5 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20"
+                <Link to="/category"
+                  className="inline-flex items-center justify-center rounded-2xl gap-2 border border-emerald-300/40 bg-emerald-400/10 px-5 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20 cursor-pointer"
                 >
-                  + Thêm danh mục
+                  <Plus size={16} />
+                  {t("dash_add_category")}
                 </Link>
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               {[
-                ["Thu tháng", formatCurrency(monthlyIncome)],
-                ["Chi tháng", formatCurrency(monthlyExpense)],
-                ["Số dư tháng", formatCurrency(monthlyBalance)]
+                [t("dash_monthly_income"), formatCurrency(monthlyIncome)],
+                [t("dash_monthly_expense"), formatCurrency(monthlyExpense)],
+                [t("dash_total_balance"), formatCurrency(monthlyBalance)]
               ].map(([label, value]) => (
                 <div key={label} className="rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-center backdrop-blur-xl">
                   <p className="text-xs uppercase tracking-[0.35em] text-slate-400">{label}</p>
@@ -605,14 +609,13 @@ export default function DashboardPage() {
           </div>
 
           <aside className="rounded-[1.75rem] border border-cyan-400/20 bg-slate-950/50 p-5">
-            <p className="text-sm text-slate-400">Tóm tắt phiên làm việc</p>
-            <h4 className="mt-2 text-xl font-semibold text-white">Nhanh hôm nay</h4>
+            <h4 className="mt-2 text-xl font-semibold text-white">{t("dash_quick_today")}</h4>
 
             <div className="mt-5 space-y-4">
               {[
-                { label: "Tổng thu tích lũy", value: formatCurrency(dashboardData?.totalIncome ?? 0) },
-                { label: "Tổng chi tích lũy", value: formatCurrency(dashboardData?.totalExpense ?? 0) },
-                { label: "Tổng số dư hiện tại", value: formatCurrency(dashboardData?.totalBalance ?? 0) }
+                { label: t("dash_total_savings"), value: formatCurrency(dashboardData?.totalIncome ?? 0) },
+                { label: t("dash_total_expenses"), value: formatCurrency(dashboardData?.totalExpense ?? 0) },
+                { label: t("dash_current_net"), value: formatCurrency(dashboardData?.totalBalance ?? 0) }
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                   <div className="flex items-center justify-between gap-4 text-sm">
@@ -630,9 +633,9 @@ export default function DashboardPage() {
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {moduleCards.map((item) => (
           <Link key={item.route} to={item.route} className="glass-panel rounded-3xl p-5 transition hover:-translate-y-1">
-            <p className="text-sm text-cyan-200">{item.name}</p>
+            <p className="text-sm text-cyan-200 font-semibold">{item.name}</p>
             <p className="mt-3 text-sm leading-6 text-slate-300">{item.desc}</p>
-            <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">Mở trang</p>
+            <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">{t("dash_open_page")}</p>
           </Link>
         ))}
       </section>
@@ -656,11 +659,11 @@ export default function DashboardPage() {
         {/* Recent Transactions list */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-white">Giao dịch gần đây</h3>
+            <h3 className="text-xl font-bold text-white">{t("dash_recent_title")}</h3>
           </div>
           {dashboardLoading && (
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
-              Đang tải giao dịch...
+              {t("loading")}
             </div>
           )}
           {dashboardError && (
@@ -677,13 +680,11 @@ export default function DashboardPage() {
           <article className="glass-panel rounded-3xl p-5 border border-white/10">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.1em] text-slate-400">Ngân sách chi tiêu</p>
-                <h3 className="text-lg font-bold text-white mt-0.5">Budget Progress</h3>
+                <p className="text-xs uppercase tracking-[0.1em] text-slate-400">{t("dash_budgets_title")}</p>
+                <h3 className="text-lg font-bold text-white mt-0.5">{t("dash_budgets_sub")}</h3>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowBudgetModal(true)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20"
+              <button type="button" onClick={() => setShowBudgetModal(true)}
+                className="grid h-8 w-8 place-items-center rounded-xl bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20 cursor-pointer"
               >
                 <Plus size={16} />
               </button>
@@ -691,7 +692,7 @@ export default function DashboardPage() {
 
             <div className="space-y-4 max-h-[220px] overflow-y-auto pr-1">
               {budgets.length === 0 ? (
-                <p className="text-sm text-slate-500 py-4 text-center">Chưa có ngân sách nào được thiết lập.</p>
+                <p className="text-sm text-slate-500 py-4 text-center">{t("dash_no_budget")}</p>
               ) : (
                 budgets.map((budget) => {
                   const percent = Math.min(100, (budget.spentAmount / budget.limitAmount) * 100)
@@ -702,9 +703,8 @@ export default function DashboardPage() {
                     <div key={budget.id} className="rounded-2xl bg-white/5 p-3 border border-white/5 relative">
                       <div className="flex items-center justify-between text-xs mb-2">
                         <span className="font-semibold text-white">{budget.categoryName}</span>
-                        <button
-                          onClick={() => handleDeleteBudget(budget.id)}
-                          className="text-slate-500 hover:text-rose-400 transition"
+                        <button onClick={() => handleDeleteBudget(budget.id)}
+                          className="text-slate-500 hover:text-rose-400 transition cursor-pointer"
                           title="Xóa ngân sách"
                         >
                           <Trash2 size={12} />
@@ -731,13 +731,11 @@ export default function DashboardPage() {
           <article className="glass-panel rounded-3xl p-5 border border-white/10">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.1em] text-slate-400">Mục tiêu tiết kiệm</p>
-                <h3 className="text-lg font-bold text-white mt-0.5">Financial Goals</h3>
+                <p className="text-xs uppercase tracking-[0.1em] text-slate-400">{t("dash_goals_title")}</p>
+                <h3 className="text-lg font-bold text-white mt-0.5">{t("dash_goals_sub")}</h3>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowGoalModal(true)}
-                className="grid h-8 w-8 place-items-center rounded-xl bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20"
+              <button type="button" onClick={() => setShowGoalModal(true)}
+                className="grid h-8 w-8 place-items-center rounded-xl bg-cyan-400/10 text-cyan-300 hover:bg-cyan-400/20 cursor-pointer"
               >
                 <Plus size={16} />
               </button>
@@ -745,7 +743,7 @@ export default function DashboardPage() {
 
             <div className="space-y-4 max-h-[220px] overflow-y-auto pr-1">
               {goals.length === 0 ? (
-                <p className="text-sm text-slate-500 py-4 text-center">Chưa có mục tiêu tiết kiệm.</p>
+                <p className="text-sm text-slate-500 py-4 text-center">{t("dash_no_goal")}</p>
               ) : (
                 goals.map((goal) => {
                   const percent = Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)
@@ -756,14 +754,11 @@ export default function DashboardPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleUpdateGoalProgress(goal.id, goal.currentAmount, goal.targetAmount)}
-                            className="text-cyan-300 hover:underline"
+                            className="text-cyan-300 hover:underline cursor-pointer"
                           >
-                            Cập nhật
+                            {t("edit")}
                           </button>
-                          <button
-                            onClick={() => handleDeleteGoal(goal.id)}
-                            className="text-slate-500 hover:text-rose-400"
-                          >
+                          <button onClick={() => handleDeleteGoal(goal.id)} className="text-slate-500 hover:text-rose-400 cursor-pointer">
                             <Trash2 size={12} />
                           </button>
                         </div>
@@ -773,13 +768,10 @@ export default function DashboardPage() {
                         <span>Mục tiêu: {formatCurrency(goal.targetAmount)}</span>
                       </div>
                       <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"
-                          style={{ width: `${percent}%` }}
-                        />
+                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500" style={{ width: `${percent}%` }} />
                       </div>
                       <p className="text-[10px] text-slate-500 mt-2">
-                        Hạn chót: {goal.targetDate ? new Date(goal.targetDate).toLocaleDateString("vi-VN") : "Không xác định"} | Trạng thái: {goal.status}
+                        Hạn chót: {goal.targetDate ? new Date(goal.targetDate).toLocaleDateString("vi-VN") : "---"} | Trạng thái: {goal.status}
                       </p>
                     </div>
                   )
@@ -794,8 +786,8 @@ export default function DashboardPage() {
           {/* Upcoming Bills Widget */}
           <article className="glass-panel rounded-3xl p-5 border border-white/10">
             <div>
-              <p className="text-xs uppercase tracking-[0.1em] text-slate-400">Các hóa đơn định kỳ</p>
-              <h3 className="text-lg font-bold text-white mt-0.5">Upcoming Bills</h3>
+              <p className="text-xs uppercase tracking-[0.1em] text-slate-400">{t("dash_upcoming_bills")}</p>
+              <h3 className="text-lg font-bold text-white mt-0.5">{t("dash_upcoming_bills")}</h3>
             </div>
 
             <div className="mt-4 space-y-3">
@@ -803,18 +795,16 @@ export default function DashboardPage() {
                 <div key={bill.id} className="flex items-center justify-between rounded-2xl bg-white/5 p-3 border border-white/5 text-xs">
                   <div>
                     <p className="font-semibold text-white">{bill.title}</p>
-                    <p className="text-slate-400 mt-0.5">Số tiền: {formatCurrency(bill.amount)}</p>
+                    <p className="text-slate-400 mt-0.5">{t("col_amount")}: {formatCurrency(bill.amount)}</p>
                     <p className="text-[10px] text-cyan-300 font-medium mt-1">{bill.dueDate}</p>
                   </div>
                   {bill.paid ? (
-                    <span className="rounded-xl bg-emerald-500/10 px-3 py-1.5 font-medium text-emerald-400">Đã trả</span>
+                    <span className="rounded-xl bg-emerald-500/10 px-3 py-1.5 font-medium text-emerald-400">{t("dash_bill_paid")}</span>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => handlePayBill(bill.id)}
-                      className="rounded-xl bg-cyan-400/15 px-3 py-1.5 font-semibold text-cyan-300 hover:bg-cyan-400/25 transition"
+                    <button type="button" onClick={() => handlePayBill(bill.id)}
+                      className="rounded-xl bg-cyan-400/15 px-3 py-1.5 font-semibold text-cyan-300 hover:bg-cyan-400/25 transition cursor-pointer"
                     >
-                      Thanh toán
+                      {t("dash_bill_pay")}
                     </button>
                   )}
                 </div>
@@ -833,9 +823,7 @@ export default function DashboardPage() {
                 <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/70 font-semibold">Tác vụ nhanh</p>
                 <h4 className="mt-2 text-xl font-semibold text-white">{modalTitle}</h4>
               </div>
-              <button
-                type="button"
-                onClick={closeQuickAction}
+              <button type="button" onClick={closeQuickAction}
                 className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10"
                 aria-label="Đóng"
               >
@@ -852,23 +840,16 @@ export default function DashboardPage() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label htmlFor="quick-date" className="mb-2 block text-sm text-slate-300">Ngày</label>
-                  <input
-                    id="quick-date"
-                    type="date"
-                    value={form.date}
+                  <label htmlFor="quick-date" className="mb-2 block text-sm text-slate-300">{t("col_date")}</label>
+                  <input id="quick-date" type="date" value={form.date}
                     onChange={(event) => setForm((prev) => ({ ...prev, date: event.target.value }))}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="quick-amount" className="mb-2 block text-sm text-slate-300">Số tiền</label>
-                  <input
-                    id="quick-amount"
-                    type="number"
-                    min="0"
-                    value={form.amount}
+                  <label htmlFor="quick-amount" className="mb-2 block text-sm text-slate-300">{t("col_amount")}</label>
+                  <input id="quick-amount" type="number" min="0" value={form.amount}
                     onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
                     placeholder={amountPlaceholder}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
@@ -876,14 +857,11 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label htmlFor="quick-category" className="mb-2 block text-sm text-slate-300">Danh mục</label>
-                  <select
-                    id="quick-category"
-                    value={form.categoryId}
-                    onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
-                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                  <label htmlFor="quick-category" className="mb-2 block text-sm text-slate-300">{t("col_category")}</label>
+                  <select id="quick-category" value={form.categoryId} onChange={(event) => setForm((prev) => ({ ...prev, categoryId: event.target.value }))}
+                    className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45 cursor-pointer"
                   >
-                    <option value="">Chọn danh mục</option>
+                    <option value="">{t("all_categories_filter")}</option>
                     {quickActionCategories.map((category) => (
                       <option key={category.id} value={category.id} className="bg-slate-900">
                         {category.name}
@@ -894,31 +872,24 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <label htmlFor="quick-note" className="mb-2 block text-sm text-slate-300">Ghi chú</label>
-                <textarea
-                  id="quick-note"
-                  rows={3}
-                  value={form.note}
+                <label htmlFor="quick-note" className="mb-2 block text-sm text-slate-300">{t("col_note")}</label>
+                <textarea id="quick-note" rows={3} value={form.note}
                   onChange={(event) => setForm((prev) => ({ ...prev, note: event.target.value }))}
-                  placeholder="Mô tả ngắn cho giao dịch"
+                  placeholder="..."
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                 />
               </div>
 
               <div className="flex flex-wrap justify-end gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={closeQuickAction}
-                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10"
+                <button type="button" onClick={closeQuickAction}
+                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10 cursor-pointer"
                 >
-                  Hủy
+                  {t("cancel")}
                 </button>
-                <button
-                  type="submit"
-                  disabled={quickActionSaving}
-                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25"
+                <button type="submit" disabled={quickActionSaving}
+                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/25 cursor-pointer"
                 >
-                  {quickActionSaving ? "Đang lưu..." : "Lưu nhanh"}
+                  {quickActionSaving ? t("loading") : t("save")}
                 </button>
               </div>
             </form>
@@ -932,12 +903,10 @@ export default function DashboardPage() {
           <div className="glass-panel-strong w-full max-w-md rounded-3xl p-5 sm:p-6">
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
-                <h4 className="text-xl font-bold text-white">Thiết lập ngân sách tháng</h4>
+                <h4 className="text-xl font-bold text-white">{t("dash_budgets_title")}</h4>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowBudgetModal(false)}
-                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 hover:bg-white/10"
+              <button type="button" onClick={() => setShowBudgetModal(false)}
+                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 hover:bg-white/10 cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -945,25 +914,20 @@ export default function DashboardPage() {
 
             <form onSubmit={handleBudgetSubmit} className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Danh mục</label>
-                <select
-                  value={budgetForm.categoryId}
-                  onChange={(e) => setBudgetForm((p) => ({ ...p, categoryId: e.target.value }))}
-                  className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
+                <label className="mb-2 block text-sm text-slate-300">{t("col_category")}</label>
+                <select value={budgetForm.categoryId} onChange={(e) => setBudgetForm((p) => ({ ...p, categoryId: e.target.value }))}
+                  className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45 cursor-pointer"
                   required
                 >
-                  <option value="">Chọn danh mục</option>
+                  <option value="">{t("all_categories_filter")}</option>
                   {allCategories.map((c) => (
                     <option key={c.id} value={c.id} className="bg-slate-900">{c.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Hạn mức chi tiêu ({currencyCode})</label>
-                <input
-                  type="number"
-                  placeholder="Ví dụ: 5000000"
-                  value={budgetForm.limitAmount}
+                <label className="mb-2 block text-sm text-slate-300">{t("dash_budgets_sub")} ({currencyCode})</label>
+                <input type="number" placeholder="5000000" value={budgetForm.limitAmount}
                   onChange={(e) => setBudgetForm((p) => ({ ...p, limitAmount: e.target.value }))}
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   required
@@ -971,19 +935,15 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowBudgetModal(false)}
-                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:bg-white/10"
+                <button type="button" onClick={() => setShowBudgetModal(false)}
+                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 cursor-pointer"
                 >
-                  Hủy
+                  {t("cancel")}
                 </button>
-                <button
-                  type="submit"
-                  disabled={budgetSaving}
-                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/25"
+                <button type="submit" disabled={budgetSaving}
+                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/25 cursor-pointer"
                 >
-                  {budgetSaving ? "Đang lưu..." : "Lưu ngân sách"}
+                  {budgetSaving ? t("loading") : t("save")}
                 </button>
               </div>
             </form>
@@ -997,12 +957,10 @@ export default function DashboardPage() {
           <div className="glass-panel-strong w-full max-w-md rounded-3xl p-5 sm:p-6">
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
-                <h4 className="text-xl font-bold text-white">Tạo mục tiêu tích lũy mới</h4>
+                <h4 className="text-xl font-bold text-white">{t("dash_goals_title")}</h4>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowGoalModal(false)}
-                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 hover:bg-white/10"
+              <button type="button" onClick={() => setShowGoalModal(false)}
+                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 hover:bg-white/10 cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -1010,51 +968,39 @@ export default function DashboardPage() {
 
             <form onSubmit={handleGoalSubmit} className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Tên mục tiêu</label>
-                <input
-                  type="text"
-                  placeholder="Ví dụ: Mua laptop mới, Quỹ khẩn cấp"
-                  value={goalForm.name}
+                <label className="mb-2 block text-sm text-slate-300">{t("cat_col_name")}</label>
+                <input type="text" placeholder="..." value={goalForm.name}
                   onChange={(e) => setGoalForm((p) => ({ ...p, name: e.target.value }))}
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   required
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Số tiền cần tích lũy ({currencyCode})</label>
-                <input
-                  type="number"
-                  placeholder="Ví dụ: 25000000"
-                  value={goalForm.targetAmount}
+                <label className="mb-2 block text-sm text-slate-300">{t("col_amount")} ({currencyCode})</label>
+                <input type="number" placeholder="25000000" value={goalForm.targetAmount}
                   onChange={(e) => setGoalForm((p) => ({ ...p, targetAmount: e.target.value }))}
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   required
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Ngày hoàn thành mong muốn</label>
-                <input
-                  type="date"
-                  value={goalForm.targetDate}
+                <label className="mb-2 block text-sm text-slate-300">{t("dash_target_date")}</label>
+                <input type="date" value={goalForm.targetDate}
                   onChange={(e) => setGoalForm((p) => ({ ...p, targetDate: e.target.value }))}
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                 />
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowGoalModal(false)}
-                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:bg-white/10"
+                <button type="button" onClick={() => setShowGoalModal(false)}
+                  className="rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 cursor-pointer"
                 >
-                  Hủy
+                  {t("cancel")}
                 </button>
-                <button
-                  type="submit"
-                  disabled={goalSaving}
-                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/25"
+                <button type="submit" disabled={goalSaving}
+                  className="rounded-2xl border border-cyan-300/40 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 hover:bg-cyan-400/25 cursor-pointer"
                 >
-                  {goalSaving ? "Đang lưu..." : "Tạo mục tiêu"}
+                  {goalSaving ? t("loading") : t("save")}
                 </button>
               </div>
             </form>
@@ -1068,13 +1014,11 @@ export default function DashboardPage() {
           <div className="glass-panel-strong w-full max-w-2xl rounded-3xl p-5 sm:p-6">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
-                <h4 className="text-xl font-bold text-white">Danh sách tài khoản ngân hàng</h4>
-                <p className="text-xs text-slate-400 mt-1">Được lấy trực tiếp từ hệ thống Plaid</p>
+                <h4 className="text-xl font-bold text-white">{t("bank_view_accounts")}</h4>
+                <p className="text-xs text-slate-400 mt-1">Plaid Automated Integration</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowAccountsModal(false)}
-                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 hover:bg-white/10"
+              <button type="button" onClick={() => setShowAccountsModal(false)}
+                className="rounded-xl border border-white/15 bg-white/5 p-2 text-slate-300 hover:bg-white/10 cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -1086,13 +1030,13 @@ export default function DashboardPage() {
                   <div>
                     <h5 className="font-semibold text-white text-sm">{acc.accountName}</h5>
                     <p className="text-xs text-slate-400 mt-1">
-                      Mã tài khoản Plaid: {acc.id} | Phân loại: {acc.accountType} ({acc.accountSubtype || "default"})
+                      Plaid ID: {acc.id} | {acc.accountType} ({acc.accountSubtype || "default"})
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-cyan-300">{formatCurrency(acc.currentBalance)}</p>
                     <p className="text-[10px] text-slate-500 mt-1">
-                      Sync: {acc.lastSyncedAt ? new Date(acc.lastSyncedAt).toLocaleString("vi-VN") : "Chưa có"}
+                      Sync: {acc.lastSyncedAt ? new Date(acc.lastSyncedAt).toLocaleString("vi-VN") : "---"}
                     </p>
                   </div>
                 </div>
@@ -1100,12 +1044,10 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex justify-end pt-4 mt-4 border-t border-white/10">
-              <button
-                type="button"
-                onClick={() => setShowAccountsModal(false)}
-                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+              <button type="button" onClick={() => setShowAccountsModal(false)}
+                className="rounded-2xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 cursor-pointer"
               >
-                Đóng
+                {t("cancel")}
               </button>
             </div>
           </div>

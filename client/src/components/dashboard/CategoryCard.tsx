@@ -1,3 +1,5 @@
+import { useLanguage } from "../../context/LanguageContext"
+
 type CategorySplit = {
   label: string
   value: number
@@ -9,6 +11,7 @@ type CategoryCardProps = {
 }
 
 export default function CategoryCard({ categories, spentPercent }: CategoryCardProps) {
+  const { t } = useLanguage()
   const categoryData = categories ?? []
   const topCategory = categoryData.length > 0 ? categoryData[0] : null
   const total = categoryData.reduce((sum, item) => sum + item.value, 0)
@@ -44,12 +47,12 @@ export default function CategoryCard({ categories, spentPercent }: CategoryCardP
     <article className="glass-panel rounded-3xl p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-sm text-slate-400">Danh mục</p>
-          <h3 className="mt-1 text-xl font-semibold text-white">Phân bổ chi tiêu</h3>
+          <p className="text-sm text-slate-400">{t("nav_categories")}</p>
+          <h3 className="mt-1 text-xl font-semibold text-white">{t("dash_cat_distribution")}</h3>
         </div>
         {topCategory && (
           <div className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-200">
-            Chi nhiều nhất: <span className="font-semibold text-white">{topCategory.label}</span> ({topCategory.value}%)
+            {t("dash_top_category_prefix")}: <span className="font-semibold text-white">{topCategory.label}</span> ({topCategory.value}%)
           </div>
         )}
       </div>
@@ -59,7 +62,7 @@ export default function CategoryCard({ categories, spentPercent }: CategoryCardP
           <div className="h-full w-full rounded-full" style={{ background: donutBackground }} />
           <div className="absolute grid h-28 w-28 place-items-center rounded-full border border-cyan-400/30 bg-slate-900/90 text-center">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.25em] text-cyan-200/70">ĐÃ CHI</p>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-cyan-200/70">SPENT</p>
               <p className="mt-1 text-2xl font-bold text-white">{Math.max(0, Math.min(999, spentPercent ?? 0)).toFixed(1)}%</p>
               {topCategory && (
                 <p className="mt-0.5 truncate text-[10px] text-slate-400 max-w-[90px] mx-auto" title={`${topCategory.label}: ${topCategory.value}%`}>
@@ -71,7 +74,7 @@ export default function CategoryCard({ categories, spentPercent }: CategoryCardP
         </div>
 
         {categoryData.length === 0 ? (
-          <p className="text-center text-sm text-slate-400">Chưa có dữ liệu chi tiêu trong tháng để phân bổ theo danh mục.</p>
+          <p className="text-center text-sm text-slate-400">{t("no_data")}</p>
         ) : (
           <div className="space-y-3 mt-2">
             {categoryData.map((item, index) => {

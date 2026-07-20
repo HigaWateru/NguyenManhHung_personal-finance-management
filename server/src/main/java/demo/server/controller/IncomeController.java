@@ -37,13 +37,13 @@ public class IncomeController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<IncomeResponse>>> getIncomes(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be greater than or equal to 0") int page,
-            @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") @Max(value = 100, message = "Size must not exceed 100") int size
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @RequestParam(required = false) Long categoryId,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page must be greater than or equal to 0") int page,
+        @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") @Max(value = 100, message = "Size must not exceed 100") int size
     ) {
         return ResponseEntity.ok(ApiResponse.success(
                 "Incomes fetched successfully",
@@ -53,16 +53,16 @@ public class IncomeController {
 
     @GetMapping("/{incomeId}")
     public ResponseEntity<ApiResponse<IncomeResponse>> getIncome(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @PathVariable Long incomeId
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @PathVariable Long incomeId
     ) {
         return ResponseEntity.ok(ApiResponse.success("Income fetched successfully", incomeService.getIncome(principal.getId(), incomeId)));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<IncomeResponse>> createIncome(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @Valid @RequestBody IncomeRequest request
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @Valid @RequestBody IncomeRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Income created successfully", incomeService.createIncome(principal.getId(), request)));
@@ -70,17 +70,17 @@ public class IncomeController {
 
     @PutMapping("/{incomeId}")
     public ResponseEntity<ApiResponse<IncomeResponse>> updateIncome(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @PathVariable Long incomeId,
-            @Valid @RequestBody IncomeRequest request
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @PathVariable Long incomeId,
+        @Valid @RequestBody IncomeRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.success("Income updated successfully", incomeService.updateIncome(principal.getId(), incomeId, request)));
     }
 
     @DeleteMapping("/{incomeId}")
     public ResponseEntity<ApiResponse<MessageResponse>> deleteIncome(
-            @AuthenticationPrincipal CurrentUserPrincipal principal,
-            @PathVariable Long incomeId
+        @AuthenticationPrincipal CurrentUserPrincipal principal,
+        @PathVariable Long incomeId
     ) {
         return ResponseEntity.ok(ApiResponse.success("Income deleted successfully", incomeService.deleteIncome(principal.getId(), incomeId)));
     }

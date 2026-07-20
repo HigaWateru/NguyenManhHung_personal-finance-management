@@ -1,61 +1,67 @@
 import { useEffect, useMemo, useState } from "react"
-import {Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer,
-  Tooltip, XAxis, YAxis, } from "recharts"
+import { Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer,
+  Tooltip, XAxis, YAxis } from "recharts"
 import { apiService } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
 import type { StatisticsData } from "../../types/api"
 import { useAppSelector } from "../../redux/hooks"
 import { formatCurrency as formatCurrencyUtil } from "../../utils/format"
+import { useLanguage } from "../../context/LanguageContext"
 
 const monthlyFinance = [
-  { month: "T1", income: 18.5, expense: 11.2, net: 7.3 },
-  { month: "T2", income: 19.8, expense: 12.4, net: 7.4 },
-  { month: "T3", income: 21.2, expense: 13.6, net: 7.6 },
-  { month: "T4", income: 20.5, expense: 12.1, net: 8.4 },
-  { month: "T5", income: 22.9, expense: 14.2, net: 8.7 },
-  { month: "T6", income: 24.6, expense: 15.1, net: 9.5 },
-  { month: "T7", income: 26.1, expense: 16.8, net: 9.3 },
-  { month: "T8", income: 25.4, expense: 16.2, net: 9.2 },
-  { month: "T9", income: 23.7, expense: 15.3, net: 8.4 },
-  { month: "T10", income: 24.2, expense: 14.7, net: 9.5 },
-  { month: "T11", income: 22.8, expense: 13.9, net: 8.9 },
-  { month: "T12", income: 27.3, expense: 17.4, net: 9.9 },
-]
-
-const expenseByCategory = [
-  { name: "Ăn uống", value: 34, amount: 5900000 },
-  { name: "Di chuyển", value: 18, amount: 3100000 },
-  { name: "Tiện ích", value: 22, amount: 3800000 },
-  { name: "Mua sắm", value: 14, amount: 2400000 },
-  { name: "Sức khỏe", value: 12, amount: 2100000 },
+  { month: "M1", income: 18.5, expense: 11.2, net: 7.3 },
+  { month: "M2", income: 19.8, expense: 12.4, net: 7.4 },
+  { month: "M3", income: 21.2, expense: 13.6, net: 7.6 },
+  { month: "M4", income: 20.5, expense: 12.1, net: 8.4 },
+  { month: "M5", income: 22.9, expense: 14.2, net: 8.7 },
+  { month: "M6", income: 24.6, expense: 15.1, net: 9.5 },
+  { month: "M7", income: 26.1, expense: 16.8, net: 9.3 },
+  { month: "M8", income: 25.4, expense: 16.2, net: 9.2 },
+  { month: "M9", income: 23.7, expense: 15.3, net: 8.4 },
+  { month: "M10", income: 24.2, expense: 14.7, net: 9.5 },
+  { month: "M11", income: 22.8, expense: 13.9, net: 8.9 },
+  { month: "M12", income: 27.3, expense: 17.4, net: 9.9 },
 ]
 
 const pieColors = [
-  "#22d3ee", // Cyan
-  "#f43f5e", // Rose
-  "#3b82f6", // Blue
-  "#10b981", // Emerald
-  "#8b5cf6", // Purple
-  "#f59e0b", // Amber
-  "#ec4899", // Pink
-  "#14b8a6", // Teal
-  "#6366f1", // Indigo
-  "#f97316", // Orange
-  "#a855f7", // Violet
-  "#06b6d4", // Light Cyan
-  "#84cc16", // Lime
-  "#e11d48", // Crimson
-  "#d946ef", // Fuchsia
-  "#0ea5e9", // Sky Blue
-  "#facc15", // Yellow
-  "#22c55e", // Green
-  "#fbbf24", // Gold
-  "#fb7185", // Soft Rose
+  "#22d3ee", "#f43f5e", "#3b82f6", "#10b981", "#8b5cf6",
+  "#f59e0b", "#ec4899", "#14b8a6", "#6366f1", "#f97316",
+  "#a855f7", "#06b6d4", "#84cc16", "#e11d48", "#d946ef",
+  "#0ea5e9", "#facc15", "#22c55e", "#fbbf24", "#fb7185"
 ]
 
 export default function StatisticsPage() {
   const { user } = useAppSelector((state) => state.auth)
+  const { t, language } = useLanguage()
   const currencyCode = user?.currencyCode || "VND"
+
+  const expenseByCategoryFallback = useMemo(() => {
+    if (language === "en") {
+      return [
+        { name: "Dining & Food", value: 34, amount: 5900000 },
+        { name: "Transportation", value: 18, amount: 3100000 },
+        { name: "Utilities", value: 22, amount: 3800000 },
+        { name: "Shopping", value: 14, amount: 2400000 },
+        { name: "Healthcare", value: 12, amount: 2100000 },
+      ]
+    }
+    if (language === "ja") {
+      return [
+        { name: "飲食費", value: 34, amount: 5900000 },
+        { name: "交通費", value: 18, amount: 3100000 },
+        { name: "光熱費", value: 22, amount: 3800000 },
+        { name: "ショッピング", value: 14, amount: 2400000 },
+        { name: "医療費", value: 12, amount: 2100000 },
+      ]
+    }
+    return [
+      { name: "Ăn uống", value: 34, amount: 5900000 },
+      { name: "Di chuyển", value: 18, amount: 3100000 },
+      { name: "Tiện ích", value: 22, amount: 3800000 },
+      { name: "Mua sắm", value: 14, amount: 2400000 },
+      { name: "Sức khỏe", value: 12, amount: 2100000 },
+    ]
+  }, [language])
 
   const formatMoney = (value: number) => {
     if (currencyCode === "VND") {
@@ -100,7 +106,7 @@ export default function StatisticsPage() {
 
   const monthlyChartData = useMemo(() => {
     if (!stats?.monthlyStatistics?.length) {
-      const scale = currencyCode === "VND" ? 1_000_000 : 100;
+      const scale = currencyCode === "VND" ? 1_000_000 : 100
       return monthlyFinance.map((item) => ({
         month: item.month,
         income: item.income * scale,
@@ -109,18 +115,19 @@ export default function StatisticsPage() {
       }))
     }
 
+    const monthPrefix = language === "ja" ? "月" : "M"
     return stats.monthlyStatistics.map((item) => ({
-      month: `T${item.month}`,
+      month: `${monthPrefix}${item.month}`,
       income: Number(item.income),
       expense: Number(item.expense),
       net: Number(item.balance),
     }))
-  }, [stats, currencyCode])
+  }, [stats, currencyCode, language])
 
   const categoryChartData = useMemo(() => {
     if (!stats?.categoryStatistics?.length) {
-      const scale = currencyCode === "VND" ? 1 : (currencyCode === "JPY" ? 0.006 : 0.00004);
-      return expenseByCategory.map(item => ({
+      const scale = currencyCode === "VND" ? 1 : (currencyCode === "JPY" ? 0.006 : 0.00004)
+      return expenseByCategoryFallback.map(item => ({
         ...item,
         amount: item.amount * scale
       }))
@@ -136,7 +143,7 @@ export default function StatisticsPage() {
         amount: Number(item.totalAmount),
       }
     })
-  }, [stats, currencyCode])
+  }, [stats, currencyCode, expenseByCategoryFallback])
 
   const availableYears = useMemo(() => {
     if (!stats?.yearlyStatistics?.length) return [selectedYear, selectedYear - 1, selectedYear - 2]
@@ -152,17 +159,17 @@ export default function StatisticsPage() {
   return (
     <section className="space-y-6">
       <header className="glass-panel rounded-[2rem] p-6 sm:p-8">
-        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Thống kê</p>
-        <h3 className="mt-3 text-3xl font-semibold text-white">Báo cáo tài chính</h3>
+        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">{t("stat_page_tag")}</p>
+        <h3 className="mt-3 text-3xl font-semibold text-white">{t("stat_page_title")}</h3>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          Báo cáo phân tích tổng quan dòng tiền thu nhập, chi tiêu và phân bổ ngân sách chi tiết theo thời gian thực.
+          {t("stat_page_desc")}
         </p>
 
         <div className="mt-5 grid gap-3 md:grid-cols-4">
           <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
-            Năm
+            {t("stat_year_label")}
             <select value={selectedYear} onChange={(event) => setSelectedYear(Number(event.target.value))}
-              className="mt-1 w-full bg-transparent text-white outline-none"
+              className="mt-1 w-full bg-transparent text-white outline-none cursor-pointer"
             >
               {availableYears.map((year) => (
                 <option key={year} value={year} className="bg-slate-900">{year}</option>
@@ -171,31 +178,31 @@ export default function StatisticsPage() {
           </label>
 
           <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
-            Từ ngày
+            {t("stat_from_date")}
             <input type="date" className="mt-1 w-full bg-transparent text-white outline-none" />
           </label>
 
           <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
-            Đến ngày
+            {t("stat_to_date")}
             <input type="date" className="mt-1 w-full bg-transparent text-white outline-none" />
           </label>
 
           <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-300">
-            Từ khóa
-            <input type="text" placeholder="VD: ăn uống" className="mt-1 w-full bg-transparent text-white placeholder:text-slate-500 outline-none" />
+            {t("search")}
+            <input type="text" placeholder="..." className="mt-1 w-full bg-transparent text-white placeholder:text-slate-500 outline-none" />
           </label>
         </div>
 
-        {loading && <p className="mt-4 text-sm text-slate-300">Đang tải dữ liệu thống kê từ backend...</p>}
+        {loading && <p className="mt-4 text-sm text-slate-300">{t("loading")}</p>}
         {error && <p className="mt-4 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">{error}</p>}
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Tổng thu năm", formatCurrencyUtil(yearlyIncome, currencyCode)],
-          ["Tổng chi năm", formatCurrencyUtil(yearlyExpense, currencyCode)],
-          ["Số dư ròng", formatCurrencyUtil(yearlyNet, currencyCode)],
-          ["Tỷ lệ tiết kiệm", `${savingRate.toFixed(1)}%`],
+          [t("stat_total_income_year"), formatCurrencyUtil(yearlyIncome, currencyCode)],
+          [t("stat_total_expense_year"), formatCurrencyUtil(yearlyExpense, currencyCode)],
+          [t("stat_yearly_net"), formatCurrencyUtil(yearlyNet, currencyCode)],
+          [t("dash_saving_rate"), `${savingRate.toFixed(1)}%`],
         ].map(([label, value]) => (
           <article key={label} className="glass-panel rounded-3xl p-5">
             <p className="text-sm text-slate-400">{label}</p>
@@ -207,7 +214,7 @@ export default function StatisticsPage() {
       <section className="grid gap-6 xl:grid-cols-[1.25fr_1fr]">
         <article className="glass-panel rounded-3xl p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h4 className="text-lg font-semibold text-white">Bar Chart: Thu và chi theo tháng</h4>
+            <h4 className="text-lg font-semibold text-white">{t("stat_flow_chart_title")}</h4>
             <span className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">{selectedYear}</span>
           </div>
           <div className="h-72">
@@ -225,15 +232,15 @@ export default function StatisticsPage() {
                   formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
-                <Bar dataKey="income" name="Thu nhập" fill="#22d3ee" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="expense" name="Chi tiêu" fill="#fb7185" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="income" name={t("nav_income")} fill="#22d3ee" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="expense" name={t("nav_expense")} fill="#fb7185" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </article>
 
         <article className="glass-panel rounded-3xl p-5">
-          <h4 className="text-lg font-semibold text-white">Pie Chart: Tỷ trọng chi tiêu</h4>
+          <h4 className="text-lg font-semibold text-white">{t("stat_dist_chart_title")}</h4>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -254,7 +261,7 @@ export default function StatisticsPage() {
                   formatter={(value, _name, props) => {
                     const percentage = Number(value ?? 0);
                     const amount = Number((props as { payload?: { amount?: number } }).payload?.amount ?? 0);
-                    return [`${percentage}% | ${formatCurrencyUtil(amount, currencyCode)}`, "Tỷ trọng"];
+                    return [`${percentage}% | ${formatCurrencyUtil(amount, currencyCode)}`, t("stat_proportion")];
                   }}
                 />
                 <Legend verticalAlign="bottom" height={24} />
@@ -267,8 +274,8 @@ export default function StatisticsPage() {
       <section>
         <article className="glass-panel rounded-3xl p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h4 className="text-lg font-semibold text-white">Line Chart: Xu hướng số dư ròng</h4>
-            <span className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">Theo tháng</span>
+            <h4 className="text-lg font-semibold text-white">{t("stat_line_chart_title")}</h4>
+            <span className="rounded-full border border-cyan-300/40 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">{t("stat_by_month")}</span>
           </div>
 
           <div className="h-80">
@@ -286,11 +293,11 @@ export default function StatisticsPage() {
                   formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
-                <Line type="monotone" dataKey="net" name="Số dư ròng" stroke="#22d3ee"
+                <Line type="monotone" dataKey="net" name={t("stat_yearly_net")} stroke="#22d3ee"
                   strokeWidth={3} dot={{ r: 3, fill: "#22d3ee" }} activeDot={{ r: 6 }}/>
-                <Line type="monotone" dataKey="income" name="Thu nhập" stroke="#38bdf8"
+                <Line type="monotone" dataKey="income" name={t("nav_income")} stroke="#38bdf8"
                   strokeWidth={2} strokeDasharray="5 4" dot={false}/>
-                <Line type="monotone" dataKey="expense" name="Chi tiêu" stroke="#fb7185"
+                <Line type="monotone" dataKey="expense" name={t("nav_expense")} stroke="#fb7185"
                   strokeWidth={2} strokeDasharray="5 4" dot={false}/>
               </LineChart>
             </ResponsiveContainer>
@@ -304,7 +311,7 @@ export default function StatisticsPage() {
             <div className="mb-3 h-1.5 rounded-full" style={{ backgroundColor: pieColors[index % pieColors.length] }} />
             <p className="text-sm text-slate-300">{item.name}</p>
             <p className="mt-2 text-xl font-semibold text-white">{item.value}%</p>
-            <p className="mt-1 text-xs text-slate-400">{formatCurrencyUtil(item.amount, currencyCode)} / năm</p>
+            <p className="mt-1 text-xs text-slate-400">{formatCurrencyUtil(item.amount, currencyCode)}</p>
           </article>
         ))}
       </section>

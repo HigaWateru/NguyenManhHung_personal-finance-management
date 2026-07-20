@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class AiCategorizerServiceImpl implements AiCategorizerService {
-
     @Value("${gemini.api-key:}")
     private String geminiApiKey;
 
@@ -27,16 +26,12 @@ public class AiCategorizerServiceImpl implements AiCategorizerService {
 
     @Override
     public Category categorize(String merchantName, String note, List<Category> categories) {
-        if (categories == null || categories.isEmpty()) {
-            return null;
-        }
+        if (categories == null || categories.isEmpty()) return null;
 
         String input = (merchantName != null ? merchantName : "") + " " + (note != null ? note : "");
         input = input.trim();
 
-        if (input.isEmpty()) {
-            return categories.getFirst(); // fallback to first
-        }
+        if (input.isEmpty()) return categories.getFirst(); // fallback to first
 
         // Try Gemini API if key is present
         if (geminiApiKey != null && !geminiApiKey.trim().isEmpty()) {
@@ -114,9 +109,7 @@ public class AiCategorizerServiceImpl implements AiCategorizerService {
         // 1. Exact or contains match on category name
         for (Category category : categories) {
             String catName = category.getName().toLowerCase();
-            if (cleanInput.contains(catName) || catName.contains(cleanInput)) {
-                return category;
-            }
+            if (cleanInput.contains(catName) || catName.contains(cleanInput)) return category;
         }
 
         // 2. Keyword mapping dictionary

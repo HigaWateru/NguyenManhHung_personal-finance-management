@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiException(ApiException exception, HttpServletRequest request) {
         return buildErrorResponse(exception.getStatus(), exception.getMessage(), exception.getErrors(), request);
@@ -36,7 +35,7 @@ public class GlobalExceptionHandler {
         }
 
         exception.getBindingResult().getGlobalErrors()
-                .forEach(error -> errors.putIfAbsent(error.getObjectName(), error.getDefaultMessage()));
+            .forEach(error -> errors.putIfAbsent(error.getObjectName(), error.getDefaultMessage()));
 
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", errors, request);
     }
@@ -47,12 +46,12 @@ public class GlobalExceptionHandler {
         HttpServletRequest request
     ) {
         Map<String, Object> errors = exception.getConstraintViolations().stream()
-                .collect(Collectors.toMap(
-                        violation -> violation.getPropertyPath().toString(),
-                        violation -> violation.getMessage(),
-                        (existing, replacement) -> existing,
-                        LinkedHashMap::new
-                ));
+            .collect(Collectors.toMap(
+                violation -> violation.getPropertyPath().toString(),
+                violation -> violation.getMessage(),
+                (existing, replacement) -> existing,
+                LinkedHashMap::new
+            ));
 
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", errors, request);
     }
@@ -71,10 +70,10 @@ public class GlobalExceptionHandler {
         HttpServletRequest request
     ) {
         return buildErrorResponse(
-                HttpStatus.valueOf(exception.getStatusCode().value()),
-                exception.getReason() != null ? exception.getReason() : "Request failed",
-                null,
-                request
+            HttpStatus.valueOf(exception.getStatusCode().value()),
+            exception.getReason() != null ? exception.getReason() : "Request failed",
+            null,
+            request
         );
     }
 
@@ -98,6 +97,6 @@ public class GlobalExceptionHandler {
         HttpServletRequest request
     ) {
         return ResponseEntity.status(status)
-                .body(ApiResponse.failure(message, errors == null || errors.isEmpty() ? null : errors, request.getRequestURI()));
+            .body(ApiResponse.failure(message, errors == null || errors.isEmpty() ? null : errors, request.getRequestURI()));
     }
 }

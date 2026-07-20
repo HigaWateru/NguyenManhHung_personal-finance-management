@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ExpenseMapper {
-
     public Expense toEntity(User user, Category category, BigDecimal amount, LocalDate transactionDate, String note) {
         return Expense.builder()
             .user(user)

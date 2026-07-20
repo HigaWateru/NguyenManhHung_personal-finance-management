@@ -60,8 +60,7 @@ export default function RegisterPage() {
                 <span className="mb-2 block text-sm text-slate-300">Họ và tên</span>
                 <div className={`flex items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 ${submitted && errors.name ? "border-rose-400/50" : "border-white/10"}`}>
                   <UserRound size={18} className="text-cyan-300/80" />
-                  <input type="text" placeholder="Nguyễn Văn A"
-                    value={values.name}
+                  <input type="text" placeholder="Nguyễn Văn A" value={values.name}
                     onChange={(event) => setValues((current) => ({ ...current, name: event.target.value }))}
                     className="w-full bg-transparent text-white outline-none placeholder:text-slate-500"
                   />

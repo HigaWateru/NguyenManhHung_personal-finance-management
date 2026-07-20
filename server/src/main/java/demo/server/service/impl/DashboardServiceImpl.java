@@ -45,7 +45,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Transactional(readOnly = true)
     public DashboardResponse getDashboard(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
         CurrencyCode baseCurrency = user.getCurrencyCode();
         CurrencyCode displayCurrency = user.getDisplayCurrency();
@@ -107,18 +107,14 @@ public class DashboardServiceImpl implements DashboardService {
 
         // 2. Plaid bank expenses
         List<Transaction> bankExpenses = transactionRepository.findByUserIdAndTransactionDateBetween(userId, monthStart, monthEnd);
-        for (Transaction tx : bankExpenses) {
-            if (tx.getType() == CategoryType.EXPENSE) {
-                String catName = tx.getCategory() != null ? tx.getCategory().getName() : "Others";
-                BigDecimal converted = exchangeRateService.convert(tx.getOriginalAmount(), tx.getOriginalCurrency(), displayCurrency);
-                categoryAmountMap.put(catName, categoryAmountMap.getOrDefault(catName, ZERO).add(converted));
-            }
+        for (Transaction tx : bankExpenses) if (tx.getType() == CategoryType.EXPENSE) {
+            String catName = tx.getCategory() != null ? tx.getCategory().getName() : "Others";
+            BigDecimal converted = exchangeRateService.convert(tx.getOriginalAmount(), tx.getOriginalCurrency(), displayCurrency);
+            categoryAmountMap.put(catName, categoryAmountMap.getOrDefault(catName, ZERO).add(converted));
         }
 
         BigDecimal totalSum = categoryAmountMap.values().stream().reduce(ZERO, BigDecimal::add);
-        if (totalSum.compareTo(ZERO) <= 0) {
-            return List.of();
-        }
+        if (totalSum.compareTo(ZERO) <= 0) return List.of();
 
         List<CategoryDistributionResponse> list = new java.util.ArrayList<>();
         for (Map.Entry<String, BigDecimal> entry : categoryAmountMap.entrySet()) {

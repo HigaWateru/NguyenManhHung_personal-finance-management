@@ -54,26 +54,26 @@ public class ExpenseServiceImpl implements ExpenseService {
         CurrencyCode displayCurrency = user.getDisplayCurrency();
 
         Page<ExpenseResponse> expenses = expenseRepository.search(
-                userId,
-                categoryId,
-                fromDate,
-                toDate,
-                ServiceInputUtils.normalizeOptionalText(keyword),
-                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
-            ).map(expense -> {
-                ExpenseResponse response = expenseMapper.toResponse(expense);
-                BigDecimal convertedAmount = exchangeRateService.convert(response.getAmount(), baseCurrency, displayCurrency);
-                return ExpenseResponse.builder()
-                    .id(response.getId())
-                    .categoryId(response.getCategoryId())
-                    .categoryName(response.getCategoryName())
-                    .amount(convertedAmount)
-                    .transactionDate(response.getTransactionDate())
-                    .note(response.getNote())
-                    .createdAt(response.getCreatedAt())
-                    .updatedAt(response.getUpdatedAt())
-                    .build();
-            });
+            userId,
+            categoryId,
+            fromDate,
+            toDate,
+            ServiceInputUtils.normalizeOptionalText(keyword),
+            PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
+        ).map(expense -> {
+            ExpenseResponse response = expenseMapper.toResponse(expense);
+            BigDecimal convertedAmount = exchangeRateService.convert(response.getAmount(), baseCurrency, displayCurrency);
+            return ExpenseResponse.builder()
+                .id(response.getId())
+                .categoryId(response.getCategoryId())
+                .categoryName(response.getCategoryName())
+                .amount(convertedAmount)
+                .transactionDate(response.getTransactionDate())
+                .note(response.getNote())
+                .createdAt(response.getCreatedAt())
+                .updatedAt(response.getUpdatedAt())
+                .build();
+        });
 
         return PageResponse.from(expenses);
     }
@@ -169,17 +169,17 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     private Expense findOwnedExpense(Long userId, Long expenseId) {
         return expenseRepository.findByIdAndUserId(expenseId, userId)
-                .orElseThrow(() -> ApiException.notFound("Expense not found"));
+            .orElseThrow(() -> ApiException.notFound("Expense not found"));
     }
 
     private User findActiveUser(Long userId) {
         return userRepository.findByIdAndActiveTrue(userId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+            .orElseThrow(() -> ApiException.notFound("User not found"));
     }
 
     private Category findCategory(Long userId, Long categoryId, CategoryType expectedType) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
-                .orElseThrow(() -> ApiException.notFound("Category not found"));
+            .orElseThrow(() -> ApiException.notFound("Category not found"));
 
         if (category.getType() != expectedType) throw ApiException.badRequest("Selected category type is invalid");
 

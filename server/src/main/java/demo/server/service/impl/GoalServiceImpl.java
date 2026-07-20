@@ -55,9 +55,7 @@ public class GoalServiceImpl implements GoalService {
         Goal goal = goalRepository.findById(goalId)
             .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalId));
 
-        if (!goal.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Unauthorized goal access");
-        }
+        if (!goal.getUser().getId().equals(userId)) throw new IllegalArgumentException("Unauthorized goal access");
 
         User user = goal.getUser();
         BigDecimal currentInBase = exchangeRateService.convert(currentAmount, user.getDisplayCurrency(), user.getCurrencyCode());
@@ -67,9 +65,7 @@ public class GoalServiceImpl implements GoalService {
         // Auto-complete status if target reached
         if (goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0) {
             goal.updateDetails(goal.getName(), goal.getTargetAmount(), goal.getTargetDate(), "COMPLETED");
-        } else {
-            goal.updateDetails(goal.getName(), goal.getTargetAmount(), goal.getTargetDate(), "ACTIVE");
-        }
+        } else goal.updateDetails(goal.getName(), goal.getTargetAmount(), goal.getTargetDate(), "ACTIVE");
 
         return goalRepository.save(goal);
     }
@@ -80,9 +76,7 @@ public class GoalServiceImpl implements GoalService {
         Goal goal = goalRepository.findById(goalId)
             .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalId));
 
-        if (!goal.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Unauthorized goal access");
-        }
+        if (!goal.getUser().getId().equals(userId)) throw new IllegalArgumentException("Unauthorized goal access");
 
         User user = goal.getUser();
         BigDecimal targetInBase = exchangeRateService.convert(targetAmount, user.getDisplayCurrency(), user.getCurrencyCode());
@@ -98,9 +92,7 @@ public class GoalServiceImpl implements GoalService {
         Goal goal = goalRepository.findById(goalId)
             .orElseThrow(() -> new IllegalArgumentException("Goal not found: " + goalId));
 
-        if (!goal.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Unauthorized goal access");
-        }
+        if (!goal.getUser().getId().equals(userId)) throw new IllegalArgumentException("Unauthorized goal access");
 
         goalRepository.delete(goal);
     }

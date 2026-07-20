@@ -18,10 +18,7 @@ public interface IncomeService {
     );
 
     IncomeResponse getIncome(Long userId, Long incomeId);
-
     IncomeResponse createIncome(Long userId, IncomeRequest request);
-
     IncomeResponse updateIncome(Long userId, Long incomeId, IncomeRequest request);
-
     MessageResponse deleteIncome(Long userId, Long incomeId);
 }

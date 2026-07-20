@@ -97,6 +97,6 @@ public class Transaction extends BaseEntity {
 
     public CurrencyCode getOriginalCurrency() {
         return this.originalCurrency != null ? this.originalCurrency :
-               (this.user != null ? this.user.getCurrencyCode() : CurrencyCode.VND);
+            (this.user != null ? this.user.getCurrencyCode() : CurrencyCode.VND);
     }
 }

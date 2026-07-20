@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BudgetServiceImpl implements BudgetService {
-
     private final BudgetRepository budgetRepository;
     private final CategoryRepository categoryRepository;
     private final ExpenseRepository expenseRepository;
@@ -81,9 +80,7 @@ public class BudgetServiceImpl implements BudgetService {
         Budget budget = budgetRepository.findById(budgetId)
             .orElseThrow(() -> new IllegalArgumentException("Budget not found: " + budgetId));
 
-        if (!budget.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Unauthorized budget access");
-        }
+        if (!budget.getUser().getId().equals(userId)) throw new IllegalArgumentException("Unauthorized budget access");
 
         User user = budget.getUser();
         BigDecimal limitInBase = exchangeRateService.convert(limitAmount, user.getDisplayCurrency(), user.getCurrencyCode());
@@ -98,9 +95,7 @@ public class BudgetServiceImpl implements BudgetService {
         Budget budget = budgetRepository.findById(budgetId)
             .orElseThrow(() -> new IllegalArgumentException("Budget not found: " + budgetId));
 
-        if (!budget.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("Unauthorized budget access");
-        }
+        if (!budget.getUser().getId().equals(userId)) throw new IllegalArgumentException("Unauthorized budget access");
 
         budgetRepository.delete(budget);
     }
@@ -117,15 +112,11 @@ public class BudgetServiceImpl implements BudgetService {
 
         // Manual expenses spent
         BigDecimal manualSpent = expenseRepository.sumAmountByUserIdAndCategoryIdAndTransactionDateBetween(userId, categoryId, start, end);
-        if (manualSpent == null) {
-            manualSpent = BigDecimal.ZERO;
-        }
+        if (manualSpent == null) manualSpent = BigDecimal.ZERO;
 
         // Bank sync transactions spent (where type is EXPENSE)
         BigDecimal bankSpent = transactionRepository.sumAmountByUserIdAndCategoryIdAndTypeAndTransactionDateBetween(userId, categoryId, CategoryType.EXPENSE, start, end);
-        if (bankSpent == null) {
-            bankSpent = BigDecimal.ZERO;
-        }
+        if (bankSpent == null) bankSpent = BigDecimal.ZERO;
 
         BigDecimal totalSpentInBase = manualSpent.add(bankSpent);
         return exchangeRateService.convert(totalSpentInBase, user.getCurrencyCode(), user.getDisplayCurrency());

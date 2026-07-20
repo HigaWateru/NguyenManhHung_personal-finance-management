@@ -38,8 +38,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     );
 
     List<Transaction> findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(Long userId);
-
     List<Transaction> findByUserIdAndTransactionDateBetween(Long userId, LocalDate start, LocalDate end);
-    
     void deleteByUserId(Long userId);
 }

@@ -18,10 +18,7 @@ public interface ExpenseService {
     );
 
     ExpenseResponse getExpense(Long userId, Long expenseId);
-
     ExpenseResponse createExpense(Long userId, ExpenseRequest request);
-
     ExpenseResponse updateExpense(Long userId, Long expenseId, ExpenseRequest request);
-
     MessageResponse deleteExpense(Long userId, Long expenseId);
 }

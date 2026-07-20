@@ -1,4 +1,5 @@
 import { type LucideIcon } from "lucide-react"
+import { useLanguage } from "../../context/LanguageContext"
 
 type MetricCardProps = {
   label: string
@@ -9,6 +10,10 @@ type MetricCardProps = {
 }
 
 export default function MetricCard({ label, value, change, icon: Icon, positive }: MetricCardProps) {
+  const { language } = useLanguage()
+
+  const vsText = language === "en" ? "vs last month" : language === "ja" ? "前月比" : "so với tháng trước"
+
   return (
     <article className="glass-panel rounded-3xl p-5 transition-transform duration-300 hover:-translate-y-1">
       <div className="flex items-start justify-between gap-4">
@@ -22,7 +27,7 @@ export default function MetricCard({ label, value, change, icon: Icon, positive 
         </div>
       </div>
 
-      <p className={`mt-6 text-sm font-medium ${positive ? "text-emerald-300" : "text-rose-300"}`}>{change} so với tháng trước</p>
+      <p className={`mt-6 text-sm font-medium ${positive ? "text-emerald-300" : "text-rose-300"}`}>{change} {vsText}</p>
     </article>
   )
 }

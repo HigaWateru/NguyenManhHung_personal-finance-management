@@ -1,5 +1,6 @@
 import type { CurrencyCode } from "../../types/api"
 import { formatCurrency } from "../../utils/format"
+import { useLanguage } from "../../context/LanguageContext"
 
 type WeekFlowItem = {
   day: string
@@ -13,16 +14,17 @@ type ChartCardProps = {
 }
 
 const defaultData: WeekFlowItem[] = [
-  { day: "T2", income: 72, expense: 44 },
-  { day: "T3", income: 88, expense: 55 },
-  { day: "T4", income: 64, expense: 49 },
-  { day: "T5", income: 92, expense: 58 },
-  { day: "T6", income: 77, expense: 61 },
-  { day: "T7", income: 96, expense: 67 },
-  { day: "CN", income: 84, expense: 52 },
+  { day: "Mon", income: 72, expense: 44 },
+  { day: "Tue", income: 88, expense: 55 },
+  { day: "Wed", income: 64, expense: 49 },
+  { day: "Thu", income: 92, expense: 58 },
+  { day: "Fri", income: 77, expense: 61 },
+  { day: "Sat", income: 96, expense: 67 },
+  { day: "Sun", income: 84, expense: 52 },
 ]
 
 export default function ChartCard({ data, currencyCode = "VND" }: ChartCardProps) {
+  const { t } = useLanguage()
   const formatMoney = (value: number) => formatCurrency(value, currencyCode)
   const cashFlowByDay = data && data.length > 0 ? data : defaultData
 
@@ -34,15 +36,15 @@ export default function ChartCard({ data, currencyCode = "VND" }: ChartCardProps
     <article className="glass-panel rounded-3xl p-5">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-slate-400">Dòng tiền</p>
-          <h3 className="mt-2 text-xl font-semibold text-white">Xu hướng theo tuần</h3>
+          <p className="text-sm text-slate-400">{t("dash_weekly_flow")}</p>
+          <h3 className="mt-2 text-xl font-semibold text-white">{t("dash_weekly_flow_sub")}</h3>
         </div>
         <div className="flex items-center gap-3 text-xs">
           <span className="inline-flex items-center gap-1 text-emerald-300">
-            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400" /> Thu vào
+            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400" /> {t("nav_income")}
           </span>
           <span className="inline-flex items-center gap-1 text-rose-300">
-            <span className="h-2.5 w-2.5 rounded-sm bg-rose-400" /> Chi ra
+            <span className="h-2.5 w-2.5 rounded-sm bg-rose-400" /> {t("nav_expense")}
           </span>
         </div>
       </div>
@@ -53,11 +55,11 @@ export default function ChartCard({ data, currencyCode = "VND" }: ChartCardProps
             <div className="flex h-44 w-full items-end justify-center gap-1 rounded-xl bg-slate-950/40 p-2">
               <div className="w-1/2 rounded-sm bg-gradient-to-t from-emerald-500 to-emerald-300"
                 style={{ height: `${toPercent(item.income)}%` }}
-                title={`Thu vào: ${formatMoney(item.income)}`}
+                title={`${t("nav_income")}: ${formatMoney(item.income)}`}
               />
               <div className="w-1/2 rounded-sm bg-gradient-to-t from-rose-500 to-rose-300"
                 style={{ height: `${toPercent(item.expense)}%` }}
-                title={`Chi ra: ${formatMoney(item.expense)}`}
+                title={`${t("nav_expense")}: ${formatMoney(item.expense)}`}
               />
             </div>
 
