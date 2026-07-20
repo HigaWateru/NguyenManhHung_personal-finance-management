@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/plaid")
+@RequestMapping({"/api/v2/plaid", "/api/v1/plaid"})
 @RequiredArgsConstructor
 public class PlaidController {
     private final PlaidService plaidService;

@@ -32,12 +32,12 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST,
-                        "/api/v1/auth/register",
-                        "/api/v1/auth/login",
-                        "/api/v1/auth/refresh-token",
-                        "/api/v1/auth/forgot-password",
-                        "/api/v1/auth/verify-otp",
-                        "/api/v1/auth/reset-password")
+                    "/api/v1/auth/register",
+                    "/api/v1/auth/login",
+                    "/api/v1/auth/refresh-token",
+                    "/api/v1/auth/forgot-password",
+                    "/api/v1/auth/verify-otp",
+                    "/api/v1/auth/reset-password")
                 .permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                 .anyRequest().authenticated()

@@ -192,21 +192,21 @@ sequenceDiagram
     participant DB as MySQL / Redis
 
     User->>Client: Bấm nút [Connect Bank]
-    Client->>Server: POST /api/v1/plaid/create-link-token
+    Client->>Server: POST /api/v2/plaid/create-link-token
     Server->>Plaid: Create Link Token
     Plaid-->>Server: Link Token
     Server-->>Client: link_token
     Client->>Plaid: Mở Plaid Link Modal (Chọn First Platypus Bank)
     User->>Plaid: Nhập user_transactions_dynamic / pass_good
     Plaid-->>Client: Trả về public_token
-    Client->>Server: POST /api/v1/plaid/exchange-public-token (public_token)
+    Client->>Server: POST /api/v2/plaid/exchange-public-token (public_token)
     Server->>Plaid: Exchange Public Token
     Plaid-->>Server: access_token & item_id
     Server->>DB: Lưu BankAccount (First Platypus Bank)
     Server-->>Client: Trạng thái Connected
     
     User->>Client: Bấm [Đồng bộ giao dịch]
-    Client->>Server: POST /api/v1/plaid/sync
+    Client->>Server: POST /api/v2/plaid/sync
     Server->>Plaid: POST /transactions/sync (access_token)
     Plaid-->>Server: Trả về 15 giao dịch Sandbox
     Server->>Server: Chạy Pipeline Phân loại Thương hiệu AI/Rules
@@ -333,23 +333,23 @@ erDiagram
 
 | Endpoint | Method | Mô tả |
 |---|:---:|---|
-| `/api/v1/auth/register` | `POST` | Đăng ký tài khoản mới (khởi tạo danh mục chuẩn, 0 giao dịch rác) |
-| `/api/v1/auth/login` | `POST` | Đăng nhập trả JWT Access & Refresh Token |
-| `/api/v1/auth/forgot-password` | `POST` | Yêu cầu gửi OTP qua Email (Redis 5 phút TTL) |
-| `/api/v1/auth/verify-otp` | `POST` | Xác thực mã OTP |
-| `/api/v1/auth/reset-password` | `POST` | Đổi mật khẩu mới và thu hồi phiên |
-| `/api/v1/auth/logout` | `POST` | Đăng xuất, đưa Access Token vào Redis Blacklist |
-| `/api/v1/plaid/create-link-token` | `POST` | Tạo Link Token kết nối Plaid Sandbox |
-| `/api/v1/plaid/exchange-public-token` | `POST` | Đổi public_token lấy access_token ngân hàng **First Platypus Bank** |
-| `/api/v1/plaid/sync` | `POST` | Đồng bộ 15 giao dịch Sandbox & tự động phân loại AI/Rules |
-| `/api/v1/dashboard` | `GET` | Lấy dữ liệu Dashboard & **Phân bổ chi tiêu (categoryDistribution)** |
-| `/api/v1/categories` | `GET/POST/PUT/DELETE` | CRUD danh mục thu/chi |
-| `/api/v1/incomes` | `GET/POST/PUT/DELETE` | CRUD thu nhập |
-| `/api/v1/expenses` | `GET/POST/PUT/DELETE` | CRUD chi tiêu |
-| `/api/v1/budgets` | `GET/POST/DELETE` | Quản lý ngân sách |
-| `/api/v1/goals` | `GET/POST/PUT/DELETE` | Quản lý mục tiêu tiết kiệm |
-| `/api/v1/notifications` | `GET/POST` | Truy xuất và đánh dấu đọc thông báo |
-| `/api/exchange-rate` | `GET` | Truy xuất danh sách tỉ giá tự động |
+| `/api/v2/auth/register` | `POST` | Đăng ký tài khoản mới (khởi tạo danh mục chuẩn, 0 giao dịch rác) |
+| `/api/v2/auth/login` | `POST` | Đăng nhập trả JWT Access & Refresh Token |
+| `/api/v2/auth/forgot-password` | `POST` | Yêu cầu gửi OTP qua Email (Redis 5 phút TTL) |
+| `/api/v2/auth/verify-otp` | `POST` | Xác thực mã OTP |
+| `/api/v2/auth/reset-password` | `POST` | Đổi mật khẩu mới và thu hồi phiên |
+| `/api/v2/auth/logout` | `POST` | Đăng xuất, đưa Access Token vào Redis Blacklist |
+| `/api/v2/plaid/create-link-token` | `POST` | Tạo Link Token kết nối Plaid Sandbox |
+| `/api/v2/plaid/exchange-public-token` | `POST` | Đổi public_token lấy access_token ngân hàng **First Platypus Bank** |
+| `/api/v2/plaid/sync` | `POST` | Đồng bộ 15 giao dịch Sandbox & tự động phân loại AI/Rules |
+| `/api/v2/dashboard` | `GET` | Lấy dữ liệu Dashboard & **Phân bổ chi tiêu (categoryDistribution)** |
+| `/api/v2/categories` | `GET/POST/PUT/DELETE` | CRUD danh mục thu/chi |
+| `/api/v2/incomes` | `GET/POST/PUT/DELETE` | CRUD thu nhập |
+| `/api/v2/expenses` | `GET/POST/PUT/DELETE` | CRUD chi tiêu |
+| `/api/v2/budgets` | `GET/POST/DELETE` | Quản lý ngân sách |
+| `/api/v2/goals` | `GET/POST/PUT/DELETE` | Quản lý mục tiêu tiết kiệm |
+| `/api/v2/notifications` | `GET/POST` | Truy xuất và đánh dấu đọc thông báo |
+| `/api/v2/exchange-rate` | `GET` | Truy xuất danh sách tỉ giá tự động |
 
 ---
 

@@ -45,13 +45,12 @@ public class GlobalExceptionHandler {
         ConstraintViolationException exception,
         HttpServletRequest request
     ) {
-        Map<String, Object> errors = exception.getConstraintViolations().stream()
-            .collect(Collectors.toMap(
-                violation -> violation.getPropertyPath().toString(),
-                violation -> violation.getMessage(),
-                (existing, replacement) -> existing,
-                LinkedHashMap::new
-            ));
+        Map<String, Object> errors = exception.getConstraintViolations().stream().collect(Collectors.toMap(
+            violation -> violation.getPropertyPath().toString(),
+            violation -> violation.getMessage(),
+            (existing, replacement) -> existing,
+            LinkedHashMap::new
+        ));
 
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", errors, request);
     }

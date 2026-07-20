@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p>Personal Smart Finance · {t("header_subtitle")}</p>
         <p>© 2026 · Dev: Higa_Wateru</p>
-        <p>React + TypeScript + Tailwind</p>
+        <p>React + Spring Boot + Redis + AI</p>
       </div>
     </footer>
   )

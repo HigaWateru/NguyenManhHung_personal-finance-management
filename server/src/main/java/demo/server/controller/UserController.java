@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({"/api/users", "/api/v1/users"})
+@RequestMapping({"/api/v2/users", "/api/users", "/api/v1/users"})
 @RequiredArgsConstructor
 public class UserController {
     private final AuthService authService;

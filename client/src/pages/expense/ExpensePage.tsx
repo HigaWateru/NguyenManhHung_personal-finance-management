@@ -81,6 +81,7 @@ export default function ExpensePage() {
           page: page - 1,
           size: PAGE_SIZE,
           keyword: query || undefined,
+          search: query || undefined,
           categoryId: selectedCategory ? Number(selectedCategory) : undefined,
         }),
         apiService.getCategories("EXPENSE"),

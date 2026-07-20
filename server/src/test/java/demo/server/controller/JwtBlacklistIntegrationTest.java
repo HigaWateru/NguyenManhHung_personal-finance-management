@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class JwtBlacklistIntegrationTest {
-
     @Autowired
     private MockMvc mockMvc;
 

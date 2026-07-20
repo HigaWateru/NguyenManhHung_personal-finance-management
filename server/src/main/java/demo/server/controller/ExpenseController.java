@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/expenses")
+@RequestMapping({"/api/v2/expenses", "/api/v1/expenses"})
 @RequiredArgsConstructor
 public class ExpenseController {
     private final ExpenseService expenseService;

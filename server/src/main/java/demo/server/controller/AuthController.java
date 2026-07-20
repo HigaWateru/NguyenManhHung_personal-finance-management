@@ -32,7 +32,7 @@ import demo.server.dto.request.VerifyOtpRequest;
 import demo.server.dto.request.ResetPasswordRequest;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping({"/api/v2/auth", "/api/v1/auth"})
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
@@ -112,9 +112,7 @@ public class AuthController {
         @Valid @RequestBody ResetPasswordRequest request
     ) {
         String accessToken = null;
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            accessToken = authHeader.substring(7);
-        }
+        if (authHeader != null && authHeader.startsWith("Bearer ")) accessToken = authHeader.substring(7);
         authService.resetPassword(accessToken, request);
         return ResponseEntity.ok(ApiResponse.success(
             "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.",

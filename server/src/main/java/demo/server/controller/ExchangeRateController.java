@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping({"/api/exchange-rate", "/api/v1/exchange-rate"})
+@RequestMapping({"/api/v2/exchange-rate", "/api/exchange-rate", "/api/v1/exchange-rate"})
 @RequiredArgsConstructor
 public class ExchangeRateController {
-
     private final ExchangeRateService exchangeRateService;
 
     @GetMapping

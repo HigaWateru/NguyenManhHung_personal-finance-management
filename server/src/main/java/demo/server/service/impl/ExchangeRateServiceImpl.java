@@ -138,8 +138,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             case USD: return BigDecimal.valueOf(25450.0);
             case EUR: return BigDecimal.valueOf(27663.0);
             case JPY: return BigDecimal.valueOf(160.5);
-            case VND:
-            default: return BigDecimal.ONE;
+            case VND: default: return BigDecimal.ONE;
         }
     }
 

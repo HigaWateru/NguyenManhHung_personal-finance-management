@@ -11,6 +11,9 @@ type ErrorPayload = {
 }
 
 const AUTH_WHITELIST = [
+  "/api/v2/auth/login",
+  "/api/v2/auth/register",
+  "/api/v2/auth/refresh-token",
   "/api/v1/auth/login",
   "/api/v1/auth/register",
   "/api/v1/auth/refresh-token",
@@ -32,7 +35,7 @@ async function refreshAccessToken(): Promise<string | null> {
   const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
 
-  const response = await authClient.post<ApiResponse<AuthPayload>>("/api/v1/auth/refresh-token", {refreshToken,})
+  const response = await authClient.post<ApiResponse<AuthPayload>>("/api/v2/auth/refresh-token", {refreshToken,})
 
   const data = response.data.data
   saveAuthTokens(data.accessToken, data.refreshToken)

@@ -21,7 +21,6 @@ import demo.server.common.enums.CurrencyCode;
 @Entity
 @Table(name = "exchange_rates")
 public class ExchangeRate extends BaseEntity {
-
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "currency_code", nullable = false, unique = true, length = 10)

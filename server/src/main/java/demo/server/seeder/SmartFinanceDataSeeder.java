@@ -77,9 +77,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         if (dynamicUser != null) {
             try {
                 plaidService.syncTransactions(dynamicUser.getId());
-            } catch (Exception e) {
-                // ignore if sandbox token not yet connected
-            }
+            } catch (Exception e) {}
             ensureNotification(dynamicUser, "Đồng bộ Giao dịch Plaid", "Đã kết nối tài khoản First Platypus Bank và tự động đồng bộ 15 giao dịch.", "PLAID");
             ensureNotification(dynamicUser, "Cảnh báo Ngân sách Ăn uống", "Chi tiêu cho danh mục Ăn uống đã đạt 85% hạn mức ngân sách.", "BUDGET_WARNING");
             ensureNotification(dynamicUser, "Cập nhật Tỷ giá Ngoại tệ", "Tỷ giá thị trường đã được đồng bộ trực tuyến chuẩn USD ($1.0000 USD).", "EXCHANGE_RATE");
@@ -173,11 +171,9 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
     private User findUserByEmail(String email) {
         try {
             return entityManager.createQuery(
-                    "select u from User u where u.email = :email",
-                    User.class
-            )
-            .setParameter("email", email)
-            .getSingleResult();
+                "select u from User u where u.email = :email",
+                User.class
+            ).setParameter("email", email).getSingleResult();
         } catch (NoResultException exception) {
             return null;
         }
@@ -188,11 +184,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
             return entityManager.createQuery(
                 "select c from Category c where c.user = :user and c.name = :name and c.type = :type",
                 Category.class
-            )
-            .setParameter("user", user)
-            .setParameter("name", name)
-            .setParameter("type", type)
-            .getSingleResult();
+            ).setParameter("user", user).setParameter("name", name).setParameter("type", type).getSingleResult();
         } catch (NoResultException exception) {
             return null;
         }
@@ -228,10 +220,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         Long count = entityManager.createQuery(
                 "select count(n) from Notification n where n.user = :user and n.title = :title",
                 Long.class
-            )
-            .setParameter("user", user)
-            .setParameter("title", title)
-            .getSingleResult();
+            ).setParameter("user", user).setParameter("title", title).getSingleResult();
 
         if (count == 0) {
             demo.server.entity.Notification notification = demo.server.entity.Notification.builder()

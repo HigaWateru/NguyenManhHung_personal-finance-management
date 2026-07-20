@@ -1,6 +1,40 @@
 # Nhật ký Thay đổi (Changelog) - Smart Finance
 
-Tất cả các thay đổi lớn đối với cơ sở dữ liệu, backend API và giao diện Frontend của dự án **Smart Finance** trong Giai đoạn 2 được ghi chép đầy đủ dưới đây.
+Tất cả các thay đổi lớn đối với cơ sở dữ liệu, backend API và giao diện Frontend của dự án **Smart Finance** được ghi chép đầy đủ dưới đây.
+
+---
+
+## [1.2.0] - 2026-07-20
+
+### Added (Thêm mới)
+- **Backend (BE) Features**:
+  - **OAuth2 Authentication**: Tích hợp đăng nhập mạng xã hội qua Google và GitHub (`OAuth2AuthenticationSuccessHandler`, `CustomOAuth2UserService`, `OAuth2AuthorizationRequestRepository`).
+  - **Redis Token Blacklist**: Quản lý thu hồi JWT Refresh Token và Blacklist Access Token khi Logout hoặc đổi mật khẩu qua Spring Data Redis (`RedisTokenBlacklistService`).
+  - **Quên mật khẩu & OTP qua Email**: Luồng khôi phục mật khẩu tự động gửi mã OTP 6 chữ số qua Email sử dụng `JavaMailSender` và Redis storage (`POST /api/v2/auth/forgot-password`, `verify-otp`, `reset-password`).
+  - **Upload Ảnh đại diện (Cloudinary)**: Hỗ trợ upload và lưu trữ avatar người dùng trực tuyến qua Cloudinary Java SDK (`CloudinaryService`, `POST /api/v2/auth/profile/avatar`).
+  - **Tỷ giá hối đoái & Quy đổi đa tiền tệ (Multi-Currency Support)**:
+    - Quản lý tỷ giá 4 loại tiền tệ chính (`VND`, `USD`, `EUR`, `JPY`) với thực thể `ExchangeRate`, API `/api/v2/exchange-rates`.
+    - Tự động cập nhật tỷ giá thị trường định kỳ thông qua `@Scheduled` task.
+    - Hỗ trợ trường `displayCurrency` trong hồ sơ người dùng, tự động quy đổi số tiền thu/chi trên Dashboard, Thống kê và Báo cáo.
+  - **Bộ lọc & Tìm kiếm nâng cao**: Bổ sung truy vấn lọc giao dịch thu/chi theo khoảng thời gian (`fromDate`, `toDate`), danh mục (`categoryId`) và từ khóa (`keyword`) trong `IncomeRepository` và `ExpenseRepository`.
+
+- **Frontend (FE) Features**:
+  - **Đa ngôn ngữ (i18n)**: Hỗ trợ 3 ngôn ngữ **Tiếng Việt (VN)**, **Tiếng Anh (EN)**, **Tiếng Nhật (JP)** với `LanguageContext` và từ điển dịch toàn bộ giao diện (Dashboard, Thu nhập, Chi tiêu, Ngân sách, Mục tiêu, Tỷ giá, Cài đặt).
+  - **Trang Quản lý Tỷ giá (`ExchangeRatePage.tsx`)**: Hiển thị bảng tỷ giá thời gian thực, chỉ số biến động phần trăm và công cụ quy đổi tiền tệ nhanh.
+  - **Cập nhật Profile & Upload Avatar**: Giao diện chọn ảnh đại diện trực quan trên trang Cài đặt với phản hồi tức thì.
+  - **Nâng cấp Giao diện & Trải nghiệm Dashboard**: Thiết kế Glassmorphism hiện đại, tối ưu biểu đồ dòng tiền (ChartCard), thẻ danh mục (CategoryCard), danh sách giao dịch gần đây và thanh Header với menu thông báo & đổi ngôn ngữ/tiền tệ.
+
+### Changed (Thay đổi)
+- Nâng cấp toàn bộ các API endpoint lên phiên bản `/api/v2/*` (`/api/v2/auth`, `/api/v2/dashboard`, `/api/v2/incomes`, `/api/v2/expenses`, `/api/v2/categories`, `/api/v2/exchange-rates`).
+- Mở rộng kiểu dữ liệu `UserProfile` trong `client/src/types/api.ts` hỗ trợ `displayCurrency` và `avatarUrl`.
+- Cập nhật kiểu `PaginationQuery` trong `client/src/types/api.ts` để bổ sung hai trường tìm kiếm tùy chọn `fromDate?: string` và `toDate?: string`.
+- Cập nhật hàm chuyển đổi `toQueryParams` trong `client/src/apis/service.ts` để map linh hoạt các tham số ngày tháng (`fromDate`/`toDate`, `startDate`/`endDate`) thành URL query string gửi lên server.
+
+### Fixed (Sửa lỗi)
+- Sửa lỗi biên dịch TypeScript `Object literal may only specify known properties, and 'fromDate' does not exist in type 'PaginationQuery'` khi gọi API từ [DashboardPage.tsx](client/src/pages/dashboard/DashboardPage.tsx).
+- Sửa lỗi JPA Transaction `No EntityManager with actual transaction available` trong `OAuth2AuthenticationSuccessHandler` bằng cách di chuyển logic vào `@Service` với `@Transactional`.
+- Sửa lỗi `Duplicate entry` trùng lặp danh mục khi đồng bộ giao dịch ngân hàng Plaid (`CategoryClassificationServiceImpl`).
+- Sửa lỗi thiếu placeholder cấu hình Plaid trong môi trường test context (`application-test.properties`).
 
 ---
 

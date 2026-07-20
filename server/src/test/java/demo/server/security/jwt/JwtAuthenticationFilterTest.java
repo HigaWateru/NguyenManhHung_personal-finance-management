@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class JwtAuthenticationFilterTest {
-
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
@@ -96,12 +95,12 @@ public class JwtAuthenticationFilterTest {
     void doFilterInternal_validAndNotBlacklistedToken_authenticatesUser() throws ServletException, IOException {
         String token = "valid_token";
         User user = User.builder()
-                .id(1L)
-                .email("user@example.com")
-                .fullName("User Name")
-                .active(true)
-                .credentialsUpdatedAt(LocalDateTime.now().minusDays(1))
-                .build();
+            .id(1L)
+            .email("user@example.com")
+            .fullName("User Name")
+            .active(true)
+            .credentialsUpdatedAt(LocalDateTime.now().minusDays(1))
+            .build();
 
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
         when(jwtTokenProvider.isTokenValid(token)).thenReturn(true);

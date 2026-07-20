@@ -228,8 +228,7 @@ export default function StatisticsPage() {
                     border: "1px solid rgba(34, 211, 238, 0.2)",
                     borderRadius: "14px",
                     color: "#e2e8f0",
-                  }}
-                  formatter={(value) => `${formatTooltipMoney(value)}`}
+                  }} formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
                 <Bar dataKey="income" name={t("nav_income")} fill="#22d3ee" radius={[8, 8, 0, 0]} />
@@ -289,8 +288,7 @@ export default function StatisticsPage() {
                     border: "1px solid rgba(34, 211, 238, 0.2)",
                     borderRadius: "14px",
                     color: "#e2e8f0",
-                  }}
-                  formatter={(value) => `${formatTooltipMoney(value)}`}
+                  }} formatter={(value) => `${formatTooltipMoney(value)}`}
                 />
                 <Legend />
                 <Line type="monotone" dataKey="net" name={t("stat_yearly_net")} stroke="#22d3ee"

@@ -50,6 +50,11 @@ export type TranslationKeys = {
   bank_label_balance: string
   bank_label_last_synced: string
   bank_label_status: string
+  bank_sync_success_up_to_date: string
+  bank_sync_success_count: string
+  bank_sync_success_header: string
+  bank_sync_error_timeout: string
+  bank_sync_error_generic: string
 
   // Dashboard Overview
   dash_total_balance: string
@@ -253,6 +258,11 @@ export const translations: Record<Language, TranslationKeys> = {
     bank_label_balance: "Số dư hiện tại",
     bank_label_last_synced: "Đồng bộ cuối",
     bank_label_status: "Trạng thái kết nối",
+    bank_sync_success_up_to_date: "Đã đồng bộ ngân hàng First Platypus Bank. Toàn bộ 15 giao dịch đã ở trạng thái cập nhật mới nhất.",
+    bank_sync_success_count: "Đã đồng bộ thành công {count} giao dịch mới từ ngân hàng!",
+    bank_sync_success_header: "Đồng bộ giao dịch ngân hàng thành công!",
+    bank_sync_error_timeout: "Đồng bộ giao dịch thất bại do quá thời gian phản hồi từ máy chủ (Server Response Timeout). Vui lòng thử lại sau.",
+    bank_sync_error_generic: "Đồng bộ giao dịch Plaid thất bại.",
 
     // Dashboard Overview
     dash_total_balance: "Tổng số dư",
@@ -455,6 +465,11 @@ export const translations: Record<Language, TranslationKeys> = {
     bank_label_balance: "Current Balance",
     bank_label_last_synced: "Last Synced",
     bank_label_status: "Connection Status",
+    bank_sync_success_up_to_date: "First Platypus Bank synchronized. All 15 transactions are up to date.",
+    bank_sync_success_count: "Successfully synchronized {count} new bank transactions!",
+    bank_sync_success_header: "Bank transactions synchronized successfully!",
+    bank_sync_error_timeout: "Transaction synchronization failed due to Server Response Timeout. Please try again later.",
+    bank_sync_error_generic: "Plaid transaction synchronization failed.",
 
     // Dashboard Overview
     dash_total_balance: "Total Balance",
@@ -657,6 +672,11 @@ export const translations: Record<Language, TranslationKeys> = {
     bank_label_balance: "現在残高",
     bank_label_last_synced: "最終同期",
     bank_label_status: "接続状態",
+    bank_sync_success_up_to_date: "First Platypus Bank が同期されました。全15件の取引が最新状態です。",
+    bank_sync_success_count: "銀行から {count} 件の新しい取引を正常に同期しました！",
+    bank_sync_success_header: "銀行取引が正常に同期されました！",
+    bank_sync_error_timeout: "サーバーの応答タイムアウトにより取引の同期に失敗しました。後でもう一度お試しください。",
+    bank_sync_error_generic: "Plaid 取引の同期に失敗しました。",
 
     // Dashboard Overview
     dash_total_balance: "総資産残高",

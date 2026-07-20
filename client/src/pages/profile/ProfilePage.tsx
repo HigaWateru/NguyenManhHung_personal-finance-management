@@ -42,8 +42,8 @@ export default function ProfilePage() {
     try {
       await dispatch(uploadAvatar(file)).unwrap()
       setSuccessMsg("Cập nhật ảnh đại diện thành công!")
-    } catch (err: any) {
-      setFormError(err || "Không thể cập nhật ảnh đại diện.")
+    } catch (err) {
+      setFormError(typeof err === "string" ? err : "Không thể cập nhật ảnh đại diện.")
     }
   }
 
@@ -64,8 +64,8 @@ export default function ProfilePage() {
     try {
       await dispatch(updateProfile({ fullName: fullName.trim(), timezone, currencyCode })).unwrap()
       setSuccessMsg("Cập nhật hồ sơ thành công!")
-    } catch (err: any) {
-      setFormError(err || "Không thể cập nhật hồ sơ.")
+    } catch (err) {
+      setFormError(typeof err === "string" ? err : "Không thể cập nhật hồ sơ.")
     }
   }
 

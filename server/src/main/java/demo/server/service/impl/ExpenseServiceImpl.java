@@ -38,26 +38,15 @@ public class ExpenseServiceImpl implements ExpenseService {
 
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<ExpenseResponse> getExpenses(
-        Long userId,
-        Long categoryId,
-        LocalDate fromDate,
-        LocalDate toDate,
-        String keyword,
-        int page,
-        int size
-    ) {
+    public PageResponse<ExpenseResponse> getExpenses(Long userId, Long categoryId, LocalDate fromDate,
+            LocalDate toDate, String keyword, int page, int size) {
         ServiceInputUtils.validateDateRange(fromDate, toDate);
 
         User user = findActiveUser(userId);
         CurrencyCode baseCurrency = user.getCurrencyCode();
         CurrencyCode displayCurrency = user.getDisplayCurrency();
 
-        Page<ExpenseResponse> expenses = expenseRepository.search(
-            userId,
-            categoryId,
-            fromDate,
-            toDate,
+        Page<ExpenseResponse> expenses = expenseRepository.search(userId, categoryId, fromDate, toDate,
             ServiceInputUtils.normalizeOptionalText(keyword),
             PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionDate", "createdAt"))
         ).map(expense -> {

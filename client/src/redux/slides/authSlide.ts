@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { apiService, type LoginInput, type ProfileUpdateInput, type RegisterInput } from "../../apis/service"
+import { apiService } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
-import type { UserProfile, CurrencyCode } from "../../types/api"
+import type { UserProfile, CurrencyCode, LoginInput, ProfileUpdateInput, RegisterInput } from "../../types/api"
 import { clearAuthTokens, getAccessToken, getRefreshToken, saveAuthTokens } from "../../utils/auth"
 
 type AuthState = {

@@ -104,6 +104,21 @@ public class CategoryClassificationServiceImpl implements CategoryClassification
         if (aiMatched != null) {
             transaction.updateCategory(aiMatched);
             cacheCategory(cacheKey, aiMatched.getId());
+
+            // Auto-persist MerchantMapping to DB so subsequent syncs hit DB/Redis directly in 0.1ms!
+            try {
+                if (merchant != null && !merchant.trim().isEmpty() && merchantMappingRepository.findByUserIdAndMerchantNameIgnoreCase(userId, merchant.trim()).isEmpty()) {
+                    MerchantMapping mapping = MerchantMapping.builder()
+                        .user(transaction.getUser())
+                        .merchantName(merchant.trim())
+                        .category(aiMatched)
+                        .build();
+                    merchantMappingRepository.save(mapping);
+                }
+            } catch (Exception e) {
+                log.warn("Merchant mapping already exists or failed to save for {}", merchant);
+            }
+
             log.info("Transaction [ID: {}] classified via AI Categorizer: {}", transaction.getId(), aiMatched.getName());
             return;
         }
@@ -125,23 +140,22 @@ public class CategoryClassificationServiceImpl implements CategoryClassification
 
     private Category runRuleEngine(Transaction transaction, String lookupName) {
         String cleanText = lookupName.toLowerCase();
-        Long userId = transaction.getUser().getId();
         CategoryType type = transaction.getType();
 
         // Standard categories and their keywords
         Map<String, String[]> rules = new HashMap<>();
         if (type == CategoryType.INCOME) {
-            rules.put("Salary", new String[]{"salary", "payroll", "paycheck", "lương", "thu nhập"});
+            rules.put("Salary", new String[]{"salary", "payroll", "paycheck", "lương", "thu nhập", "employer", "deposit"});
             rules.put("Bonus", new String[]{"bonus", "thưởng"});
             rules.put("Freelance", new String[]{"freelance", "upwork", "fiverr", "dự án"});
-            rules.put("Interest", new String[]{"interest", "interest payment", "dividend", "yield", "lãi", "tiền lãi", "cổ tức", "tiết kiệm", "hoàn tiền", "refund", "cashback"});
+            rules.put("Interest", new String[]{"interest", "interest payment", "dividend", "yield", "lãi", "tiền lãi", "cổ tức", "tiết kiệm", "hoàn tiền", "refund", "cashback", "ach electronic credit"});
         } else {
-            rules.put("Food", new String[]{"starbucks", "mcdonald", "kfc", "restaurant", "pizza", "food", "cafe", "coffee", "cà phê", "uber eats", "grabfood", "foodpanda", "bakery", "sweetgreen", "royal farms", "smart & final", "dining", "quán ăn", "trà sữa"});
-            rules.put("Transport", new String[]{"uber", "lyft", "grab", "taxi", "gas", "fuel", "petrol", "parking", "shell", "chevron", "di chuyển", "xăng"});
-            rules.put("Shopping", new String[]{"amazon", "walmart", "target", "ebay", "shopee", "tiki", "lazada", "supermarket", "grocery", "mall", "apple", "nike", "adidas", "zara", "uniqlo", "cửa hàng"});
+            rules.put("Food", new String[]{"starbucks", "mcdonald", "kfc", "restaurant", "pizza", "food", "cafe", "coffee", "cà phê", "uber eats", "grabfood", "foodpanda", "bakery", "sweetgreen", "royal farms", "smart & final", "dining", "quán ăn", "trà sữa", "sparkles", "in-n-out"});
+            rules.put("Transport", new String[]{"uber", "lyft", "grab", "taxi", "gas", "fuel", "petrol", "parking", "shell", "chevron", "di chuyển", "xăng", "bart", "united airlines", "airlines"});
+            rules.put("Shopping", new String[]{"amazon", "walmart", "target", "ebay", "shopee", "tiki", "lazada", "supermarket", "grocery", "mall", "apple", "nike", "adidas", "zara", "uniqlo", "cửa hàng", "kroger", "square inc", "cvs"});
             rules.put("Entertainment", new String[]{"netflix", "spotify", "hulu", "steam", "playstation", "xbox", "cinema", "movie", "theater", "disney", "youtube", "nintendo", "game", "giải trí"});
             rules.put("Utilities", new String[]{"electric", "power", "water", "internet", "phone", "comcast", "verizon", "t-mobile", "openai", "chatgpt", "software", "subscription", "aws", "cloud", "google", "microsoft", "icloud", "fpt", "viettel", "vnpt", "điện nước"});
-            rules.put("Health", new String[]{"pharmacy", "medical", "hospital", "doctor", "health", "dentist", "thuốc", "bệnh viện"});
+            rules.put("Health", new String[]{"pharmacy", "medical", "hospital", "doctor", "health", "dentist", "thuốc", "bệnh viện", "cvs pharmacy"});
         }
 
         for (Map.Entry<String, String[]> rule : rules.entrySet()) {

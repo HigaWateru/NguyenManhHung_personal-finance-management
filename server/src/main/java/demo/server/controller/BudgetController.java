@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/budgets")
+@RequestMapping({"/api/v2/budgets", "/api/v1/budgets"})
 @RequiredArgsConstructor
 public class BudgetController {
     private final BudgetService budgetService;

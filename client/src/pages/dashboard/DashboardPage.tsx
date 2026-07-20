@@ -54,6 +54,7 @@ export default function DashboardPage() {
   const [linkToken, setLinkToken] = useState<string | null>(null)
   const [plaidSyncing, setPlaidSyncing] = useState(false)
   const [plaidError, setPlaidError] = useState<string | null>(null)
+  const [plaidSuccess, setPlaidSuccess] = useState<string | null>(null)
   const [showAccountsModal, setShowAccountsModal] = useState(false)
 
   // Budget state
@@ -161,12 +162,30 @@ export default function DashboardPage() {
     try {
       setPlaidSyncing(true)
       setPlaidError(null)
+      setPlaidSuccess(null)
       const res = await apiService.syncPlaidTransactions()
       await loadDashboardData()
       await fetchPlaidStatus()
+      const count = res.syncedCount ?? 0
+      const successMsg = count > 0 
+        ? t("bank_sync_success_count").replace("{count}", count.toString())
+        : t("bank_sync_success_up_to_date")
+      
+      setPlaidSuccess(successMsg)
+      notifyHeader(t("bank_sync_success_header"), "success")
       triggerNotificationRefresh()
     } catch (err) {
-      setPlaidError(extractApiError(err, "Đồng bộ giao dịch Plaid thất bại."))
+      setPlaidSuccess(null)
+      const rawMsg = extractApiError(err, t("bank_sync_error_generic"))
+      const isTimeout = rawMsg.toLowerCase().includes("timeout") 
+        || rawMsg.toLowerCase().includes("quá thời gian") 
+        || rawMsg.toLowerCase().includes("504") 
+        || rawMsg.toLowerCase().includes("econnaborted")
+      const finalMsg = isTimeout ? t("bank_sync_error_timeout") : rawMsg
+      
+      setPlaidError(finalMsg)
+      notifyHeader(finalMsg, "error")
+      triggerNotificationRefresh()
     } finally {
       setPlaidSyncing(false)
     }
@@ -399,25 +418,7 @@ export default function DashboardPage() {
     setPaidBillIds((prev) => [...prev, id])
   }
 
-  const metrics = useMemo(() => {
-    if (!dashboardData) {
-      return [
-        { label: t("dash_total_balance"), value: formatCurrency(0), change: "0%", icon: "Wallet", positive: true },
-        { label: t("dash_monthly_income"), value: formatCurrency(0), change: "0%", icon: "ArrowDownRight", positive: true },
-        { label: t("dash_monthly_expense"), value: formatCurrency(0), change: "0%", icon: "ArrowUpRight", positive: false },
-        { label: t("dash_saving_rate"), value: "0%", change: "0%", icon: "PiggyBank", positive: true }
-      ]
-    }
 
-    const savingRate = dashboardData.totalIncome > 0 ? (dashboardData.totalBalance / dashboardData.totalIncome) * 100 : 0
-
-    return [
-      { label: t("dash_total_balance"), value: formatCurrency(dashboardData.totalBalance), change: "Live", icon: "Wallet", positive: true },
-      { label: t("dash_monthly_income"), value: formatCurrency(dashboardData.monthlyIncome), change: "Live", icon: "ArrowDownRight", positive: true },
-      { label: t("dash_monthly_expense"), value: formatCurrency(dashboardData.monthlyExpense), change: "Live", icon: "ArrowUpRight", positive: false },
-      { label: t("dash_saving_rate"), value: `${savingRate.toFixed(1)}%`, change: "Live", icon: "PiggyBank", positive: savingRate >= 0 }
-    ]
-  }, [dashboardData, currencyCode, t])
 
   const isIncome = quickActionType === "income"
   const modalTitle = isIncome ? t("dash_add_income") : t("dash_add_expense")
@@ -518,9 +519,26 @@ export default function DashboardPage() {
         </div>
 
         {plaidError && (
-          <div className="mt-4 flex items-center gap-2 rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
-            <AlertCircle size={16} />
-            <p>{plaidError}</p>
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={16} />
+              <p>{plaidError}</p>
+            </div>
+            <button type="button" onClick={() => setPlaidError(null)} className="text-rose-300 hover:text-white cursor-pointer">
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
+        {plaidSuccess && (
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
+            <div className="flex items-center gap-2">
+              <Activity size={16} className="text-emerald-400" />
+              <p>{plaidSuccess}</p>
+            </div>
+            <button type="button" onClick={() => setPlaidSuccess(null)} className="text-emerald-300 hover:text-white cursor-pointer">
+              <X size={16} />
+            </button>
           </div>
         )}
 

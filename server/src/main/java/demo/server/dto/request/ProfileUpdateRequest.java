@@ -18,14 +18,14 @@ import lombok.Setter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileUpdateRequest {
-                @NotBlank(message = "Full name is required")
-                @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
-                private String fullName;
+    @NotBlank(message = "Full name is required")
+    @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
+    private String fullName;
 
-                @NotBlank(message = "Timezone is required")
-                @Size(max = 50, message = "Timezone must not exceed 50 characters")
-                private String timezone;
+    @NotBlank(message = "Timezone is required")
+    @Size(max = 50, message = "Timezone must not exceed 50 characters")
+    private String timezone;
 
-                @NotNull(message = "Currency code is required")
-                private CurrencyCode currencyCode;
+    @NotNull(message = "Currency code is required")
+    private CurrencyCode currencyCode;
 }

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/incomes")
+@RequestMapping({"/api/v2/incomes", "/api/v1/incomes"})
 @RequiredArgsConstructor
 public class IncomeController {
 

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/statistics")
+@RequestMapping({"/api/v2/statistics", "/api/v1/statistics"})
 @RequiredArgsConstructor
 public class StatisticsController {
     private final StatisticsService statisticsService;

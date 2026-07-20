@@ -18,10 +18,10 @@ type HeaderProps = {
   onMenuClick: () => void
 }
 
-const languageOptions: { code: Language; label: string; flag: string }[] = [
-  { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "ja", label: "日本語", flag: "🇯🇵" },
+const languageOptions: { code: Language; label: string; flagClass: string }[] = [
+  { code: "vi", label: "Tiếng Việt", flagClass: "fi fi-vn" },
+  { code: "en", label: "English", flagClass: "fi fi-us" },
+  { code: "ja", label: "日本語", flagClass: "fi fi-jp" },
 ]
 
 export default function Header({ title, onMenuClick }: HeaderProps) {
@@ -165,7 +165,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
             className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white hover:bg-white/10 hover:border-cyan-400/40 transition cursor-pointer shadow-sm"
             aria-label="Đổi ngôn ngữ"
           >
-            <span className="text-base leading-none">{currentLangObj.flag}</span>
+            <span className={`${currentLangObj.flagClass} rounded-xs shadow-sm`}></span>
             <span className="font-semibold text-white">{currentLangObj.label}</span>
             <ChevronDown size={14} className="text-slate-400" />
           </button>
@@ -183,8 +183,8 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                       : "text-slate-300 hover:bg-white/5 hover:text-white"
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-base">{option.flag}</span>
+                  <div className="flex items-center gap-2.5">
+                    <span className={`${option.flagClass} rounded-xs shadow-sm`}></span>
                     <span>{option.label}</span>
                   </div>
                   {language === option.code && <Check size={14} className="text-cyan-400" />}
@@ -292,6 +292,45 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                 ) : (
                   displayedNotifications.map((notif) => {
                     const cat = getNotificationCategory(notif.type)
+                    
+                    // Translate notification content based on current system language
+                    let translatedTitle = notif.title
+                    let translatedMessage = notif.message
+
+                    if (notif.title.includes("Đồng bộ Giao dịch") || notif.title.includes("Cảnh báo Đồng bộ Giao dịch")) {
+                      translatedTitle = notif.title.includes("Cảnh báo") 
+                        ? (language === "en" ? "Bank Sync Warning" : language === "ja" ? "銀行同期警告" : "Cảnh báo Đồng bộ Giao dịch")
+                        : (language === "en" ? "Bank Sync Completed" : language === "ja" ? "銀行同期完了" : "Đồng bộ Giao dịch Plaid")
+                      
+                      if (notif.message.includes("quá thời gian")) {
+                        translatedMessage = t("bank_sync_error_timeout")
+                      } else if (notif.message.includes("cập nhật mới nhất")) {
+                        translatedMessage = t("bank_sync_success_up_to_date")
+                      } else if (notif.message.includes("Đã đồng bộ thành công")) {
+                        const match = notif.message.match(/\d+/)
+                        const countStr = match ? match[0] : "15"
+                        translatedMessage = t("bank_sync_success_count").replace("{count}", countStr)
+                      } else {
+                        translatedMessage = notif.message
+                      }
+                    } else if (notif.title.includes("Cảnh báo Ngân sách")) {
+                      if (language === "en") {
+                        translatedTitle = "Budget Warning"
+                        translatedMessage = notif.message.replace("Chi tiêu cho danh mục", "Expenses for category").replace("đã đạt", "reached").replace("hạn mức ngân sách.", "of budget limit.")
+                      } else if (language === "ja") {
+                        translatedTitle = "予算警告"
+                        translatedMessage = notif.message.replace("Chi tiêu cho danh mục", "カテゴリ「").replace("đã đạt", "」の支出が").replace("hạn mức ngân sách.", "の予算上限に達しました。")
+                      }
+                    } else if (notif.title.includes("Cập nhật Tỷ giá")) {
+                      if (language === "en") {
+                        translatedTitle = "Exchange Rates Updated"
+                        translatedMessage = "Market exchange rates synced online against USD standard ($1.0000 USD)."
+                      } else if (language === "ja") {
+                        translatedTitle = "為替レート更新"
+                        translatedMessage = "市場為替レートがオンラインで同期されました（USD標準 $1.0000 USD）。"
+                      }
+                    }
+
                     return (
                       <div key={notif.id} 
                         className={`relative rounded-2xl p-3.5 border transition-all duration-200 space-y-2 ${
@@ -327,8 +366,8 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
                           )}
                         </div>
 
-                        <h5 className="font-bold text-white text-xs leading-snug">{notif.title}</h5>
-                        <p className="text-slate-300 text-[11px] leading-relaxed font-normal">{notif.message}</p>
+                        <h5 className="font-bold text-white text-xs leading-snug">{translatedTitle}</h5>
+                        <p className="text-slate-300 text-[11px] leading-relaxed font-normal">{translatedMessage}</p>
                         
                         <div className="text-[10px] text-cyan-400/80 text-right font-semibold">
                           {new Date(notif.createdAt).toLocaleString(language === "vi" ? "vi-VN" : language === "ja" ? "ja-JP" : "en-US", {

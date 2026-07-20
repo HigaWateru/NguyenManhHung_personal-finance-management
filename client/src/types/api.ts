@@ -40,7 +40,7 @@ export type PageResponse<T> = {
   totalPages: number
   first: boolean
   last: boolean
-};
+}
 
 export type CategoryType = "INCOME" | "EXPENSE"
 
@@ -181,3 +181,72 @@ export type ExchangeRateResponse = {
   updatedAt: string
 }
 
+// Request Input & Query DTOs
+export type LoginInput = {
+  email: string
+  password: string
+}
+
+export type RegisterInput = {
+  fullName: string
+  email: string
+  password: string
+  confirmPassword?: string
+  timezone?: string
+  currencyCode?: string
+}
+
+export type ProfileUpdateInput = {
+  fullName?: string
+  timezone?: string
+  currencyCode?: CurrencyCode
+}
+
+export type ForgotPasswordInput = {
+  email: string
+}
+
+export type VerifyOtpInput = {
+  email: string
+  otp: string
+}
+
+export type ResetPasswordInput = {
+  email: string
+  otp: string
+  newPassword: string
+}
+
+export type IncomeInput = {
+  categoryId: number
+  amount: number
+  transactionDate: string
+  note?: string
+}
+
+export type ExpenseInput = {
+  categoryId: number
+  amount: number
+  transactionDate: string
+  note?: string
+}
+
+export type CategoryInput = {
+  name: string
+  type: CategoryType
+  description?: string
+}
+
+export type PaginationQuery = {
+  page: number
+  size: number
+  search?: string
+  keyword?: string
+  sortBy?: string
+  sortDir?: "asc" | "desc"
+  categoryId?: number
+  startDate?: string
+  endDate?: string
+  fromDate?: string
+  toDate?: string
+}

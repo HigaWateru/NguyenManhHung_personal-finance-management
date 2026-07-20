@@ -1,108 +1,109 @@
 import { http } from "./http"
-import type {ApiResponse, AuthPayload, CategoryItem, CategoryType, CurrencyCode, DashboardData, ExpenseItem, IncomeItem,
-  PageResponse, StatisticsData, UserProfile, BankAccountResponse, BudgetResponse, GoalResponse, NotificationResponse, ExchangeRateResponse } from "../types/api"
+import type {
+  ApiResponse,
+  AuthPayload,
+  CategoryInput,
+  CategoryItem,
+  ExpenseInput,
+  ExpenseItem,
+  ForgotPasswordInput,
+  IncomeInput,
+  IncomeItem,
+  LoginInput,
+  PageResponse,
+  PaginationQuery,
+  ProfileUpdateInput,
+  RegisterInput,
+  ResetPasswordInput,
+  StatisticsData,
+  UserProfile,
+  VerifyOtpInput,
+  CategoryType,
+  DashboardData,
+  BankAccountResponse,
+  BudgetResponse,
+  GoalResponse,
+  NotificationResponse,
+  ExchangeRateResponse,
+  CurrencyCode
+} from "../types/api"
 
-export type LoginInput = {
-  email: string
-  password: string
+export type {
+  LoginInput,
+  RegisterInput,
+  ProfileUpdateInput,
+  ForgotPasswordInput,
+  VerifyOtpInput,
+  ResetPasswordInput,
+  IncomeInput,
+  ExpenseInput,
+  CategoryInput
 }
 
-export type ProfileUpdateInput = {
-  fullName: string
-  timezone: string
-  currencyCode: CurrencyCode
-}
-
-export type RegisterInput = {
-  fullName: string
-  email: string
-  password: string
-  confirmPassword: string
-  timezone?: string
-  currencyCode?: "VND" | "USD" | "EUR"
-}
-
-export type CategoryInput = {
-  name: string
-  type: CategoryType
-  description?: string
-}
-
-export type IncomeInput = {
-  categoryId: number
-  amount: number
-  transactionDate: string
-  note?: string
-}
-
-export type ExpenseInput = {
-  categoryId: number
-  amount: number
-  transactionDate: string
-  note?: string
-}
-
-export type ForgotPasswordInput = {
-  email: string
-}
-
-export type VerifyOtpInput = {
-  email: string
-  otp: string
-}
-
-export type ResetPasswordInput = {
-  email: string
-  otp: string
-  password: string
-  confirmPassword: string
-}
-
-export type PaginationQuery = {
-  page?: number
-  size?: number
-  keyword?: string
-  categoryId?: number
-  fromDate?: string
-  toDate?: string
-}
-
-function toQueryParams(query: PaginationQuery) {
-  return {
-    ...(query.page !== undefined ? { page: query.page } : {}),
-    ...(query.size !== undefined ? { size: query.size } : {}),
-    ...(query.keyword ? { keyword: query.keyword } : {}),
-    ...(query.categoryId ? { categoryId: query.categoryId } : {}),
-    ...(query.fromDate ? { fromDate: query.fromDate } : {}),
-    ...(query.toDate ? { toDate: query.toDate } : {}),
+function toQueryParams(query: PaginationQuery): Record<string, string | number> {
+  const params: Record<string, string | number> = {
+    page: query.page,
+    size: query.size,
   }
+
+  const searchText = query.keyword?.trim() || query.search?.trim()
+  if (searchText) {
+    params.keyword = searchText
+    params.search = searchText
+  }
+
+  if (query.sortBy) {
+    params.sortBy = query.sortBy
+  }
+
+  if (query.sortDir) {
+    params.sortDir = query.sortDir
+  }
+
+  if (query.categoryId) {
+    params.categoryId = query.categoryId
+  }
+
+  const from = query.fromDate || query.startDate
+  if (from) {
+    params.fromDate = from
+    params.startDate = from
+  }
+
+  const to = query.toDate || query.endDate
+  if (to) {
+    params.toDate = to
+    params.endDate = to
+  }
+
+  return params
 }
 
 export const apiService = {
   login: async (payload: LoginInput) => {
-    const response = await http.post<ApiResponse<AuthPayload>>("/api/v1/auth/login", payload)
+    const response = await http.post<ApiResponse<AuthPayload>>("/api/v2/auth/login", payload)
     return response.data.data
   },
 
   register: async (payload: RegisterInput) => {
-    const response = await http.post<ApiResponse<UserProfile>>("/api/v1/auth/register", payload)
+    const response = await http.post<ApiResponse<UserProfile>>("/api/v2/auth/register", payload)
     return response.data.data
   },
 
   getProfile: async () => {
-    const response = await http.get<ApiResponse<UserProfile>>("/api/v1/auth/profile")
+    const response = await http.get<ApiResponse<UserProfile>>("/api/v2/auth/profile")
     return response.data.data
   },
 
   updateProfile: async (payload: ProfileUpdateInput) => {
-    const response = await http.put<ApiResponse<UserProfile>>("/api/v1/auth/profile", payload)
+    const response = await http.put<ApiResponse<UserProfile>>("/api/v2/auth/profile", payload)
     return response.data.data
   },
 
   uploadAvatar: async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await http.post<ApiResponse<UserProfile>>("/api/v1/auth/profile/avatar", formData, {
+    const response = await http.post<ApiResponse<UserProfile>>("/api/v2/auth/profile/avatar", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -111,215 +112,215 @@ export const apiService = {
   },
 
   logout: async (refreshToken: string) => {
-    await http.post("/api/v1/auth/logout", { refreshToken })
+    await http.post("/api/v2/auth/logout", { refreshToken })
   },
 
   getDashboard: async () => {
-    const response = await http.get<ApiResponse<DashboardData>>("/api/v1/dashboard")
+    const response = await http.get<ApiResponse<DashboardData>>("/api/v2/dashboard")
     return response.data.data
   },
 
   getStatistics: async (year?: number) => {
-    const response = await http.get<ApiResponse<StatisticsData>>("/api/v1/statistics", {
+    const response = await http.get<ApiResponse<StatisticsData>>("/api/v2/statistics", {
       params: year ? { year } : undefined,
     })
     return response.data.data
   },
 
   getCategories: async (type?: CategoryType) => {
-    const response = await http.get<ApiResponse<CategoryItem[]>>("/api/v1/categories", {
+    const response = await http.get<ApiResponse<CategoryItem[]>>("/api/v2/categories", {
       params: type ? { type } : undefined,
     })
     return response.data.data
   },
 
   createCategory: async (payload: CategoryInput) => {
-    const response = await http.post<ApiResponse<CategoryItem>>("/api/v1/categories", payload);
+    const response = await http.post<ApiResponse<CategoryItem>>("/api/v2/categories", payload);
     return response.data.data
   },
 
   updateCategory: async (id: number, payload: CategoryInput) => {
-    const response = await http.put<ApiResponse<CategoryItem>>(`/api/v1/categories/${id}`, payload)
+    const response = await http.put<ApiResponse<CategoryItem>>(`/api/v2/categories/${id}`, payload)
     return response.data.data
   },
 
   deleteCategory: async (id: number) => {
-    await http.delete(`/api/v1/categories/${id}`)
+    await http.delete(`/api/v2/categories/${id}`)
   },
 
   getIncomes: async (query: PaginationQuery) => {
-    const response = await http.get<ApiResponse<PageResponse<IncomeItem>>>("/api/v1/incomes", {
+    const response = await http.get<ApiResponse<PageResponse<IncomeItem>>>("/api/v2/incomes", {
       params: toQueryParams(query),
     });
     return response.data.data
   },
 
   createIncome: async (payload: IncomeInput) => {
-    const response = await http.post<ApiResponse<IncomeItem>>("/api/v1/incomes", payload)
+    const response = await http.post<ApiResponse<IncomeItem>>("/api/v2/incomes", payload)
     return response.data.data
   },
 
   updateIncome: async (id: number, payload: IncomeInput) => {
-    const response = await http.put<ApiResponse<IncomeItem>>(`/api/v1/incomes/${id}`, payload)
+    const response = await http.put<ApiResponse<IncomeItem>>(`/api/v2/incomes/${id}`, payload)
     return response.data.data
   },
 
   deleteIncome: async (id: number) => {
-    await http.delete(`/api/v1/incomes/${id}`)
+    await http.delete(`/api/v2/incomes/${id}`)
   },
 
   getExpenses: async (query: PaginationQuery) => {
-    const response = await http.get<ApiResponse<PageResponse<ExpenseItem>>>("/api/v1/expenses", {
+    const response = await http.get<ApiResponse<PageResponse<ExpenseItem>>>("/api/v2/expenses", {
       params: toQueryParams(query),
     });
     return response.data.data
   },
 
   createExpense: async (payload: ExpenseInput) => {
-    const response = await http.post<ApiResponse<ExpenseItem>>("/api/v1/expenses", payload)
+    const response = await http.post<ApiResponse<ExpenseItem>>("/api/v2/expenses", payload)
     return response.data.data
   },
 
   updateExpense: async (id: number, payload: ExpenseInput) => {
-    const response = await http.put<ApiResponse<ExpenseItem>>(`/api/v1/expenses/${id}`, payload)
+    const response = await http.put<ApiResponse<ExpenseItem>>(`/api/v2/expenses/${id}`, payload)
     return response.data.data
   },
 
   deleteExpense: async (id: number) => {
-    await http.delete(`/api/v1/expenses/${id}`)
+    await http.delete(`/api/v2/expenses/${id}`)
   },
 
   forgotPassword: async (payload: ForgotPasswordInput) => {
-    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/forgot-password", payload)
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v2/auth/forgot-password", payload)
     return response.data
   },
 
   verifyOtp: async (payload: VerifyOtpInput) => {
-    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/verify-otp", payload)
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v2/auth/verify-otp", payload)
     return response.data
   },
 
   resetPassword: async (payload: ResetPasswordInput) => {
-    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/auth/reset-password", payload)
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v2/auth/reset-password", payload)
     return response.data
   },
 
   // Plaid Integration
   getPlaidLinkToken: async () => {
-    const response = await http.post<ApiResponse<{ linkToken: string }>>("/api/v1/plaid/create-link-token")
+    const response = await http.post<ApiResponse<{ linkToken: string }>>("/api/v2/plaid/create-link-token")
     return response.data.data
   },
 
   exchangePlaidPublicToken: async (publicToken: string, institutionName: string) => {
-    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/plaid/exchange-public-token", { publicToken, institutionName })
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v2/plaid/exchange-public-token", { publicToken, institutionName })
     return response.data.data
   },
 
   syncPlaidTransactions: async () => {
-    const response = await http.post<ApiResponse<{ syncedCount: number }>>("/api/v1/plaid/sync")
+    const response = await http.post<ApiResponse<{ syncedCount: number }>>("/api/v2/plaid/sync")
     return response.data.data
   },
 
   getPlaidBankAccounts: async () => {
-    const response = await http.get<ApiResponse<BankAccountResponse[]>>("/api/v1/plaid/accounts")
+    const response = await http.get<ApiResponse<BankAccountResponse[]>>("/api/v2/plaid/accounts")
     return response.data.data
   },
 
   getPlaidStatus: async () => {
-    const response = await http.get<ApiResponse<{ connected: boolean }>>("/api/v1/plaid/status")
+    const response = await http.get<ApiResponse<{ connected: boolean }>>("/api/v2/plaid/status")
     return response.data.data
   },
 
   disconnectPlaid: async () => {
-    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/plaid/disconnect")
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v2/plaid/disconnect")
     return response.data.data
   },
 
   // Budgets
   getBudgets: async () => {
-    const response = await http.get<ApiResponse<BudgetResponse[]>>("/api/v1/budgets")
+    const response = await http.get<ApiResponse<BudgetResponse[]>>("/api/v2/budgets")
     return response.data.data
   },
 
   createBudget: async (categoryId: number, limitAmount: number) => {
-    const response = await http.post<ApiResponse<BudgetResponse>>("/api/v1/budgets", { categoryId, limitAmount })
+    const response = await http.post<ApiResponse<BudgetResponse>>("/api/v2/budgets", { categoryId, limitAmount })
     return response.data.data
   },
 
   updateBudget: async (id: number, limitAmount: number) => {
-    const response = await http.put<ApiResponse<BudgetResponse>>(`/api/v1/budgets/${id}`, { categoryId: 0, limitAmount })
+    const response = await http.put<ApiResponse<BudgetResponse>>(`/api/v2/budgets/${id}`, { categoryId: 0, limitAmount })
     return response.data.data
   },
 
   deleteBudget: async (id: number) => {
-    await http.delete(`/api/v1/budgets/${id}`)
+    await http.delete(`/api/v2/budgets/${id}`)
   },
 
   // Goals
   getGoals: async () => {
-    const response = await http.get<ApiResponse<GoalResponse[]>>("/api/v1/goals")
+    const response = await http.get<ApiResponse<GoalResponse[]>>("/api/v2/goals")
     return response.data.data
   },
 
   createGoal: async (name: string, targetAmount: number, targetDate?: string) => {
-    const response = await http.post<ApiResponse<GoalResponse>>("/api/v1/goals", { name, targetAmount, targetDate })
+    const response = await http.post<ApiResponse<GoalResponse>>("/api/v2/goals", { name, targetAmount, targetDate })
     return response.data.data
   },
 
   updateGoalProgress: async (id: number, currentAmount: number) => {
-    const response = await http.put<ApiResponse<GoalResponse>>(`/api/v1/goals/${id}/progress`, { currentAmount })
+    const response = await http.put<ApiResponse<GoalResponse>>(`/api/v2/goals/${id}/progress`, { currentAmount })
     return response.data.data
   },
 
   updateGoal: async (id: number, name: string, targetAmount: number, targetDate?: string, status?: string) => {
-    const response = await http.put<ApiResponse<GoalResponse>>(`/api/v1/goals/${id}?status=${status || "ACTIVE"}`, { name, targetAmount, targetDate })
+    const response = await http.put<ApiResponse<GoalResponse>>(`/api/v2/goals/${id}?status=${status || "ACTIVE"}`, { name, targetAmount, targetDate })
     return response.data.data
   },
 
   deleteGoal: async (id: number) => {
-    await http.delete(`/api/v1/goals/${id}`)
+    await http.delete(`/api/v2/goals/${id}`)
   },
 
   // Notifications
   getNotifications: async (unreadOnly?: boolean) => {
-    const response = await http.get<ApiResponse<NotificationResponse[]>>("/api/v1/notifications", {
+    const response = await http.get<ApiResponse<NotificationResponse[]>>("/api/v2/notifications", {
       params: unreadOnly ? { unreadOnly } : undefined
     })
     return response.data.data
   },
 
   markNotificationRead: async (id: number) => {
-    const response = await http.post<ApiResponse<{ message: string }>>(`/api/v1/notifications/${id}/read`)
+    const response = await http.post<ApiResponse<{ message: string }>>(`/api/v2/notifications/${id}/read`)
     return response.data.data
   },
 
   markAllNotificationsRead: async () => {
-    const response = await http.post<ApiResponse<{ message: string }>>("/api/v1/notifications/mark-all-read")
+    const response = await http.post<ApiResponse<{ message: string }>>("/api/v2/notifications/mark-all-read")
     return response.data.data
   },
 
   getExchangeRates: async () => {
-    const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate")
+    const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/v2/exchange-rate")
     return response.data.data
   },
 
   syncExchangeRates: async () => {
-    const response = await http.post<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate/sync")
+    const response = await http.post<ApiResponse<ExchangeRateResponse[]>>("/api/v2/exchange-rate/sync")
     return response.data.data
   },
 
   getLatestExchangeRates: async () => {
-    const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/exchange-rate/latest")
+    const response = await http.get<ApiResponse<ExchangeRateResponse[]>>("/api/v2/exchange-rate/latest")
     return response.data.data
   },
 
   getExchangeRate: async (currency: string) => {
-    const response = await http.get<ApiResponse<ExchangeRateResponse>>(`/api/exchange-rate/${currency}`)
+    const response = await http.get<ApiResponse<ExchangeRateResponse>>(`/api/v2/exchange-rate/${currency}`)
     return response.data.data
   },
 
   updateDisplayCurrency: async (displayCurrency: CurrencyCode) => {
-    const response = await http.put<ApiResponse<UserProfile>>("/api/users/display-currency", { displayCurrency })
+    const response = await http.put<ApiResponse<UserProfile>>("/api/v2/users/display-currency", { displayCurrency })
     return response.data.data
   }
 }

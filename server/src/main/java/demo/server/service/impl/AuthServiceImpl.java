@@ -131,9 +131,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public MessageResponse logout(String accessToken, String refreshTokenValue) {
-        if (accessToken != null) {
-            jwtBlacklistService.blacklistToken(accessToken);
-        }
+        if (accessToken != null) jwtBlacklistService.blacklistToken(accessToken);
 
         refreshTokenRepository.findByToken(refreshTokenValue)
             .ifPresent(token -> {
@@ -379,9 +377,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         List<RefreshToken> activeTokens = refreshTokenRepository.findByUserAndRevokedFalse(user);
-        for (RefreshToken token : activeTokens) {
-            token.revoke(LocalDateTime.now());
-        }
+        for (RefreshToken token : activeTokens) token.revoke(LocalDateTime.now());
         refreshTokenRepository.saveAll(activeTokens);
 
         if (accessToken != null) jwtBlacklistService.blacklistToken(accessToken);

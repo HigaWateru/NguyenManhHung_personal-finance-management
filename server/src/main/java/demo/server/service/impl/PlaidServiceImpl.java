@@ -57,7 +57,6 @@ public class PlaidServiceImpl implements PlaidService {
     private final IncomeRepository incomeRepository;
     private final ExpenseRepository expenseRepository;
 
-
     @Value("${plaid.client-id:mock_client_id}")
     private String clientId;
 
@@ -190,12 +189,11 @@ public class PlaidServiceImpl implements PlaidService {
             return 0;
         }
 
-        // Gather unique access tokens (typically 1 item per connection)
         String accessToken = bankAccounts.getFirst().getPlaidAccessToken();
         
         int totalSyncCount = 0;
         boolean hasMore = true;
-        String cursor = null; // In production, save/retrieve cursor per connection. For sandbox, start clean or poll
+        String cursor = null;
 
         try {
             while (hasMore) {
@@ -274,12 +272,13 @@ public class PlaidServiceImpl implements PlaidService {
                 hasMore = syncResponse.getHasMore();
             }
 
-            // Re-classify all existing transactions to ensure accurate categorization
+            // Classify only transactions that do not yet have a category assigned
             List<demo.server.entity.Transaction> allUserTxs = transactionRepository.findByUserId(userId);
             for (demo.server.entity.Transaction tx : allUserTxs) {
-                tx.updateCategory(null);
-                categoryClassificationService.classifyTransaction(tx);
-                transactionRepository.save(tx);
+                if (tx.getCategory() == null) {
+                    categoryClassificationService.classifyTransaction(tx);
+                    transactionRepository.save(tx);
+                }
             }
 
             // Sync Plaid transactions to Income and Expense entities for full reporting
@@ -310,9 +309,37 @@ public class PlaidServiceImpl implements PlaidService {
 
             return totalSyncCount;
 
-        } catch (IOException e) {
-            log.error("Network error during Plaid transactions sync", e);
-            throw new RuntimeException("Failed to sync Plaid transactions due to network error", e);
+        } catch (Exception e) {
+            log.error("Error or timeout during Plaid transaction sync for user {}", userId, e);
+            boolean isTimeout = e instanceof java.io.InterruptedIOException
+                || e instanceof java.net.SocketTimeoutException 
+                || e instanceof java.util.concurrent.TimeoutException
+                || (e.getMessage() != null && (e.getMessage().toLowerCase().contains("timeout") 
+                || e.getMessage().toLowerCase().contains("timed out")
+                || e.getMessage().toLowerCase().contains("time out")));
+
+            try {
+                String title = "Cảnh báo Đồng bộ Giao dịch";
+                String message = isTimeout
+                    ? "Đồng bộ giao dịch thất bại do quá thời gian phản hồi từ máy chủ (Server Response Timeout). Vui lòng thử lại sau."
+                    : "Đồng bộ giao dịch thất bại: " + (e.getMessage() != null ? e.getMessage() : "Lỗi kết nối máy chủ.");
+
+                notificationService.createNotification(
+                    userId,
+                    title,
+                    message,
+                    "PLAID_ERROR"
+                );
+            } catch (Exception notifErr) {
+                log.warn("Could not save error notification for Plaid sync timeout", notifErr);
+            }
+
+            throw new RuntimeException(
+                isTimeout 
+                    ? "Đồng bộ giao dịch thất bại do quá thời gian phản hồi từ máy chủ (Server Response Timeout)."
+                    : "Failed to sync Plaid transactions: " + e.getMessage(), 
+                e
+            );
         }
     }
 
@@ -369,8 +396,8 @@ public class PlaidServiceImpl implements PlaidService {
                 // Check if Income record already exists for this note/date/user
                 List<Income> existing = incomeRepository.findAllByUserId(userId).stream()
                     .filter(i -> i.getTransactionDate().equals(tx.getTransactionDate()) 
-                            && i.getAmount().compareTo(tx.getAmount()) == 0
-                            && ((i.getNote() == null && noteText == null) || (i.getNote() != null && i.getNote().equalsIgnoreCase(noteText))))
+                        && i.getAmount().compareTo(tx.getAmount()) == 0
+                        && ((i.getNote() == null && noteText == null) || (i.getNote() != null && i.getNote().equalsIgnoreCase(noteText))))
                     .toList();
 
                 if (existing.isEmpty()) {
@@ -390,8 +417,8 @@ public class PlaidServiceImpl implements PlaidService {
                 // Check if Expense record already exists for this note/date/user
                 List<Expense> existing = expenseRepository.findAllByUserId(userId).stream()
                     .filter(e -> e.getTransactionDate().equals(tx.getTransactionDate()) 
-                            && e.getAmount().compareTo(tx.getAmount()) == 0
-                            && ((e.getNote() == null && noteText == null) || (e.getNote() != null && e.getNote().equalsIgnoreCase(noteText))))
+                        && e.getAmount().compareTo(tx.getAmount()) == 0
+                        && ((e.getNote() == null && noteText == null) || (e.getNote() != null && e.getNote().equalsIgnoreCase(noteText))))
                     .toList();
 
                 if (existing.isEmpty()) {

@@ -18,7 +18,6 @@ import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerForgotPasswordIntegrationTest {
-
     @Mock
     private AuthService authService;
 
@@ -28,8 +27,8 @@ public class AuthControllerForgotPasswordIntegrationTest {
     @Test
     void forgotPassword_validRequest_returnsOk() {
         ForgotPasswordRequest request = ForgotPasswordRequest.builder()
-                .email("test@example.com")
-                .build();
+            .email("test@example.com")
+            .build();
 
         doNothing().when(authService).requestForgotPassword(request);
 

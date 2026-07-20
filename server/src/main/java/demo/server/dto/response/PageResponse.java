@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 @Getter
 @Builder
 public class PageResponse<T> {
-
     private final List<T> content;
     private final int pageNumber;
     private final int pageSize;
@@ -19,13 +18,13 @@ public class PageResponse<T> {
 
     public static <T> PageResponse<T> from(Page<T> page) {
         return PageResponse.<T>builder()
-                .content(page.getContent())
-                .pageNumber(page.getNumber())
-                .pageSize(page.getSize())
-                .totalElements(page.getTotalElements())
-                .totalPages(page.getTotalPages())
-                .first(page.isFirst())
-                .last(page.isLast())
-                .build();
+            .content(page.getContent())
+            .pageNumber(page.getNumber())
+            .pageSize(page.getSize())
+            .totalElements(page.getTotalElements())
+            .totalPages(page.getTotalPages())
+            .first(page.isFirst())
+            .last(page.isLast())
+            .build();
     }
 }

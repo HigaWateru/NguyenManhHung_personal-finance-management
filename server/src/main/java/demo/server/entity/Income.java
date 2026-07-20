@@ -26,10 +26,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "incomes", indexes = {
-        @Index(name = "idx_incomes_user_date", columnList = "user_id,transaction_date"),
-        @Index(name = "idx_incomes_user_category", columnList = "user_id,category_id")
-    }
-)
+    @Index(name = "idx_incomes_user_date", columnList = "user_id,transaction_date"),
+    @Index(name = "idx_incomes_user_category", columnList = "user_id,category_id")
+})
 public class Income extends BaseEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
