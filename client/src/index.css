@@ -37,6 +37,17 @@
 		text-decoration: none;
 	}
 
+	button,
+	a,
+	select,
+	[role="button"],
+	input[type="submit"],
+	input[type="button"],
+	input[type="checkbox"],
+	input[type="radio"] {
+		cursor: pointer;
+	}
+
 	input,
 	button,
 	textarea,

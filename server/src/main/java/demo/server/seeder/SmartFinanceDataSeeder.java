@@ -17,10 +17,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import demo.server.service.PlaidService;
+
 @Component
 @RequiredArgsConstructor
 public class SmartFinanceDataSeeder implements CommandLineRunner {
     private final EntityManager entityManager;
+    private final PlaidService plaidService;
     BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -69,9 +72,14 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         ensureExchangeRate(CurrencyCode.JPY, "Japanese Yen", "¥", BigDecimal.valueOf(160.5), BigDecimal.valueOf(-0.21));
         ensureExchangeRate(CurrencyCode.VND, "Vietnamese Dong", "₫", BigDecimal.ONE, BigDecimal.valueOf(0.08));
 
-        // Seed initial notifications for demo user
+        // Seed initial notifications and trigger full transaction sync for demo user
         User dynamicUser = findUserByEmail("user_transactions_dynamic");
         if (dynamicUser != null) {
+            try {
+                plaidService.syncTransactions(dynamicUser.getId());
+            } catch (Exception e) {
+                // ignore if sandbox token not yet connected
+            }
             ensureNotification(dynamicUser, "Đồng bộ Giao dịch Plaid", "Đã kết nối tài khoản First Platypus Bank và tự động đồng bộ 15 giao dịch.", "PLAID");
             ensureNotification(dynamicUser, "Cảnh báo Ngân sách Ăn uống", "Chi tiêu cho danh mục Ăn uống đã đạt 85% hạn mức ngân sách.", "BUDGET_WARNING");
             ensureNotification(dynamicUser, "Cập nhật Tỷ giá Ngoại tệ", "Tỷ giá thị trường đã được đồng bộ trực tuyến chuẩn USD ($1.0000 USD).", "EXCHANGE_RATE");

@@ -189,7 +189,7 @@ export default function ExpensePage() {
         <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Giao dịch</p>
         <h3 className="mt-3 text-3xl font-semibold text-white">Quản lý chi tiêu</h3>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          Dữ liệu chi tiêu đã kết nối backend: CRUD, tìm kiếm và phân trang theo API thật.
+          Theo dõi và quản lý chi tiết các khoản chi tiêu sinh hoạt, ăn uống và mua sắm cá nhân hàng ngày.
         </p>
       </header>
 

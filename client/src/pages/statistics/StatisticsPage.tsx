@@ -155,7 +155,7 @@ export default function StatisticsPage() {
         <p className="text-xs uppercase tracking-[0.35em] text-cyan-300/70">Thống kê</p>
         <h3 className="mt-3 text-3xl font-semibold text-white">Báo cáo tài chính</h3>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          Module thống kê trực quan bằng Recharts, hiển thị tương quan Thu nhập và Chi tiêu theo thời gian cùng phân bố chi tiêu theo danh mục.
+          Báo cáo phân tích tổng quan dòng tiền thu nhập, chi tiêu và phân bổ ngân sách chi tiết theo thời gian thực.
         </p>
 
         <div className="mt-5 grid gap-3 md:grid-cols-4">

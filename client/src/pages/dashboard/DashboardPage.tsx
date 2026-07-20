@@ -459,10 +459,10 @@ export default function DashboardPage() {
               <Banknote size={24} />
             </div>
             <div>
-              <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-semibold">Tích hợp Plaid</p>
+              <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/70 font-semibold">Kết nối Ngân hàng</p>
               <h3 className="mt-1 text-2xl font-bold text-white">Kết nối ngân hàng tự động</h3>
               <p className="mt-2 text-sm text-slate-400">
-                Đồng bộ hóa các giao dịch ngân hàng của bạn tức thời qua Plaid Sandbox.
+                Đồng bộ hóa tất cả các giao dịch từ tài khoản ngân hàng của bạn một cách nhanh chóng và bảo mật.
               </p>
             </div>
           </div>

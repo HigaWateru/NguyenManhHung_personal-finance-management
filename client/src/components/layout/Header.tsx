@@ -134,7 +134,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300/70 font-semibold">Smart Finance · Kiến trúc MVP</p>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-cyan-300/70 font-semibold">Smart Finance · Quản Lý Tài Chính Cá Nhân</p>
           <h2 className="truncate text-lg font-bold text-white sm:text-xl">{title}</h2>
         </div>
 

@@ -17,9 +17,12 @@ import demo.server.common.enums.CategoryType;
 import demo.server.common.enums.CurrencyCode;
 import demo.server.dto.response.BankAccountResponse;
 import demo.server.entity.BankAccount;
-
+import demo.server.entity.Expense;
+import demo.server.entity.Income;
 import demo.server.entity.User;
 import demo.server.repository.BankAccountRepository;
+import demo.server.repository.ExpenseRepository;
+import demo.server.repository.IncomeRepository;
 import demo.server.repository.TransactionRepository;
 import demo.server.repository.UserRepository;
 import demo.server.service.CategoryClassificationService;
@@ -52,6 +55,8 @@ public class PlaidServiceImpl implements PlaidService {
     private final CategoryClassificationService categoryClassificationService;
     private final ExchangeRateService exchangeRateService;
     private final demo.server.service.NotificationService notificationService;
+    private final IncomeRepository incomeRepository;
+    private final ExpenseRepository expenseRepository;
 
 
     @Value("${plaid.client-id:mock_client_id}")
@@ -282,6 +287,9 @@ public class PlaidServiceImpl implements PlaidService {
                 transactionRepository.save(tx);
             }
 
+            // Sync Plaid transactions to Income and Expense entities for full reporting
+            syncTransactionsToIncomeAndExpense(userId, allUserTxs);
+
             // Update last synced timestamps on bank accounts
             LocalDateTime now = LocalDateTime.now();
             for (BankAccount acc : bankAccounts) {
@@ -349,5 +357,66 @@ public class PlaidServiceImpl implements PlaidService {
         }
         bankAccountRepository.deleteByUserId(userId);
         log.info("Plaid Bank accounts disconnected for User: {}", userId);
+    }
+
+    private void syncTransactionsToIncomeAndExpense(Long userId, List<demo.server.entity.Transaction> transactions) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) return;
+
+        for (demo.server.entity.Transaction tx : transactions) {
+            if (tx.getCategory() == null) continue;
+
+            String noteText = tx.getMerchantName() != null && !tx.getMerchantName().isBlank() 
+                ? tx.getMerchantName() 
+                : tx.getNote();
+
+            if (tx.getType() == CategoryType.INCOME) {
+                // Check if Income record already exists for this note/date/user
+                List<Income> existing = incomeRepository.findAllByUserId(userId).stream()
+                    .filter(i -> i.getTransactionDate().equals(tx.getTransactionDate()) 
+                              && i.getAmount().compareTo(tx.getAmount()) == 0
+                              && ((i.getNote() == null && noteText == null) || (i.getNote() != null && i.getNote().equalsIgnoreCase(noteText))))
+                    .toList();
+
+                if (existing.isEmpty()) {
+                    Income income = Income.builder()
+                        .user(user)
+                        .category(tx.getCategory())
+                        .amount(tx.getAmount())
+                        .transactionDate(tx.getTransactionDate())
+                        .note(noteText)
+                        .build();
+                    incomeRepository.save(income);
+                } else {
+                    for (Income inc : existing) {
+                        inc.updateDetails(tx.getCategory(), tx.getAmount(), tx.getTransactionDate(), noteText);
+                        incomeRepository.save(inc);
+                    }
+                }
+            } else if (tx.getType() == CategoryType.EXPENSE) {
+                // Check if Expense record already exists for this note/date/user
+                List<Expense> existing = expenseRepository.findAllByUserId(userId).stream()
+                    .filter(e -> e.getTransactionDate().equals(tx.getTransactionDate()) 
+                              && e.getAmount().compareTo(tx.getAmount()) == 0
+                              && ((e.getNote() == null && noteText == null) || (e.getNote() != null && e.getNote().equalsIgnoreCase(noteText))))
+                    .toList();
+
+                if (existing.isEmpty()) {
+                    Expense expense = Expense.builder()
+                        .user(user)
+                        .category(tx.getCategory())
+                        .amount(tx.getAmount())
+                        .transactionDate(tx.getTransactionDate())
+                        .note(noteText)
+                        .build();
+                    expenseRepository.save(expense);
+                } else {
+                    for (Expense exp : existing) {
+                        exp.updateDetails(tx.getCategory(), tx.getAmount(), tx.getTransactionDate(), noteText);
+                        expenseRepository.save(exp);
+                    }
+                }
+            }
+        }
     }
 }
