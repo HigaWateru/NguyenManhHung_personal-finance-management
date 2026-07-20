@@ -3449,3 +3449,511 @@ Caused by: java.net.ConnectException: Connection refused: getsockopt
 	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
 2026-07-21 00:21:11 INFO  [http-nio-8080-exec-5] d.s.s.i.CategoryClassificationServiceImpl - Transaction [ID: 492] classified via Rule Engine: Utilities
+2026-07-21 00:21:11 INFO  [http-nio-8080-exec-5] d.s.service.impl.PlaidServiceImpl - Plaid sync finished. Synced 123 new transactions for User: 3
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:12 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:13 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:13 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:13 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:13 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:13 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:13 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:14 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:14 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:24 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:24 INFO  [http-nio-8080-exec-6] d.s.service.impl.PlaidServiceImpl - Syncing Plaid Transactions for User ID: 3
+2026-07-21 00:21:24 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:24 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:28 INFO  [http-nio-8080-exec-6] d.s.service.impl.PlaidServiceImpl - Plaid sync finished. Synced 0 new transactions for User: 3
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:28 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:29 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:29 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:29 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:30 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:30 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:30 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:35 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:35 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:40 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:40 INFO  [http-nio-8080-exec-10] d.s.service.impl.PlaidServiceImpl - Syncing Plaid Transactions for User ID: 3
+2026-07-21 00:21:42 INFO  [http-nio-8080-exec-10] d.s.service.impl.PlaidServiceImpl - Plaid sync finished. Synced 0 new transactions for User: 3
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:42 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:43 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:43 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:43 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:43 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:43 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:44 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:44 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:54 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:54 INFO  [http-nio-8080-exec-7] d.s.service.impl.PlaidServiceImpl - Syncing Plaid Transactions for User ID: 3
+2026-07-21 00:21:54 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:54 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:57 INFO  [http-nio-8080-exec-7] d.s.service.impl.PlaidServiceImpl - Plaid sync finished. Synced 0 new transactions for User: 3
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:58 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:59 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:59 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:59 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:59 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:21:59 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:21:59 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:22:04 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:22:04 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:22:15 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:22:15 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:22:25 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:22:25 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:22:35 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:22:35 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:22:45 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:22:45 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:22:55 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:22:55 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:23:05 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:23:05 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:23:15 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:23:15 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:23:25 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:23:25 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:23:35 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:23:35 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:23:45 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:23:45 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:23:55 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:23:55 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:24:05 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:24:05 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:24:15 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:24:15 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:24:25 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:24:25 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:24:35 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:24:35 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:24:45 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:24:45 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:24:55 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:24:55 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:04 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:04 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:04 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:05 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:05 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:05 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:05 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:05 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:07 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:08 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:17 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:17 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:27 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:27 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:29 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:29 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:30 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:31 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:31 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:32 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:32 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:32 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:32 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:32 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:33 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:37 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:37 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:38 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:38 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:39 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:39 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:39 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:39 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:39 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:39 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:39 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:40 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:41 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:42 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:42 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:43 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:43 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:44 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:44 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:44 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:44 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:44 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:44 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:52 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:52 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:53 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:53 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:53 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:53 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:54 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:55 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:25:56 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:00 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:00 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:01 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:01 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:02 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:02 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:02 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:02 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:02 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:02 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:03 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:03 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:04 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:04 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:05 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:06 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:13 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:13 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:14 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:15 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:15 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:16 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:16 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:17 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:17 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:17 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:17 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:17 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:18 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:18 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:19 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:19 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:20 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:20 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:20 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:20 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:20 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:20 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:29 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:29 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:39 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:39 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:49 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:49 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:26:59 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:26:59 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:27:09 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:27:09 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:27:19 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:27:19 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:27:29 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:27:29 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:28:28 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:28 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:28:49 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:49 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:51 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:52 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:52 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:52 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:52 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:52 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:28:52 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:01 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:01 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:29:11 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:11 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:29:21 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:21 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:29:31 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:31 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:29:41 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:41 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:29:51 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:29:51 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:01 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:01 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:12 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:12 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 WARN  [http-nio-8080-exec-5] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:13 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:14 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:23 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:23 WARN  [http-nio-8080-exec-9] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:33 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:33 WARN  [http-nio-8080-exec-7] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:43 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:43 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:30:53 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:30:53 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:31:03 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:31:03 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:31:13 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:31:13 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]
+2026-07-21 00:31:23 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-07-21 00:31:23 WARN  [http-nio-8080-exec-2] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.http.converter.HttpMessageNotWritableException: Could not write JSON: Could not initialize proxy [demo.server.entity.User#3] - no session]

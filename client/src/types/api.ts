@@ -214,7 +214,8 @@ export type VerifyOtpInput = {
 export type ResetPasswordInput = {
   email: string
   otp: string
-  newPassword: string
+  password: string
+  confirmPassword: string
 }
 
 export type IncomeInput = {

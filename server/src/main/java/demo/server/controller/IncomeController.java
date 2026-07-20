@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/api/v2/incomes", "/api/v1/incomes"})
 @RequiredArgsConstructor
 public class IncomeController {
-
     private final IncomeService incomeService;
 
     @GetMapping

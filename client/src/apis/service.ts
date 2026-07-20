@@ -1,44 +1,13 @@
 import { http } from "./http"
-import type {
-  ApiResponse,
-  AuthPayload,
-  CategoryInput,
-  CategoryItem,
-  ExpenseInput,
-  ExpenseItem,
-  ForgotPasswordInput,
-  IncomeInput,
-  IncomeItem,
-  LoginInput,
-  PageResponse,
-  PaginationQuery,
-  ProfileUpdateInput,
-  RegisterInput,
-  ResetPasswordInput,
-  StatisticsData,
-  UserProfile,
-  VerifyOtpInput,
-  CategoryType,
-  DashboardData,
-  BankAccountResponse,
-  BudgetResponse,
-  GoalResponse,
-  NotificationResponse,
-  ExchangeRateResponse,
-  CurrencyCode
+import type { ApiResponse, AuthPayload, CategoryInput, CategoryItem, ExpenseInput, ExpenseItem, 
+  ForgotPasswordInput, IncomeInput, IncomeItem, LoginInput, PageResponse, PaginationQuery, 
+  ProfileUpdateInput, RegisterInput, ResetPasswordInput, StatisticsData, UserProfile, VerifyOtpInput,
+  CategoryType, DashboardData, BankAccountResponse, BudgetResponse, GoalResponse, NotificationResponse,
+  ExchangeRateResponse, CurrencyCode
 } from "../types/api"
 
-export type {
-  LoginInput,
-  RegisterInput,
-  ProfileUpdateInput,
-  ForgotPasswordInput,
-  VerifyOtpInput,
-  ResetPasswordInput,
-  IncomeInput,
-  ExpenseInput,
-  CategoryInput
-}
+export type { LoginInput, RegisterInput, ProfileUpdateInput, ForgotPasswordInput, VerifyOtpInput,
+  ResetPasswordInput, IncomeInput, ExpenseInput, CategoryInput }
 
 function toQueryParams(query: PaginationQuery): Record<string, string | number> {
   const params: Record<string, string | number> = {
@@ -52,17 +21,9 @@ function toQueryParams(query: PaginationQuery): Record<string, string | number> 
     params.search = searchText
   }
 
-  if (query.sortBy) {
-    params.sortBy = query.sortBy
-  }
-
-  if (query.sortDir) {
-    params.sortDir = query.sortDir
-  }
-
-  if (query.categoryId) {
-    params.categoryId = query.categoryId
-  }
+  if (query.sortBy) params.sortBy = query.sortBy
+  if (query.sortDir) params.sortDir = query.sortDir
+  if (query.categoryId) params.categoryId = query.categoryId
 
   const from = query.fromDate || query.startDate
   if (from) {

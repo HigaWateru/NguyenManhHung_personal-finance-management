@@ -31,7 +31,6 @@ public class BudgetController {
     private final BudgetService budgetService;
     private final ExchangeRateService exchangeRateService;
 
-
     @GetMapping
     public ResponseEntity<ApiResponse<List<BudgetResponse>>> getBudgets(
         @AuthenticationPrincipal CurrentUserPrincipal principal
@@ -85,4 +84,3 @@ public class BudgetController {
             .build();
     }
 }
-

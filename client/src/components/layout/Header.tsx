@@ -4,6 +4,7 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
+import type { RootState } from "../../redux/store/index"
 import { logout } from "../../redux/slides/authSlide"
 import { apiService } from "../../apis/service"
 import type { NotificationResponse } from "../../types/api"
@@ -27,7 +28,7 @@ const languageOptions: { code: Language; label: string; flagClass: string }[] = 
 export default function Header({ title, onMenuClick }: HeaderProps) {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const { user } = useAppSelector((state) => state.auth)
+  const { user } = useAppSelector((state: RootState) => state.auth)
   const { language, setLanguage, t } = useLanguage()
 
   const [allNotifications, setAllNotifications] = useState<NotificationResponse[]>([])
