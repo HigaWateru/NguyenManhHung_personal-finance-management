@@ -233,7 +233,7 @@ export default function DashboardPage() {
       const toDate = formatLocalDate(sunday)
       const startOfMonth = formatLocalDate(new Date(now.getFullYear(), now.getMonth(), 1))
 
-      const [data, weeklyIncomes, weeklyExpenses, monthlyExpenses, activeBudgets, activeGoals, expenseCats] = await Promise.all([
+      const [data, weeklyIncomes, weeklyExpenses, , activeBudgets, activeGoals, expenseCats] = await Promise.all([
         apiService.getDashboard(),
         apiService.getIncomes({ page: 0, size: 100, fromDate, toDate }),
         apiService.getExpenses({ page: 0, size: 100, fromDate, toDate }),
@@ -351,7 +351,7 @@ export default function DashboardPage() {
       setShowBudgetModal(false)
       setBudgetForm({ categoryId: "", limitAmount: "" })
       await loadDashboardData()
-    } catch (err) {
+    } catch {
       window.alert("Lỗi thiết lập ngân sách.")
     } finally {
       setBudgetSaving(false)
@@ -363,7 +363,7 @@ export default function DashboardPage() {
     try {
       await apiService.deleteBudget(id)
       await loadDashboardData()
-    } catch (err) {
+    } catch {
       window.alert("Xóa ngân sách thất bại.")
     }
   }
@@ -381,7 +381,7 @@ export default function DashboardPage() {
       setShowGoalModal(false)
       setGoalForm({ name: "", targetAmount: "", targetDate: "" })
       await loadDashboardData()
-    } catch (err) {
+    } catch {
       window.alert("Lỗi tạo mục tiêu.")
     } finally {
       setGoalSaving(false)
@@ -393,7 +393,7 @@ export default function DashboardPage() {
     try {
       await apiService.deleteGoal(id)
       await loadDashboardData()
-    } catch (err) {
+    } catch {
       window.alert("Xóa mục tiêu thất bại.")
     }
   }
@@ -409,7 +409,7 @@ export default function DashboardPage() {
     try {
       await apiService.updateGoalProgress(id, num)
       await loadDashboardData()
-    } catch (err) {
+    } catch {
       window.alert("Cập nhật tiến trình thất bại.")
     }
   }

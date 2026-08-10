@@ -27,7 +27,8 @@ export default function MetricCard({ label, value, change, icon: Icon, positive 
         </div>
       </div>
 
-      <p className={`mt-6 text-sm font-medium ${positive ? "text-emerald-300" : "text-rose-300"}`}>{change} {vsText}</p>
+      <p className={`mt-6 text-sm font-medium ${positive ? "text-emerald-300" : "text-rose-300"}`}>
+        {change} {vsText}</p>
     </article>
   )
 }

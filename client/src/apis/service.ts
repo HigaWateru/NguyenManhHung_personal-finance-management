@@ -283,5 +283,10 @@ export const apiService = {
   updateDisplayCurrency: async (displayCurrency: CurrencyCode) => {
     const response = await http.put<ApiResponse<UserProfile>>("/api/v2/users/display-currency", { displayCurrency })
     return response.data.data
+  },
+
+  chatWithAi: async (message: string, history: { role: 'user' | 'model'; text: string }[]) => {
+    const response = await http.post<ApiResponse<{ response: string }>>("/api/v2/chat", { message, history })
+    return response.data.data
   }
 }

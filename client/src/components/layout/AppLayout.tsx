@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom"
 import Sidebar from "./Sidebar"
 import Header from "./Header"
 import Footer from "./Footer"
+import Chatbox from "./Chatbox"
 import { useLanguage } from "../../context/LanguageContext"
 
 export default function AppLayout() {
@@ -32,6 +33,7 @@ export default function AppLayout() {
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 md:overflow-y-auto"><Outlet /></main>
         <Footer />
       </div>
+      <Chatbox />
     </div>
   )
 }
