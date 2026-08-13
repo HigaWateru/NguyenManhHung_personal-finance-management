@@ -1339,3 +1339,10 @@ Caused by: java.sql.SQLSyntaxErrorException: Unknown database 'personal_finance'
 2026-08-13 08:21:36 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
 2026-08-13 08:21:46 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
 2026-08-13 08:22:20 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:23:20 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:24:20 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:24:46 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:24:56 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:25:06 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:25:16 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:25:26 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
