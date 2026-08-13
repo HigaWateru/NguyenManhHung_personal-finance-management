@@ -64,9 +64,16 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
 
   // Periodic polling for notifications every 10 seconds
   useEffect(() => {
-    fetchNotifications()
-    const interval = setInterval(() => fetchNotifications(false), 10000)
-    return () => clearInterval(interval)
+    const timer = setTimeout(() => {
+      void fetchNotifications()
+    }, 0)
+    const interval = setInterval(() => {
+      void fetchNotifications(false)
+    }, 10000)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
   }, [])
 
   const handleMarkRead = async (id: number) => {

@@ -21,9 +21,12 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      setFullName(user.fullName || "")
-      setTimezone(user.timezone || "Asia/Ho_Chi_Minh")
-      setCurrencyCode(user.currencyCode || "VND")
+      const timer = setTimeout(() => {
+        setFullName(user.fullName || "")
+        setTimezone(user.timezone || "Asia/Ho_Chi_Minh")
+        setCurrencyCode(user.currencyCode || "VND")
+      }, 0)
+      return () => clearTimeout(timer)
     }
   }, [user])
 

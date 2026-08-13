@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"
 import { fetchExchangeRates, syncExchangeRates } from "../../redux/slides/exchangeRateSlide"
 import { formatCurrency } from "../../utils/format"
@@ -19,30 +19,28 @@ export default function ExchangeRatePage() {
   const [convertAmount, setConvertAmount] = useState<string>("100")
   const [fromCurrency, setFromCurrency] = useState<CurrencyCode>("USD")
   const [toCurrency, setToCurrency] = useState<CurrencyCode>("VND")
-  const [convertedResult, setConvertedResult] = useState<number | null>(null)
 
   // Load exchange rates on mount
   useEffect(() => {
     dispatch(fetchExchangeRates())
   }, [dispatch])
 
-  // Recalculate conversion whenever inputs or rates change
-  useEffect(() => {
-    if (!rates || rates.length === 0) return
+  // Recalculate conversion whenever inputs or rates change (derived state)
+  const convertedResult = useMemo(() => {
+    if (!rates || rates.length === 0) return null
 
     const amount = parseFloat(convertAmount)
     if (isNaN(amount) || amount <= 0) {
-      setConvertedResult(null)
-      return
+      return null
     }
 
     const fromRateObj = rates.find((r) => r.currencyCode === fromCurrency)
     const toRateObj = rates.find((r) => r.currencyCode === toCurrency)
 
     if (fromRateObj && toRateObj) {
-      const result = (amount * fromRateObj.rateToVnd) / toRateObj.rateToVnd
-      setConvertedResult(result)
+      return (amount * fromRateObj.rateToVnd) / toRateObj.rateToVnd
     }
+    return null
   }, [convertAmount, fromCurrency, toCurrency, rates])
 
   const handleSwapCurrencies = () => {

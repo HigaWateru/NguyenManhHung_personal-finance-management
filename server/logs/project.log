@@ -968,3 +968,374 @@ Caused by: java.sql.SQLSyntaxErrorException: Unknown database 'personal_finance'
 2026-08-13 08:05:20 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
 2026-08-13 08:05:20 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
 2026-08-13 08:05:20 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:05:53 INFO  [restartedMain] demo.server.ServerApplication - Starting ServerApplication using Java 21.0.11 with PID 20868 (D:\code\fullstack\Personal Finance Management\server\build\classes\java\main started by admin in D:\code\fullstack\Personal Finance Management\server)
+2026-08-13 08:05:53 INFO  [restartedMain] demo.server.ServerApplication - The following 1 profile is active: "dev"
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 130 ms. Found 12 JPA repository interfaces.
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.BankAccountRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.BudgetRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.CategoryRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.ExchangeRateRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.ExpenseRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.GoalRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.IncomeRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.MerchantMappingRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.NotificationRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.RefreshTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.TransactionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface demo.server.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-13 08:05:54 INFO  [restartedMain] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+2026-08-13 08:05:55 INFO  [restartedMain] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-08-13 08:05:55 INFO  [restartedMain] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-13 08:05:55 INFO  [restartedMain] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-13 08:05:55 INFO  [restartedMain] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1340 ms
+2026-08-13 08:05:55 INFO  [restartedMain] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-13 08:05:55 INFO  [restartedMain] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-08-13 08:05:55 INFO  [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-13 08:05:55 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-13 08:05:56 INFO  [restartedMain] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5c7334a5
+2026-08-13 08:05:56 INFO  [restartedMain] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-08-13 08:05:56 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-13 08:05:56 INFO  [restartedMain] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/personal_finance?createDatabaseIfNotExist=true]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.46
+	Default catalog/schema: personal_finance/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-13 08:05:57 INFO  [restartedMain] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-13 08:05:57 INFO  [restartedMain] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-13 08:05:57 INFO  [restartedMain] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-13 08:06:00 INFO  [restartedMain] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-08-13 08:06:00 INFO  [restartedMain] demo.server.ServerApplication - Started ServerApplication in 6.532 seconds (process running for 6.987)
+2026-08-13 08:06:04 INFO  [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-13 08:06:04 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-08-13 08:06:04 INFO  [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-08-13 08:06:05 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:11 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 INFO  [http-nio-8080-exec-6] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:12 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:13 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:13 INFO  [http-nio-8080-exec-3] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:06:14 ERROR [http-nio-8080-exec-6] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "a74367e24e25e28"
+}
+2026-08-13 08:06:14 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "a74367e24e25e28"<EOL>}]
+2026-08-13 08:06:14 ERROR [http-nio-8080-exec-3] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "5e07abaa7a409cd"
+}
+2026-08-13 08:06:14 WARN  [http-nio-8080-exec-3] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "5e07abaa7a409cd"<EOL>}]
+2026-08-13 08:06:16 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:16 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:18 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:18 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:19 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:20 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:21 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:28 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:28 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:28 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:28 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:32 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:40 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:40 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:40 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:41 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:48 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 INFO  [http-nio-8080-exec-10] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-10] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "8216ed88263549f"
+}
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "8216ed88263549f"<EOL>}]
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 INFO  [http-nio-8080-exec-4] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:06:49 ERROR [http-nio-8080-exec-4] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "9db2bb326332b30"
+}
+2026-08-13 08:06:49 WARN  [http-nio-8080-exec-4] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "9db2bb326332b30"<EOL>}]
+2026-08-13 08:06:52 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:01 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:07 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:07 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:11 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:22 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:31 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:42 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:07:51 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:02 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:11 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:22 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:23 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:23 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:29 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:29 INFO  [http-nio-8080-exec-10] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:08:30 INFO  [http-nio-8080-exec-10] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:08:30 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:32 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:33 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:33 INFO  [http-nio-8080-exec-8] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:08:33 INFO  [http-nio-8080-exec-8] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:08:34 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:36 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:36 INFO  [http-nio-8080-exec-2] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:08:36 INFO  [http-nio-8080-exec-2] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:08:36 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:38 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:41 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:41 INFO  [http-nio-8080-exec-7] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:08:41 INFO  [http-nio-8080-exec-7] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:08:41 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:41 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:43 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:43 INFO  [http-nio-8080-exec-5] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:08:43 INFO  [http-nio-8080-exec-5] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:08:43 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:45 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:46 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:52 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:53 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:55 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:55 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:08:56 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:02 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:05 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:05 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:11 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:22 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:31 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:33 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:33 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:41 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:44 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:44 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:51 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:53 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:09:54 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:01 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:03 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:03 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:11 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:15 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:15 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:21 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:30 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:31 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:31 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:42 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:42 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:42 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:51 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:58 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:10:58 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:01 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:05 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:05 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:08 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 INFO  [http-nio-8080-exec-6] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:09 INFO  [http-nio-8080-exec-10] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:11:10 ERROR [http-nio-8080-exec-6] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "ec6f189ef69a380"
+}
+2026-08-13 08:11:10 WARN  [http-nio-8080-exec-6] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "ec6f189ef69a380"<EOL>}]
+2026-08-13 08:11:10 ERROR [http-nio-8080-exec-10] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "352aa03922acac3"
+}
+2026-08-13 08:11:10 WARN  [http-nio-8080-exec-10] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "352aa03922acac3"<EOL>}]
+2026-08-13 08:11:12 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:21 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:32 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:41 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:42 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:42 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:51 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:53 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:11:53 INFO  [http-nio-8080-exec-3] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:11:53 INFO  [http-nio-8080-exec-3] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:11:53 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:02 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:11 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:22 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:31 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:38 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:38 INFO  [http-nio-8080-exec-1] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:12:38 INFO  [http-nio-8080-exec-1] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:12:39 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:40 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:40 INFO  [http-nio-8080-exec-9] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:12:40 INFO  [http-nio-8080-exec-9] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:12:41 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:41 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:44 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:45 INFO  [http-nio-8080-exec-6] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:12:45 INFO  [http-nio-8080-exec-6] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:12:45 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:49 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:12:52 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:01 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:04 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:11 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:22 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:32 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:42 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:13:52 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:14:02 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:14:12 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:15:13 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:16:14 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:15 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:55 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:55 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:55 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:55 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:55 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:17:55 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:18:06 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:18:16 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:18:26 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:18:36 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:18:46 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:18:56 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:19:06 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:19:20 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:19:51 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:19:54 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:19:54 INFO  [http-nio-8080-exec-10] d.s.s.impl.ExchangeRateServiceImpl - Starting daily exchange rate update from API (USD base)...
+2026-08-13 08:19:55 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:19:56 INFO  [http-nio-8080-exec-10] d.s.s.impl.ExchangeRateServiceImpl - Exchange rates updated successfully from API.
+2026-08-13 08:19:56 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:02 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:05 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:05 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:05 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:05 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:05 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:05 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 INFO  [http-nio-8080-exec-1] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:06 INFO  [http-nio-8080-exec-8] d.s.service.impl.PlaidServiceImpl - Creating Plaid Link Token for User ID: 3
+2026-08-13 08:20:08 ERROR [http-nio-8080-exec-1] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "d549efdd76101b1"
+}
+2026-08-13 08:20:08 WARN  [http-nio-8080-exec-1] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "d549efdd76101b1"<EOL>}]
+2026-08-13 08:20:10 ERROR [http-nio-8080-exec-8] d.s.service.impl.PlaidServiceImpl - Failed to create Plaid Link Token: {
+  "display_message": null,
+  "error_code": "INVALID_LINK_CUSTOMIZATION",
+  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",
+  "error_type": "INVALID_INPUT",
+  "request_id": "25ca319d19034d0"
+}
+2026-08-13 08:20:10 WARN  [http-nio-8080-exec-8] o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [java.lang.RuntimeException: Failed to create Plaid Link Token: {<EOL>  "display_message": null,<EOL>  "error_code": "INVALID_LINK_CUSTOMIZATION",<EOL>  "error_message": "At least one Data Transparency Messaging use case is required to be configured. Please configure use case in the Data Transparency Link Customization: https://dashboard.plaid.com/link/data-transparency-v5",<EOL>  "error_type": "INVALID_INPUT",<EOL>  "request_id": "25ca319d19034d0"<EOL>}]
+2026-08-13 08:20:16 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:25 ERROR [http-nio-8080-exec-10] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:36 ERROR [http-nio-8080-exec-4] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:45 ERROR [http-nio-8080-exec-3] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:20:56 ERROR [http-nio-8080-exec-7] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:21:06 ERROR [http-nio-8080-exec-2] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:21:16 ERROR [http-nio-8080-exec-9] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:21:26 ERROR [http-nio-8080-exec-5] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:21:36 ERROR [http-nio-8080-exec-1] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:21:46 ERROR [http-nio-8080-exec-8] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis
+2026-08-13 08:22:20 ERROR [http-nio-8080-exec-6] d.s.s.impl.JwtBlacklistServiceImpl - Redis connection failure when checking blacklist: Unable to connect to Redis

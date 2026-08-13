@@ -98,5 +98,5 @@ export default function CrudModulePage({kicker, title, description, entities, co
         </div>
       </article>
     </section>
-  );
+  )
 }
