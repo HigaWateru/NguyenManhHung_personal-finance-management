@@ -21,6 +21,9 @@ public class AiCategorizerServiceImpl implements AiCategorizerService {
     @Value("${gemini.api-key:}")
     private String geminiApiKey;
 
+    @Value("${gemini.model-name:gemini-flash-lite-latest}")
+    private String geminiModelName;
+
     private final RestTemplate restTemplate = createRestTemplate();
 
     private static RestTemplate createRestTemplate() {
@@ -70,7 +73,7 @@ public class AiCategorizerServiceImpl implements AiCategorizerService {
             inputText, categoryListStr.toString()
         );
 
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + geminiApiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/" + geminiModelName + ":generateContent?key=" + geminiApiKey;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

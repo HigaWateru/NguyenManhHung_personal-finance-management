@@ -32,8 +32,8 @@ export const http = axios.create({
 let refreshPromise: Promise<string | null> | null = null
 
 async function refreshAccessToken(): Promise<string | null> {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) return null;
+  const refreshToken = getRefreshToken()
+  if (!refreshToken) return null
 
   const response = await authClient.post<ApiResponse<AuthPayload>>("/api/v2/auth/refresh-token", {refreshToken,})
 

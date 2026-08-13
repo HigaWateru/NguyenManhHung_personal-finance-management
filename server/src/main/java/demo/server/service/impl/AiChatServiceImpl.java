@@ -41,6 +41,9 @@ public class AiChatServiceImpl implements AiChatService {
     @Value("${gemini.api-key:}")
     private String geminiApiKey;
 
+    @Value("${gemini.model-name:gemini-flash-lite-latest}")
+    private String geminiModelName;
+
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BudgetService budgetService;
@@ -110,7 +113,7 @@ public class AiChatServiceImpl implements AiChatService {
             requestBody.put("contents", contents);
 
             // Call Gemini API
-            String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + geminiApiKey;
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + geminiModelName + ":generateContent?key=" + geminiApiKey;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);

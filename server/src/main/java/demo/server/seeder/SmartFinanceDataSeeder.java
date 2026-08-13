@@ -61,10 +61,10 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
         ensureCategory(secondaryUser, "Food", CategoryType.EXPENSE, "Bua an hang ngay");
         ensureCategory(secondaryUser, "Transport", CategoryType.EXPENSE, "Chi phi di lai");
 
-        // Clean out sample historical incomes, expenses, and transactions to ensure clean state
-        entityManager.createQuery("DELETE FROM Expense").executeUpdate();
-        entityManager.createQuery("DELETE FROM Income").executeUpdate();
-        entityManager.createQuery("DELETE FROM Transaction").executeUpdate();
+        // Clean out sample historical incomes, expenses, and transactions to ensure clean state (Disabled to prevent data loss on server restart)
+        // entityManager.createQuery("DELETE FROM Expense").executeUpdate();
+        // entityManager.createQuery("DELETE FROM Income").executeUpdate();
+        // entityManager.createQuery("DELETE FROM Transaction").executeUpdate();
 
         // Seed initial exchange rates
         ensureExchangeRate(CurrencyCode.USD, "US Dollar", "$", BigDecimal.valueOf(25450.0), BigDecimal.ZERO);

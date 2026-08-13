@@ -23,7 +23,7 @@ export function RequireAuth() {
 export function PublicOnly() {
   const dispatch = useAppDispatch()
   const { initialized, isAuthenticated, loading } = useAppSelector((state) => state.auth)
-
+  
   useEffect(() => {
     if (!initialized) void dispatch(initializeAuth())
   }, [dispatch, initialized])
