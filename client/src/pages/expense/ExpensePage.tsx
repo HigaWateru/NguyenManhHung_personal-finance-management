@@ -4,7 +4,7 @@ import { apiService } from "../../apis/service"
 import { extractApiError } from "../../apis/http"
 import type { CategoryItem } from "../../types/api"
 import { useAppSelector } from "../../redux/hooks"
-import { formatCurrency } from "../../utils/format"
+import { formatCurrency, formatNumberInput, parseNumberInput } from "../../utils/format"
 import { useLanguage } from "../../context/LanguageContext"
 
 type ExpenseRecord = {
@@ -35,13 +35,13 @@ const emptyForm = (): ExpenseFormState => ({
   note: "",
 })
 
-const validateForm = (form: ExpenseFormState): FormErrors => {
+const validateForm = (form: ExpenseFormState, language: string): FormErrors => {
   const errors: FormErrors = {}
 
   if (!form.date.trim()) errors.date = "Vui lòng chọn ngày"
   if (!form.categoryId.trim()) errors.categoryId = "Vui lòng chọn danh mục"
 
-  const amount = Number(form.amount)
+  const amount = Number(parseNumberInput(form.amount, language))
   if (!form.amount.trim()) errors.amount = "Số tiền không được để trống"
   else if (!Number.isFinite(amount) || amount <= 0) errors.amount = "Số tiền phải lớn hơn 0"
 
@@ -52,7 +52,7 @@ const validateForm = (form: ExpenseFormState): FormErrors => {
 
 export default function ExpensePage() {
   const { user } = useAppSelector((state) => state.auth)
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const currencyCode = user?.currencyCode || "VND"
 
   const [records, setRecords] = useState<ExpenseRecord[]>([])
@@ -135,7 +135,7 @@ export default function ExpensePage() {
     setForm({
       date: record.date,
       categoryId: String(record.categoryId),
-      amount: String(record.amount),
+      amount: formatNumberInput(String(record.amount), language),
       note: record.note,
     })
     setErrors({})
@@ -156,14 +156,14 @@ export default function ExpensePage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const validationErrors = validateForm(form)
+    const validationErrors = validateForm(form, language)
     setErrors(validationErrors)
     if (Object.keys(validationErrors).length > 0) return
 
     const payload = {
       transactionDate: form.date,
       categoryId: Number(form.categoryId),
-      amount: Number(form.amount),
+      amount: Number(parseNumberInput(form.amount, language)),
       note: form.note.trim(),
     }
 
@@ -338,9 +338,12 @@ export default function ExpensePage() {
 
                 <div>
                   <label htmlFor="expense-amount" className="mb-2 block text-sm text-slate-300">{t("col_amount")}</label>
-                  <input id="expense-amount" type="number" min="0" value={form.amount}
-                    onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
-                    placeholder="350000"
+                  <input id="expense-amount" type="text" value={form.amount}
+                    onChange={(event) => {
+                      const formatted = formatNumberInput(event.target.value, language);
+                      setForm((prev) => ({ ...prev, amount: formatted }));
+                    }}
+                    placeholder="350.000"
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
                   {errors.amount && <p className="mt-1 text-xs text-rose-300">{errors.amount}</p>}

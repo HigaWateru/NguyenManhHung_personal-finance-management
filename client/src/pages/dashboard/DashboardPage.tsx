@@ -13,7 +13,7 @@ import ChartCard from "../../components/dashboard/ChartCard"
 import CategoryCard from "../../components/dashboard/CategoryCard"
 import TransactionList from "../../components/dashboard/TransactionList"
 import { useAppSelector } from "../../redux/hooks"
-import { formatCurrency as formatCurrencyUtil } from "../../utils/format"
+import { formatCurrency as formatCurrencyUtil, formatNumberInput, parseNumberInput } from "../../utils/format"
 import { notifyHeader, triggerNotificationRefresh } from "../../utils/notification"
 import { useLanguage } from "../../context/LanguageContext"
 
@@ -311,7 +311,8 @@ export default function DashboardPage() {
   const handleQuickActionSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (!form.categoryId.trim() || Number(form.amount) <= 0) {
+    const parsedAmount = parseNumberInput(form.amount, language)
+    if (!form.categoryId.trim() || Number(parsedAmount) <= 0) {
       window.alert("Vui lòng nhập đầy đủ thông tin hợp lệ.")
       return
     }
@@ -322,7 +323,7 @@ export default function DashboardPage() {
       const payload = {
         transactionDate: form.date,
         categoryId: Number(form.categoryId),
-        amount: Number(form.amount),
+        amount: Number(parsedAmount),
         note: form.note.trim()
       }
 
@@ -341,13 +342,14 @@ export default function DashboardPage() {
   // Budget Creation
   const handleBudgetSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!budgetForm.categoryId || Number(budgetForm.limitAmount) <= 0) {
+    const parsedLimitAmount = parseNumberInput(budgetForm.limitAmount, language)
+    if (!budgetForm.categoryId || Number(parsedLimitAmount) <= 0) {
       window.alert("Vui lòng điền thông tin hợp lệ.")
       return
     }
     try {
       setBudgetSaving(true)
-      await apiService.createBudget(Number(budgetForm.categoryId), Number(budgetForm.limitAmount))
+      await apiService.createBudget(Number(budgetForm.categoryId), Number(parsedLimitAmount))
       setShowBudgetModal(false)
       setBudgetForm({ categoryId: "", limitAmount: "" })
       await loadDashboardData()
@@ -371,13 +373,14 @@ export default function DashboardPage() {
   // Goal Creation
   const handleGoalSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!goalForm.name.trim() || Number(goalForm.targetAmount) <= 0) {
+    const parsedTargetAmount = parseNumberInput(goalForm.targetAmount, language)
+    if (!goalForm.name.trim() || Number(parsedTargetAmount) <= 0) {
       window.alert("Vui lòng điền thông tin hợp lệ.")
       return
     }
     try {
       setGoalSaving(true)
-      await apiService.createGoal(goalForm.name.trim(), Number(goalForm.targetAmount), goalForm.targetDate || undefined)
+      await apiService.createGoal(goalForm.name.trim(), Number(parsedTargetAmount), goalForm.targetDate || undefined)
       setShowGoalModal(false)
       setGoalForm({ name: "", targetAmount: "", targetDate: "" })
       await loadDashboardData()
@@ -422,7 +425,9 @@ export default function DashboardPage() {
 
   const isIncome = quickActionType === "income"
   const modalTitle = isIncome ? t("dash_add_income") : t("dash_add_expense")
-  const amountPlaceholder = isIncome ? "2500000" : "350000"
+  const amountPlaceholder = isIncome
+    ? (language === "vi" ? "2.500.000" : "2,500,000")
+    : (language === "vi" ? "350.000" : "350,000")
 
   const dynamicMetrics = useMemo(() => {
     if (!dashboardData) {
@@ -867,8 +872,11 @@ export default function DashboardPage() {
 
                 <div>
                   <label htmlFor="quick-amount" className="mb-2 block text-sm text-slate-300">{t("col_amount")}</label>
-                  <input id="quick-amount" type="number" min="0" value={form.amount}
-                    onChange={(event) => setForm((prev) => ({ ...prev, amount: event.target.value }))}
+                  <input id="quick-amount" type="text" value={form.amount}
+                    onChange={(event) => {
+                      const formatted = formatNumberInput(event.target.value, language);
+                      setForm((prev) => ({ ...prev, amount: formatted }));
+                    }}
                     placeholder={amountPlaceholder}
                     className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   />
@@ -945,8 +953,11 @@ export default function DashboardPage() {
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">{t("dash_budgets_sub")} ({currencyCode})</label>
-                <input type="number" placeholder="5000000" value={budgetForm.limitAmount}
-                  onChange={(e) => setBudgetForm((p) => ({ ...p, limitAmount: e.target.value }))}
+                <input type="text" placeholder={language === "vi" ? "5.000.000" : "5,000,000"} value={budgetForm.limitAmount}
+                  onChange={(e) => {
+                    const formatted = formatNumberInput(e.target.value, language);
+                    setBudgetForm((p) => ({ ...p, limitAmount: formatted }));
+                  }}
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   required
                 />
@@ -995,8 +1006,11 @@ export default function DashboardPage() {
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">{t("col_amount")} ({currencyCode})</label>
-                <input type="number" placeholder="25000000" value={goalForm.targetAmount}
-                  onChange={(e) => setGoalForm((p) => ({ ...p, targetAmount: e.target.value }))}
+                <input type="text" placeholder={language === "vi" ? "25.000.000" : "25,000,000"} value={goalForm.targetAmount}
+                  onChange={(e) => {
+                    const formatted = formatNumberInput(e.target.value, language);
+                    setGoalForm((p) => ({ ...p, targetAmount: formatted }));
+                  }}
                   className="w-full rounded-2xl border border-white/15 bg-slate-900/60 px-3 py-2.5 text-white outline-none focus:border-cyan-300/45"
                   required
                 />
