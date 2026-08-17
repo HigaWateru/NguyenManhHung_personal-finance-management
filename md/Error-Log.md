@@ -102,4 +102,31 @@
 - Bài học rút ra (Lesson Learned):
   1. Không bao giờ thực hiện reset/phân loại lại dữ liệu đã được xử lý trong quá khứ trong các luồng xử lý hàng loạt (batch process).
   2. Với các dịch vụ AI/API bên thứ 3 có độ trễ cao, luôn áp dụng cơ chế lưu vết (Persisted Merchant Mapping / Cache Warm-up) ngay từ lần đầu tiên nhận được kết quả để tái sử dụng tối đa và giảm thiểu chi phí cũng như độ trễ ở các lần truy vấn tiếp theo.
+- Trạng thái (Resolved/Pending): Resolved
+
+## ERR-20260814-009
+- Mã lỗi (Error ID): ERR-20260814-009
+- Ngày phát sinh: 2026-08-14
+- Module: AI Chat Service
+- Chức năng: Trò chuyện với trợ lý Cyber Vault AI
+- Mô tả lỗi: Lỗi `Could not initialize proxy [demo.server.entity.Category#16] - no session` khi chatbot chuẩn bị dữ liệu (system instruction) để gửi tới Gemini API.
+- Nguyên nhân: Phương thức `chat()` trong `AiChatServiceImpl` không được đánh dấu `@Transactional` (nhằm tránh giữ kết nối database lâu trong khi chờ Gemini API gọi qua mạng ngoài). Khi tạo prompt, phương thức này duyệt qua các danh sách budgets, manual expenses, incomes và gọi các quan hệ được cấu hình lazy-load như `b.getCategory().getName()`, `e.getCategory().getName()`, `inc.getCategory().getName()`. Vì session Hibernate đã đóng ngay sau khi query dữ liệu xong, việc truy cập các proxy chưa được khởi tạo này gây ra `LazyInitializationException`.
+- Cách khắc phục:
+  1. Tạo component helper [`AiChatContextBuilder`](file:///d:/code/fullstack/Personal%20Finance%20Management/server/src/main/java/demo/server/service/impl/AiChatContextBuilder.java) và khai báo phương thức `buildSystemInstruction(Long userId)` với annotation `@Transactional(readOnly = true)`.
+  2. Di chuyển logic tải dữ liệu và dựng prompt vào `AiChatContextBuilder`. Điều này đảm bảo toàn bộ quá trình query và duyệt các lazy proxy diễn ra trong cùng một transaction/session Hibernate hoạt động.
+  3. Cập nhật [`AiChatServiceImpl`](file:///d:/code/fullstack/Personal%20Finance%20Management/server/src/main/java/demo/server/service/impl/AiChatServiceImpl.java) để gọi helper này lấy prompt trước, kết thúc transaction, giải phóng kết nối database rồi mới thực hiện call Gemini API qua RestTemplate.
+- Bài học rút ra (Lesson Learned): Tránh truy cập vào các quan hệ lazy-load bên ngoài phạm vi của một active Hibernate session/transaction. Đối với các tác vụ vừa truy xuất dữ liệu vừa gọi API ngoài, nên tách phần xử lý dữ liệu DB (hoặc nạp eager) vào một method có `@Transactional` riêng để đóng transaction nhanh chóng trước khi gọi network API bên ngoài.
+- Trạng thái (Resolved/Pending): Resolved
+
+## ERR-20260814-010
+- Mã lỗi (Error ID): ERR-20260814-010
+- Ngày phát sinh: 2026-08-14
+- Module: AI Chat Service
+- Chức năng: Trò chuyện với trợ lý Cyber Vault AI
+- Mô tả lỗi: Lỗi HTTP `401 Unauthorized` khi call API tới Gemini (`POST https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent`).
+- Nguyên nhân: Thuộc tính `gemini.api-key` trong `application.properties` (hoặc `application-dev.properties`) đang được cấu hình mặc định là một khóa hết hạn/không hợp lệ (`AQ.Ab8RN6L1...` / `AQ.Ab8RN6Jk...`). Do giá trị này không trống và không chứa chuỗi `"YOUR_GEMINI_API_KEY"`, ứng dụng đã bỏ qua bước kiểm tra rỗng ban đầu và thực hiện cuộc gọi API thật tới Google API Gateway, gây ra lỗi HTTP 401 Unauthorized do khóa API không hợp lệ.
+- Cách khắc phục:
+  1. Cải tiến phần xử lý ngoại lệ trong [`AiChatServiceImpl`](file:///d:/code/fullstack/Personal%20Finance%20Management/server/src/main/java/demo/server/service/impl/AiChatServiceImpl.java): Thêm khối catch `HttpStatusCodeException` để bắt cụ thể các lỗi HTTP từ RestTemplate. Nếu mã HTTP trả về là 401 hoặc 403, trả về thông báo lỗi rõ ràng hướng dẫn người dùng cấu hình lại API Key hợp lệ trong `application.properties` hoặc biến môi trường `GEMINI_API_KEY`.
+  2. Người dùng cần cấu hình API Key Gemini hợp lệ bằng cách cập nhật thuộc tính `gemini.api-key` trong file `application.properties` hoặc thiết lập biến môi trường `GEMINI_API_KEY`.
+- Bài học rút ra (Lesson Learned): Luôn xử lý các mã trạng thái HTTP phổ biến (như 401 Unauthorized, 403 Forbidden, 429 Too Many Requests) khi tích hợp với các API dịch vụ bên thứ ba để cung cấp thông tin gỡ lỗi hữu ích cho người dùng cuối thay vì trả về lỗi thô (raw exception string).
 - Trạng thái (Resolved/Pending): Resolved
