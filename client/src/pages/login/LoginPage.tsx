@@ -131,7 +131,7 @@ export default function LoginPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <a
-                href="http://localhost:8080/oauth2/authorization/google"
+                href="/oauth2/authorization/google"
                 className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -143,7 +143,7 @@ export default function LoginPage() {
                 Google
               </a>
               <a
-                href="http://localhost:8080/oauth2/authorization/github"
+                href="/oauth2/authorization/github"
                 className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white"
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">

@@ -1,7 +1,8 @@
 package demo.server.service;
 
 import demo.server.dto.request.ChatRequest;
+import reactor.core.publisher.Flux;
 
 public interface AiChatService {
-    String chat(Long userId, ChatRequest request);
+    Flux<String> chat(Long userId, ChatRequest request);
 }

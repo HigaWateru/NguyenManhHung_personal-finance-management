@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -19,6 +20,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final AuthService authService;
+
+    @Value("${app.oauth2.redirect-uri:}")
+    private String customRedirectUri;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -50,7 +54,24 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         AuthResponse authResponse = authService.loginOAuth2(email, fullName, avatarUrl);
 
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:5173/oauth2/redirect")
+        String redirectBase = customRedirectUri;
+        if (redirectBase == null || redirectBase.isBlank()) {
+            String scheme = request.getScheme();
+            String serverName = request.getServerName();
+            int serverPort = request.getServerPort();
+            boolean isDefaultPort = ("http".equalsIgnoreCase(scheme) && serverPort == 80)
+                || ("https".equalsIgnoreCase(scheme) && serverPort == 443);
+
+            if ("localhost".equalsIgnoreCase(serverName) || "127.0.0.1".equalsIgnoreCase(serverName)) {
+                redirectBase = "http://localhost:5173/oauth2/redirect";
+            } else if (isDefaultPort || serverPort <= 0) {
+                redirectBase = scheme + "://" + serverName + "/oauth2/redirect";
+            } else {
+                redirectBase = scheme + "://" + serverName + ":" + serverPort + "/oauth2/redirect";
+            }
+        }
+
+        String targetUrl = UriComponentsBuilder.fromUriString(redirectBase)
             .queryParam("token", authResponse.getAccessToken())
             .queryParam("refreshToken", authResponse.getRefreshToken())
             .build().toUriString();

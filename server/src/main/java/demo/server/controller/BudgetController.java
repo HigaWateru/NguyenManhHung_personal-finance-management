@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping({"/api/v2/budgets", "/api/v1/budgets"})
 @RequiredArgsConstructor
+@Transactional
 public class BudgetController {
     private final BudgetService budgetService;
     private final ExchangeRateService exchangeRateService;

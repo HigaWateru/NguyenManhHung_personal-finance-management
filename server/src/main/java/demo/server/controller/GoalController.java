@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping({"/api/v2/goals", "/api/v1/goals"})
 @RequiredArgsConstructor
+@Transactional
 public class GoalController {
     private final GoalService goalService;
     private final ExchangeRateService exchangeRateService;

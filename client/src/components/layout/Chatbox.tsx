@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react"
 import { MessageSquare, Send, X, Bot, Sparkles, AlertCircle } from "lucide-react"
-import { apiService } from "../../apis/service"
 import { useLanguage } from "../../context/LanguageContext"
 import { extractApiError } from "../../apis/http"
+import { getAccessToken } from "../../utils/auth"
 
 type Message = {
   id: string
@@ -30,6 +30,7 @@ export default function Chatbox() {
   
   const { language } = useLanguage()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const accumulatedTextRef = useRef("")
 
   const isVi = language === "vi"
 
@@ -70,6 +71,7 @@ export default function Chatbox() {
   const handleSend = async (textToSend: string) => {
     if (!textToSend.trim() || isLoading) return
 
+    accumulatedTextRef.current = ""
     const userMessage = createMessage("user", textToSend)
 
     setMessages(prev => [...prev, userMessage])
@@ -77,25 +79,68 @@ export default function Chatbox() {
     setIsLoading(true)
     setErrorMsg(null)
 
+    // Add placeholder bot message
+    const botMessage = createMessage("model", "")
+    const botMessageId = botMessage.id
+    setMessages(prev => [...prev, botMessage])
+
     try {
-      // Map frontend Message history to backend DTO ChatMessage structure
-      // Format: { role: 'user' | 'model', text: string }
       const history = messages
-        .filter(m => m.id !== "welcome") // Exclude welcome message
+        .filter(m => m.id !== "welcome")
         .map(m => ({
           role: m.role,
           text: m.text
         }))
 
-      const response = await apiService.chatWithAi(textToSend, history)
-      
-      const botMessage = createMessage("model", response.response)
+      const token = getAccessToken()
+      const response = await fetch("/api/v2/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ message: textToSend, history })
+      })
 
-      setMessages(prev => [...prev, botMessage])
+      if (!response.ok) {
+        const text = await response.text()
+        throw new Error(text || `HTTP error ${response.status}`)
+      }
+
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+      let done = false
+      let buffer = ""
+
+      if (reader) {
+        while (!done) {
+          const { value, done: readerDone } = await reader.read()
+          done = readerDone
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true })
+            buffer += chunk
+
+            let lineEndIdx;
+            while ((lineEndIdx = buffer.indexOf("\n")) !== -1) {
+              const line = buffer.slice(0, lineEndIdx).trim()
+              buffer = buffer.slice(lineEndIdx + 1)
+
+              if (line.startsWith("data:")) {
+                const data = line.slice(5)
+                const content = data.startsWith(" ") ? data.slice(1) : data
+                accumulatedTextRef.current += content
+                setMessages(prev => prev.map(m => m.id === botMessageId ? { ...m, text: accumulatedTextRef.current } : m))
+              }
+            }
+          }
+        }
+      }
     } catch (err) {
       console.error("AI Chat Error:", err)
       const errorText = extractApiError(err, isVi ? "Không thể kết nối với máy chủ AI." : "Failed to connect to AI server.")
       setErrorMsg(errorText)
+      // Remove empty bot message if it failed before receiving text
+      setMessages(prev => prev.filter(m => m.id !== botMessageId || m.text.length > 0))
     } finally {
       setIsLoading(false)
     }
