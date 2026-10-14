@@ -79,7 +79,7 @@ jobs:
     name: Build & Push Docker Images
     needs: [test-frontend, test-backend]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     outputs:
       server_image: ${{ steps.meta-server.outputs.tags }}
       client_image: ${{ steps.meta-client.outputs.tags }}
@@ -148,7 +148,7 @@ jobs:
     name: Deploy to Server (VPS)
     needs: [build-and-push]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.SSH_HOST != ''
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code (for docker-compose)
         uses: actions/checkout@v4
