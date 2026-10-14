@@ -1,0 +1,13 @@
+.gradle/
+build/
+bin/
+logs/
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.git/
+.gitignore
+*.md
+smart-finance.db

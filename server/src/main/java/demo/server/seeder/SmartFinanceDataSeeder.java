@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ import demo.server.service.PlaidService;
 public class SmartFinanceDataSeeder implements CommandLineRunner {
     private final EntityManager entityManager;
     private final PlaidService plaidService;
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -34,7 +34,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
             "an@gmail.com",
             "Asia/Ho_Chi_Minh",
             CurrencyCode.VND,
-            bCryptPasswordEncoder.encode("12345678"),
+            passwordEncoder.encode("12345678"),
             "https://api.dicebear.com/7.x/adventurer/svg?seed=An"
         );
 
@@ -43,7 +43,7 @@ public class SmartFinanceDataSeeder implements CommandLineRunner {
             "chau@gmail.com",
             "Asia/Ho_Chi_Minh",
             CurrencyCode.VND,
-            bCryptPasswordEncoder.encode("12345678"),
+            passwordEncoder.encode("12345678"),
             "https://api.dicebear.com/7.x/adventurer/svg?seed=Chau"
         );
 
